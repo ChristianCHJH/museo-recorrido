@@ -1,0 +1,250 @@
+:host {
+  display: block;
+}
+
+.permissions-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.permissions-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.copy h1 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: var(--spa-text);
+}
+
+.copy .eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  color: var(--spa-text-muted);
+  margin: 0 0 0.35rem;
+}
+
+.copy .subtitle {
+  margin: 0.35rem 0 0;
+  color: var(--spa-text-muted);
+}
+
+.actions {
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.primary-btn {
+  border: none;
+  border-radius: 12px;
+  padding: 0.65rem 1.2rem;
+  font-weight: 600;
+  background: var(--spa-primary);
+  color: #fff;
+  cursor: pointer;
+}
+
+.permissions-card {
+  background: var(--spa-surface);
+  border-radius: 24px;
+  box-shadow: 0 20px 45px rgba(16, 42, 61, 0.08);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.card-toolbar {
+  display: flex;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.search-field {
+  flex: 1;
+  min-width: 220px;
+}
+
+.search-field label {
+  display: block;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--spa-text-muted);
+  margin-bottom: 0.35rem;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--spa-border) 80%, transparent);
+  padding: 0.65rem 0.85rem;
+  background: var(--spa-bg);
+}
+
+.input-wrapper input {
+  border: none;
+  background: transparent;
+  flex: 1;
+  font-size: 0.95rem;
+  outline: none;
+  color: var(--spa-text);
+}
+
+.summary {
+  font-weight: 600;
+  color: var(--spa-text-muted);
+}
+
+.table-wrapper {
+  border: 1px solid color-mix(in srgb, var(--spa-border) 80%, transparent);
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: var(--spa-bg);
+}
+
+th {
+  text-align: left;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--spa-text-muted);
+  padding: 0.9rem 1.25rem;
+}
+
+th.permiso-column {
+  width: 30%;
+}
+
+td {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid color-mix(in srgb, var(--spa-border) 80%, transparent);
+  font-size: 0.95rem;
+}
+
+.permiso-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+th.actions-column {
+  text-align: center;
+  width: 120px;
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.35rem;
+  justify-content: center;
+}
+
+.row-actions .icon {
+  border: 1px solid color-mix(in srgb, var(--spa-border) 75%, transparent);
+  background: transparent;
+  color: var(--spa-text-muted);
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.row-actions .icon:hover {
+  background: color-mix(in srgb, var(--spa-bg) 60%, transparent);
+  color: var(--spa-text);
+}
+
+.row-actions .icon.delete {
+  color: var(--spa-error);
+}
+
+.row-actions .icon.delete:hover {
+  background: rgba(229, 57, 53, 0.12);
+  color: var(--spa-error);
+}
+
+.row-actions .icon.activate {
+  color: var(--spa-primary);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: rgba(39, 198, 178, 0.15);
+  color: var(--spa-primary-accent);
+}
+
+.status.inactive {
+  background: rgba(255, 107, 107, 0.18);
+  color: var(--spa-error);
+}
+
+.state-card {
+  border: 1px dashed color-mix(in srgb, var(--spa-border) 70%, transparent);
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  color: var(--spa-text-muted);
+  background: color-mix(in srgb, var(--spa-bg) 85%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.state-card.error .pi {
+  color: var(--spa-error);
+}
+
+.permiso-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.ghost-btn {
+  border: 1px solid color-mix(in srgb, var(--spa-border) 75%, transparent);
+  background: transparent;
+  color: var(--spa-text);
+  border-radius: 12px;
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dropdown-label {
+  font-size: 0.85rem;
+  color: var(--spa-text);
+  font-weight: 600;
+}

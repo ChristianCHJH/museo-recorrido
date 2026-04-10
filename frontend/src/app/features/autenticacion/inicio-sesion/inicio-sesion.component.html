@@ -1,0 +1,58 @@
+<section class="login-shell">
+  <div class="visual-column">
+    <div class="visual-card">
+      <i class="pi pi-image"></i>
+      <p>Espacio para tu imagen o branding</p>
+    </div>
+  </div>
+
+  <div class="form-column">
+    <div class="form-card">
+      <div class="logo-badge">
+        <i class="pi pi-leaf"></i>
+      </div>
+
+      <h1>Iniciar sesion</h1>
+      <p class="subtitle">Accede al panel del spa</p>
+
+      <form [formGroup]="formularioInicioSesion" (ngSubmit)="alEnviar()" class="login-form">
+        <spa-input
+          etiqueta="Correo electronico"
+          placeholder="ejemplo@correo.com"
+          tipo="email"
+          [control]="controles.correo"
+          [mensajeError]="mensajeErrorCorreo"
+        ></spa-input>
+
+        <spa-input
+          etiqueta="Contrasena"
+          placeholder="Ingresa tu contrasena"
+          tipo="password"
+          [control]="controles.contrasena"
+          [mensajeError]="mensajeErrorContrasena"
+          [mostrarToggleContrasena]="true"
+        ></spa-input>
+
+        <div class="helper-row">
+          <div class="remember">
+            <p-checkbox formControlName="recordarme" inputId="recordarme"></p-checkbox>
+            <label for="recordarme">Recordarme</label>
+          </div>
+          <a class="link" routerLink="/">Olvidaste tu contrasena?</a>
+        </div>
+
+        <spa-button
+          etiqueta="Ingresar"
+          tipo="submit"
+          [bloque]="true"
+          [cargando]="enviando"
+          [deshabilitado]="enviando"
+        ></spa-button>
+
+        <p class="form-error" *ngIf="errorInicioSesion">{{ errorInicioSesion }}</p>
+      </form>
+
+      <a class="support-link" routerLink="/">No tienes cuenta? Contacta al administrador</a>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,156 @@
+<section class="rol-access-shell">
+  <header class="rol-access-header">
+    <div class="copy">
+      <p class="eyebrow">Seguridad</p>
+      <h1>Rol: {{ rol?.rol || 'Selecciona un rol' }}</h1>
+      <p class="subtitle">Administra los permisos asignados a este rol.</p>
+    </div>
+
+    <div class="actions">
+      <button type="button" class="ghost-btn" (click)="volver.emit()">Volver</button>
+      <button
+        type="button"
+        class="primary-btn"
+        [disabled]="!hayPermisosPendientes() || permisosGuardando()"
+        (click)="guardarPermisos()"
+      >
+        {{ permisosGuardando() ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </div>
+  </header>
+
+  <ng-container *ngIf="rol; else estadoVacio">
+    <div class="access-card">
+      <section class="section-block">
+        <h2>Permisos asignados</h2>
+        <ng-container *ngIf="!permisosCargando(); else permisosCargandoPlantilla">
+          <ng-container *ngIf="!permisosError(); else permisosErrorPlantilla">
+            <div class="table-wrapper" *ngIf="permisosDirectos().length; else permisosVacios">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nombre del permiso</th>
+                    <th>Seccion</th>
+                    <th>Asignado por</th>
+                    <th>Fecha asignacion</th>
+                    <th class="actions-column">Accion</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let permiso of permisosDirectos()">
+                    <td>{{ permiso.nombre }}</td>
+                    <td>{{ permiso.seccion }}</td>
+                    <td>{{ permiso.asignadoPor }}</td>
+                    <td>{{ permiso.fechaAsignacion | date: 'dd/MM/yyyy' }}</td>
+                    <td class="row-action">
+                      <button
+                        type="button"
+                        class="text-danger"
+                        [disabled]="permisosQuitando().has(permiso.id)"
+                        (click)="quitarPermiso(permiso)"
+                      >
+                        {{ permisosQuitando().has(permiso.id) ? 'Quitando...' : 'Quitar' }}
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </ng-container>
+      </section>
+
+      <section class="section-block">
+        <div class="section-header">
+          <h2>Asignar nuevos permisos</h2>
+          <button
+            type="button"
+            class="primary-btn small"
+            *ngIf="hayPermisosPendientes()"
+            [disabled]="permisosGuardando()"
+            (click)="guardarPermisos()"
+          >
+            <i class="pi" [class.pi-save]="!permisosGuardando()" [class.pi-spin]="permisosGuardando()" [class.pi-spinner]="permisosGuardando()"></i>
+            {{ permisosGuardando() ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+        <ng-container *ngIf="!seccionesPermisosCargando(); else seccionesPermisosCargandoPlantilla">
+          <ng-container *ngIf="!seccionesPermisosError(); else seccionesPermisosErrorPlantilla">
+            <div class="modules" *ngIf="seccionesPermisos().length; else seccionesPermisosVacios">
+              <article class="module-card" *ngFor="let seccion of seccionesPermisos()">
+                <h3>{{ seccion.nombre }}</h3>
+                <div class="module-grid">
+                  <label
+                    class="checkbox-row"
+                    [class.disabled]="permiso.asignado"
+                    *ngFor="let permiso of seccion.permisos"
+                  >
+                    <p-checkbox
+                      [binary]="true"
+                      [ngModel]="permisoSeleccionado(permiso)"
+                      [disabled]="permiso.asignado || permisosGuardando()"
+                      (ngModelChange)="alternarPermisoPendiente(permiso, $event)"
+                    ></p-checkbox>
+                    <span>{{ permiso.permiso }}</span>
+                  </label>
+                </div>
+              </article>
+            </div>
+          </ng-container>
+        </ng-container>
+      </section>
+    </div>
+  </ng-container>
+</section>
+
+<ng-template #estadoVacio>
+  <div class="state-card">
+    <i class="pi pi-briefcase"></i>
+    <p>Selecciona un rol para administrar permisos.</p>
+    <button type="button" class="ghost-btn" (click)="volver.emit()">Volver a roles</button>
+  </div>
+</ng-template>
+
+<ng-template #permisosVacios>
+  <div class="state-card simple">
+    <i class="pi pi-key"></i>
+    <p>No hay permisos asignados a este rol.</p>
+  </div>
+</ng-template>
+
+<ng-template #permisosCargandoPlantilla>
+  <div class="state-card simple">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>Cargando permisos...</p>
+  </div>
+</ng-template>
+
+<ng-template #permisosErrorPlantilla>
+  <div class="state-card simple">
+    <i class="pi pi-exclamation-triangle"></i>
+    <p>{{ permisosError() }}</p>
+  </div>
+</ng-template>
+
+<ng-template #seccionesPermisosVacios>
+  <div class="state-card simple">
+    <i class="pi pi-folder-open"></i>
+    <p>No hay permisos disponibles para asignar.</p>
+  </div>
+</ng-template>
+
+<ng-template #seccionesPermisosCargandoPlantilla>
+  <div class="state-card simple">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>Cargando permisos disponibles...</p>
+  </div>
+</ng-template>
+
+<ng-template #seccionesPermisosErrorPlantilla>
+  <div class="state-card simple">
+    <i class="pi pi-exclamation-triangle"></i>
+    <p>{{ seccionesPermisosError() }}</p>
+  </div>
+</ng-template>
+
+<p-toast position="bottom-right"></p-toast>

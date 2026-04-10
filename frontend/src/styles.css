@@ -1,0 +1,44 @@
+@import 'primeng/resources/themes/lara-light-teal/theme.css';
+@import 'primeng/resources/primeng.min.css';
+@import 'primeflex/primeflex.css';
+@import 'primeicons/primeicons.css';
+
+:root {
+  --spa-primary: #27c6b2;
+  --spa-primary-strong: #21d3c5;
+  --spa-primary-accent: #1fb7aa;
+  --spa-primary-soft: #e3f8f4;
+  --spa-bg: #f6f9fb;
+  --spa-bg-alt: #eef4f7;
+  --spa-bg-muted: #f0f3f5;
+  --spa-border: #d7e0e5;
+  --spa-border-strong: #bcc5cc;
+  --spa-text: #22313f;
+  --spa-text-muted: #6f7b84;
+  --spa-text-soft: #8a939c;
+  --spa-error: #ff6b6b;
+  --spa-surface: #ffffff;
+  --spa-shadow: rgba(28, 62, 78, 0.12);
+
+  font-family: 'Poppins', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--spa-text);
+  background-color: var(--spa-bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: linear-gradient(180deg, var(--spa-bg) 0%, var(--spa-bg-alt) 100%);
+}
+
+a {
+  color: inherit;
+}

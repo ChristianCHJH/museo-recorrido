@@ -1,0 +1,30 @@
+<section class="dashboard-shell">
+  <spa-sidebar
+    (cambioAncho)="alCambiarAnchoBarraLateral($event)"
+    (seleccionElemento)="alSeleccionarElementoBarraLateral($event)"
+    [valorClaveActiva]="claveActivaBarraLateral()"
+  ></spa-sidebar>
+
+  <div class="content-area" [style.margin-left.px]="anchoBarraLateral" [class.mobile]="anchoBarraLateral === 0">
+    <ng-container [ngSwitch]="vistaActiva">
+      <spa-users-list *ngSwitchCase="'users'" (verAccesos)="alVerAccesos($event)"></spa-users-list>
+      <spa-roles-list *ngSwitchCase="'roles'" (verPermisos)="alVerPermisosRol($event)"></spa-roles-list>
+      <spa-rol-access
+        *ngSwitchCase="'rol-access'"
+        [rol]="rolSeleccionado"
+        (volver)="alVolverRoles()"
+      ></spa-rol-access>
+      <spa-sections-manager *ngSwitchCase="'sections'"></spa-sections-manager>
+      <spa-permisos-list *ngSwitchCase="'permissions'"></spa-permisos-list>
+      <spa-user-access
+        *ngSwitchCase="'user-access'"
+        [usuario]="usuarioSeleccionado"
+        (volver)="alVolverUsuarios()"
+      ></spa-user-access>
+      <div class="content-placeholder" *ngSwitchDefault>
+        <i class="pi pi-info-circle"></i>
+        <p>Esta seccion aun no tiene contenido disponible.</p>
+      </div>
+    </ng-container>
+  </div>
+</section>

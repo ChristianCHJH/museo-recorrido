@@ -1,0 +1,10 @@
+<button
+  pButton
+  class="spa-button"
+  [class.block]="bloque"
+  [disabled]="deshabilitado || cargando"
+  [attr.type]="tipo"
+>
+  <span *ngIf="!cargando">{{ etiqueta }}</span>
+  <span *ngIf="cargando" class="loader" aria-label="Cargando"></span>
+</button>
