@@ -25,7 +25,7 @@ export class ConfiguracionMuseoServicio {
   }
 
   async crear(dto: CrearConfiguracionMuseoDto): Promise<ConfiguracionMuseoEntidad> {
-    return this.modelo.create(dto as Parameters<typeof this.modelo.create>[0]);
+    return this.modelo.create(dto as any);
   }
 
   async actualizar(dto: ActualizarConfiguracionMuseoDto): Promise<ConfiguracionMuseoEntidad> {

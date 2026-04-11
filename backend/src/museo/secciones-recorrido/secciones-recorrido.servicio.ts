@@ -3,6 +3,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { SeccionRecorridoEntidad } from './entidades/seccion-recorrido.entidad';
 import { ExposicionEntidad } from '../exposiciones/entidades/exposicion.entidad';
+import { ElementoMultimediaEntidad } from '../elementos-multimedia/entidades/elemento-multimedia.entidad';
 import {
   ActualizarSeccionRecorridoDto,
   CambiarEstadoSeccionDto,
@@ -45,7 +46,7 @@ export class SeccionesRecorridoServicio {
   }
 
   async crear(dto: CrearSeccionRecorridoDto): Promise<SeccionRecorridoEntidad> {
-    return this.modelo.create(dto as Parameters<typeof this.modelo.create>[0]);
+    return this.modelo.create(dto as any);
   }
 
   async actualizar(id: string, dto: ActualizarSeccionRecorridoDto): Promise<SeccionRecorridoEntidad> {
@@ -61,6 +62,18 @@ export class SeccionesRecorridoServicio {
   async eliminar(id: string): Promise<void> {
     const seccion = await this.obtenerPorId(id);
     await seccion.update({ eliminado: true });
+  }
+
+  async obtenerPublicaPorId(id: string): Promise<SeccionRecorridoEntidad> {
+    const seccion = await this.modelo.findOne({
+      where: { id, estado: true, eliminado: false },
+      include: [
+        ExposicionEntidad,
+        { model: ElementoMultimediaEntidad, where: { estado: true, eliminado: false }, required: false, order: [['orden', 'ASC']] },
+      ],
+    });
+    if (!seccion) throw new NotFoundException(`Sección con id ${id} no encontrada o no está publicada`);
+    return seccion;
   }
 
   async reordenar(dto: ReordenarSeccionesDto): Promise<void> {

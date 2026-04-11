@@ -41,7 +41,8 @@ export class BarraLateralComponent implements OnInit, AfterViewInit {
   busqueda = signal('');
   claveActiva = signal(this.leerClaveAlmacenada());
   estadosSecciones = signal<Record<string, boolean>>({
-    security: true
+    security: true,
+    museo: true
   });
   esMovil = typeof window !== 'undefined' ? window.innerWidth < 1024 : false;
 
@@ -51,7 +52,11 @@ export class BarraLateralComponent implements OnInit, AfterViewInit {
     { clave: 'roles', etiqueta: 'Roles', icono: 'pi-briefcase', seccion: 'security' },
     { clave: 'users', etiqueta: 'Usuarios', icono: 'pi-users', seccion: 'security' },
     { clave: 'permissions', etiqueta: 'Permisos', icono: 'pi-key', seccion: 'security' },
-    { clave: 'sections', etiqueta: 'Secciones', icono: 'pi-list', seccion: 'security' }
+    { clave: 'sections', etiqueta: 'Secciones', icono: 'pi-list', seccion: 'security' },
+    { tipo: 'seccion', clave: 'museo', etiqueta: 'Museo' },
+    { clave: 'exposiciones', etiqueta: 'Exposiciones', icono: 'pi-images', seccion: 'museo' },
+    { clave: 'qr', etiqueta: 'Codigos QR', icono: 'pi-qrcode', seccion: 'museo' },
+    { clave: 'visitas', etiqueta: 'Visitas', icono: 'pi-chart-bar', seccion: 'museo' }
   ];
 
   @Output() cambioAncho = new EventEmitter<number>();

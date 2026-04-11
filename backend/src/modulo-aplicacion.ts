@@ -14,6 +14,9 @@ import { JwtGuardia } from './autenticacion/autenticacion/guardias/jwt.guardia';
 import { ConfiguracionMuseoModulo } from './museo/configuracion-museo/configuracion-museo.modulo';
 import { ExposicionesModulo } from './museo/exposiciones/exposiciones.modulo';
 import { SeccionesRecorridoModulo } from './museo/secciones-recorrido/secciones-recorrido.modulo';
+import { ElementosMultimediaModulo } from './museo/elementos-multimedia/elementos-multimedia.modulo';
+import { CodigosQrModulo } from './museo/codigos-qr/codigos-qr.modulo';
+import { SesionesVisitaModulo } from './museo/sesiones-visita/sesiones-visita.modulo';
 
 @Module({
   imports: [
@@ -23,7 +26,7 @@ import { SeccionesRecorridoModulo } from './museo/secciones-recorrido/secciones-
       port: parseInt(process.env.DB_PORT ?? '5432', 10),
       username: process.env.DB_USER || 'postgres',
       password: process.env.DB_PASS || 'postgres',
-      database: process.env.DB_NAME || 'proyecto_spa',
+      database: process.env.DB_NAME || 'museo_qr_db',
       schema: process.env.DB_SCHEMA || 'public',
       autoLoadModels: true,
       synchronize: false,
@@ -40,6 +43,9 @@ import { SeccionesRecorridoModulo } from './museo/secciones-recorrido/secciones-
     ConfiguracionMuseoModulo,
     ExposicionesModulo,
     SeccionesRecorridoModulo,
+    ElementosMultimediaModulo,
+    CodigosQrModulo,
+    SesionesVisitaModulo,
   ],
   providers: [
     {

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { BarraLateralComponent } from '@shared/components/barra-lateral/barra-lateral.component';
@@ -9,8 +9,13 @@ import { PermisosListaComponent } from '@features/permisos/permisos-lista/permis
 import { RolesListaComponent } from '@features/roles/roles-lista/roles-lista.component';
 import { RolAccesoComponent } from '@features/roles/rol-acceso/rol-acceso.component';
 import { UsuarioAccesoComponent } from '@features/usuarios/usuario-acceso/usuario-acceso.component';
+import { ExposicionesListaComponent } from '@features/museo/exposiciones/exposiciones-lista/exposiciones-lista.component';
+import { SeccionesEditorComponent } from '@features/museo/secciones/secciones-editor/secciones-editor.component';
+import { QrListaComponent } from '@features/museo/qr/qr-lista/qr-lista.component';
+import { VisitasPanelComponent } from '@features/museo/visitas/visitas-panel/visitas-panel.component';
 import { ElementoListaUsuario } from '@core/services/usuarios.servicio';
 import { Rol } from '@core/services/roles.servicio';
+import { Exposicion } from '@features/museo/servicios/exposiciones.servicio';
 
 @Component({
   selector: 'spa-dashboard',
@@ -23,7 +28,11 @@ import { Rol } from '@core/services/roles.servicio';
     PermisosListaComponent,
     RolesListaComponent,
     RolAccesoComponent,
-    UsuarioAccesoComponent
+    UsuarioAccesoComponent,
+    ExposicionesListaComponent,
+    SeccionesEditorComponent,
+    QrListaComponent,
+    VisitasPanelComponent
   ],
   templateUrl: './panel.component.html',
   styleUrl: './panel.component.css'
@@ -36,9 +45,11 @@ export class PanelComponent implements OnInit {
   anchoBarraLateral = 264;
   private readonly claveAlmacenamientoUsuario = 'spa.dashboard.usuarioSeleccionado';
   private readonly claveAlmacenamientoRol = 'spa.dashboard.rolSeleccionado';
+  private readonly claveAlmacenamientoExposicion = 'spa.dashboard.exposicionSeleccionada';
   vistaActiva: string = 'users';
   usuarioSeleccionado: ElementoListaUsuario | null = null;
   rolSeleccionado: Rol | null = null;
+  readonly exposicionSeleccionada = signal<Exposicion | null>(null);
 
   ngOnInit(): void {
     this.ruta.paramMap
@@ -66,6 +77,14 @@ export class PanelComponent implements OnInit {
             this.router.navigate(['/dashboard', 'roles'], { replaceUrl: true });
           }
         }
+        if (this.vistaActiva === 'secciones' && !this.exposicionSeleccionada()) {
+          const expoGuardada = this.leerExposicionAlmacenada();
+          if (expoGuardada) {
+            this.exposicionSeleccionada.set(expoGuardada);
+          } else {
+            this.router.navigate(['/dashboard', 'exposiciones'], { replaceUrl: true });
+          }
+        }
       });
   }
 
@@ -88,12 +107,27 @@ export class PanelComponent implements OnInit {
     this.router.navigate(['/dashboard', 'users']);
   }
 
+  alVerSecciones(expo: Exposicion) {
+    this.exposicionSeleccionada.set(expo);
+    this.persistirExposicion(expo);
+    this.router.navigate(['/dashboard', 'secciones']);
+  }
+
+  alVolverExposiciones() {
+    this.limpiarExposicionAlmacenada();
+    this.exposicionSeleccionada.set(null);
+    this.router.navigate(['/dashboard', 'exposiciones']);
+  }
+
   claveActivaBarraLateral(): string {
     if (this.vistaActiva === 'user-access') {
       return 'users';
     }
     if (this.vistaActiva === 'rol-access') {
       return 'roles';
+    }
+    if (this.vistaActiva === 'secciones') {
+      return 'exposiciones';
     }
     return this.vistaActiva;
   }
@@ -178,6 +212,43 @@ export class PanelComponent implements OnInit {
     }
     try {
       window.localStorage.removeItem(this.claveAlmacenamientoRol);
+    } catch {
+      // ignorar
+    }
+  }
+
+  private persistirExposicion(expo: Exposicion) {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    try {
+      window.localStorage.setItem(this.claveAlmacenamientoExposicion, JSON.stringify(expo));
+    } catch {
+      // ignorar
+    }
+  }
+
+  private leerExposicionAlmacenada(): Exposicion | null {
+    if (typeof window === 'undefined') {
+      return null;
+    }
+    try {
+      const crudo = window.localStorage.getItem(this.claveAlmacenamientoExposicion);
+      if (!crudo) {
+        return null;
+      }
+      return JSON.parse(crudo) as Exposicion;
+    } catch {
+      return null;
+    }
+  }
+
+  private limpiarExposicionAlmacenada() {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    try {
+      window.localStorage.removeItem(this.claveAlmacenamientoExposicion);
     } catch {
       // ignorar
     }

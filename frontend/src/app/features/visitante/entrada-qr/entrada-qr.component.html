@@ -1,0 +1,24 @@
+<div class="entrada-shell">
+  <div class="entrada-card">
+    <div class="museo-logo">
+      <i class="pi pi-building-columns"></i>
+    </div>
+    <h1 class="bienvenida">Bienvenido al Museo</h1>
+
+    <ng-container *ngIf="cargando()">
+      <div class="estado-cargando">
+        <i class="pi pi-spin pi-spinner spinner-grande"></i>
+        <p>Iniciando tu recorrido...</p>
+        <p class="subtexto">Verificando tu codigo QR</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!cargando() && error()">
+      <div class="estado-error">
+        <i class="pi pi-exclamation-circle icono-error"></i>
+        <p class="error-mensaje">{{ error() }}</p>
+        <p class="subtexto">Por favor contacta al personal del museo.</p>
+      </div>
+    </ng-container>
+  </div>
+</div>

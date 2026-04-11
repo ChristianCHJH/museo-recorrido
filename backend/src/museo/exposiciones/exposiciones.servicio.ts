@@ -43,12 +43,12 @@ export class ExposicionesServicio {
   }
 
   async crear(dto: CrearExposicionDto): Promise<ExposicionEntidad> {
-    return this.modelo.create(dto as Parameters<typeof this.modelo.create>[0]);
+    return this.modelo.create(dto as any);
   }
 
   async actualizar(id: string, dto: ActualizarExposicionDto): Promise<ExposicionEntidad> {
     const exposicion = await this.obtenerPorId(id);
-    return exposicion.update({ ...dto });
+    return exposicion.update({ ...dto } as any);
   }
 
   async cambiarEstado(id: string, dto: CambiarEstadoExposicionDto): Promise<ExposicionEntidad> {

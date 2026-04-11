@@ -3,13 +3,17 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { SeccionesRecorridoServicio } from './secciones-recorrido.servicio';
+import { SesionesVisitaServicio } from '../sesiones-visita/sesiones-visita.servicio';
+import { Publica } from '../../autenticacion/autenticacion/decoradores/publica.decorador';
 import {
   ActualizarSeccionRecorridoDto,
   CambiarEstadoSeccionDto,
@@ -21,7 +25,10 @@ import {
 @ApiBearerAuth()
 @Controller('museo/secciones')
 export class SeccionesRecorridoControlador {
-  constructor(private readonly servicio: SeccionesRecorridoServicio) {}
+  constructor(
+    private readonly servicio: SeccionesRecorridoServicio,
+    private readonly sesionesServicio: SesionesVisitaServicio,
+  ) {}
 
   @Get()
   obtenerTodas() {
@@ -67,5 +74,17 @@ export class SeccionesRecorridoControlador {
   @Delete(':id')
   eliminar(@Param('id', ParseUUIDPipe) id: string) {
     return this.servicio.eliminar(id);
+  }
+
+  @Get('publica/:id')
+  @Publica()
+  @ApiHeader({ name: 'X-Visita-Token', description: 'Token de sesión de visita', required: true })
+  async obtenerPublica(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Headers('x-visita-token') token: string,
+  ) {
+    if (!token) throw new UnauthorizedException('Token de visita requerido');
+    await this.sesionesServicio.verificarToken(token);
+    return this.servicio.obtenerPublicaPorId(id);
   }
 }

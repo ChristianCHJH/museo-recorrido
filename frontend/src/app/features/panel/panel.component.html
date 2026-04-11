@@ -21,6 +21,17 @@
         [usuario]="usuarioSeleccionado"
         (volver)="alVolverUsuarios()"
       ></spa-user-access>
+      <spa-exposiciones-lista
+        *ngSwitchCase="'exposiciones'"
+        (verSecciones)="alVerSecciones($event)"
+      ></spa-exposiciones-lista>
+      <spa-secciones-editor
+        *ngSwitchCase="'secciones'"
+        [exposicionId]="exposicionSeleccionada()?.id ?? ''"
+        (volver)="alVolverExposiciones()"
+      ></spa-secciones-editor>
+      <spa-qr-lista *ngSwitchCase="'qr'"></spa-qr-lista>
+      <spa-visitas-panel *ngSwitchCase="'visitas'"></spa-visitas-panel>
       <div class="content-placeholder" *ngSwitchDefault>
         <i class="pi pi-info-circle"></i>
         <p>Esta seccion aun no tiene contenido disponible.</p>

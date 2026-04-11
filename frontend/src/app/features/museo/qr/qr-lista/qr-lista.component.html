@@ -1,0 +1,187 @@
+<section class="qr-shell">
+  <header class="qr-header">
+    <div class="copy">
+      <p class="eyebrow">Museo</p>
+      <h1>Codigos QR</h1>
+      <p class="subtitle">Genera y administra los codigos QR del recorrido.</p>
+    </div>
+    <div class="actions">
+      <button type="button" class="primary-btn" (click)="abrirCrear()">
+        <i class="pi pi-plus"></i>
+        Nuevo QR
+      </button>
+    </div>
+  </header>
+
+  <div class="qr-card">
+    <ng-container *ngIf="!cargando(); else plantillaCargando">
+      <ng-container *ngIf="!error(); else plantillaError">
+        <div class="table-wrapper" *ngIf="codigos().length; else estadoVacio">
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre descriptivo</th>
+                <th>Codigo</th>
+                <th>Seccion asignada</th>
+                <th class="center-col">Escaneos</th>
+                <th class="center-col">Estado</th>
+                <th class="center-col">Vista previa</th>
+                <th class="center-col actions-column">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let qr of codigos()">
+                <td>
+                  <span class="qr-nombre">{{ qr.nombreDescriptivo }}</span>
+                </td>
+                <td>
+                  <code class="codigo-text">{{ qr.codigo }}</code>
+                </td>
+                <td>
+                  <span *ngIf="qr.seccionId" class="seccion-badge">{{ qr.seccionId }}</span>
+                  <span *ngIf="!qr.seccionId" class="text-muted">Sin asignar</span>
+                </td>
+                <td class="center-col">
+                  <span class="escaneos-badge">{{ qr.totalEscaneos }}</span>
+                </td>
+                <td class="center-col">
+                  <span class="badge" [class.badge-activo]="qr.activo" [class.badge-inactivo]="!qr.activo">
+                    {{ qr.activo ? 'Activo' : 'Inactivo' }}
+                  </span>
+                </td>
+                <td class="center-col">
+                  <div class="qr-thumb" *ngIf="imagenQrUrl(qr)">
+                    <img [src]="imagenQrUrl(qr)!" [alt]="'QR ' + qr.nombreDescriptivo" />
+                  </div>
+                  <span class="text-muted" *ngIf="!imagenQrUrl(qr)">Sin imagen</span>
+                </td>
+                <td class="row-actions">
+                  <a
+                    [href]="descargarUrl(qr)"
+                    target="_blank"
+                    class="icon"
+                    pTooltip="Descargar QR"
+                    tooltipPosition="top"
+                    *ngIf="qr.imagenQrUrl"
+                  >
+                    <i class="pi pi-download"></i>
+                  </a>
+                  <button
+                    type="button"
+                    class="icon"
+                    pTooltip="Editar"
+                    tooltipPosition="top"
+                    (click)="abrirEditar(qr)"
+                  >
+                    <i class="pi pi-pencil"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon"
+                    [pTooltip]="qr.activo ? 'Desactivar' : 'Activar'"
+                    tooltipPosition="top"
+                    (click)="confirmarCambioEstado(qr)"
+                  >
+                    <i class="pi" [class.pi-eye]="qr.activo" [class.pi-eye-slash]="!qr.activo"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="icon delete"
+                    pTooltip="Eliminar"
+                    tooltipPosition="top"
+                    (click)="confirmarEliminar(qr)"
+                  >
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</section>
+
+<ng-template #plantillaCargando>
+  <div class="state-card">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>Cargando codigos QR...</p>
+  </div>
+</ng-template>
+
+<ng-template #plantillaError>
+  <div class="state-card error">
+    <i class="pi pi-exclamation-triangle"></i>
+    <p>{{ error() }}</p>
+    <button type="button" class="primary-btn" (click)="recargar()">Reintentar</button>
+  </div>
+</ng-template>
+
+<ng-template #estadoVacio>
+  <div class="state-card">
+    <i class="pi pi-qrcode"></i>
+    <p>No hay codigos QR registrados. Crea el primero.</p>
+    <button type="button" class="primary-btn" (click)="abrirCrear()">
+      <i class="pi pi-plus"></i> Nuevo QR
+    </button>
+  </div>
+</ng-template>
+
+<!-- Dialog Crear / Editar -->
+<p-dialog
+  [visible]="formularioVisible()"
+  (visibleChange)="formularioVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '460px', maxWidth: '95vw' }"
+  [dismissableMask]="false"
+  (onHide)="cerrarFormulario()"
+>
+  <ng-template pTemplate="header">
+    {{ modoFormulario() === 'crear' ? 'Nuevo codigo QR' : 'Editar codigo QR' }}
+  </ng-template>
+
+  <form class="qr-form" [formGroup]="formulario" (ngSubmit)="guardar()">
+    <div class="field">
+      <label for="nombreDescriptivo">Nombre descriptivo <span class="required">*</span></label>
+      <input
+        id="nombreDescriptivo"
+        type="text"
+        class="input-text"
+        placeholder="Ej: Entrada principal - Sala 1"
+        formControlName="nombreDescriptivo"
+      />
+      <small class="field-error" *ngIf="controles.nombreDescriptivo.invalid && controles.nombreDescriptivo.touched">
+        El nombre es requerido (minimo 2 caracteres).
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="seccionId">ID de seccion (opcional)</label>
+      <input
+        id="seccionId"
+        type="text"
+        class="input-text"
+        placeholder="UUID de la seccion a vincular"
+        formControlName="seccionId"
+      />
+      <small class="field-hint">Deja vacio para crear un QR sin seccion asignada.</small>
+    </div>
+
+    <p class="form-error" *ngIf="errorFormulario()">{{ errorFormulario() }}</p>
+
+    <div class="dialog-actions">
+      <button type="button" class="ghost-btn" (click)="cerrarFormulario()" [disabled]="guardando()">
+        Cancelar
+      </button>
+      <button type="submit" class="primary-btn" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast position="bottom-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>

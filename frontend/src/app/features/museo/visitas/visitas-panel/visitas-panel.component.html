@@ -1,0 +1,170 @@
+<section class="visitas-shell">
+  <header class="visitas-header">
+    <div class="copy">
+      <p class="eyebrow">Museo</p>
+      <h1>Visitas</h1>
+      <p class="subtitle">Monitorea sesiones activas y el historial de accesos.</p>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="tabActiva() === 'sesiones'"
+      (click)="cambiarTab('sesiones')"
+    >
+      <i class="pi pi-users"></i>
+      Sesiones activas
+      <span class="tab-count" *ngIf="!cargandoSesiones()">{{ sesiones().length }}</span>
+    </button>
+    <button
+      type="button"
+      class="tab-btn"
+      [class.active]="tabActiva() === 'logs'"
+      (click)="cambiarTab('logs')"
+    >
+      <i class="pi pi-list"></i>
+      Log de accesos
+      <span class="tab-count" *ngIf="!cargandoLogs()">{{ logs().length }}</span>
+    </button>
+  </div>
+
+  <!-- Panel: Sesiones activas -->
+  <div class="tab-content" *ngIf="tabActiva() === 'sesiones'">
+    <ng-container *ngIf="!cargandoSesiones(); else cargandoSesionesPlantilla">
+      <ng-container *ngIf="!errorSesiones(); else errorSesionesPlantilla">
+        <div class="table-wrapper" *ngIf="sesiones().length; else sesionesVacias">
+          <table>
+            <thead>
+              <tr>
+                <th>Token</th>
+                <th>IP Origen</th>
+                <th>Creada</th>
+                <th>Expira</th>
+                <th class="center-col">Accesos</th>
+                <th class="center-col">Estado</th>
+                <th class="center-col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let sesion of sesiones()">
+                <td>
+                  <code class="token-text" [pTooltip]="sesion.token" tooltipPosition="top">
+                    {{ truncarToken(sesion.token) }}
+                  </code>
+                </td>
+                <td>{{ sesion.ipOrigen }}</td>
+                <td>{{ formatearFecha(sesion.fechaCreacion) }}</td>
+                <td>{{ formatearFecha(sesion.fechaExpiracion) }}</td>
+                <td class="center-col">
+                  <span class="accesos-badge">{{ sesion.totalAccesos }}</span>
+                </td>
+                <td class="center-col">
+                  <span class="badge" [class.badge-activo]="sesion.estado" [class.badge-inactivo]="!sesion.estado">
+                    {{ sesion.estado ? 'Activa' : 'Revocada' }}
+                  </span>
+                </td>
+                <td class="center-col">
+                  <button
+                    type="button"
+                    class="icon delete"
+                    pTooltip="Revocar sesion"
+                    tooltipPosition="top"
+                    *ngIf="sesion.estado"
+                    (click)="confirmarRevocar(sesion)"
+                  >
+                    <i class="pi pi-ban"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <!-- Panel: Logs de accesos -->
+  <div class="tab-content" *ngIf="tabActiva() === 'logs'">
+    <ng-container *ngIf="!cargandoLogs(); else cargandoLogsPlantilla">
+      <ng-container *ngIf="!errorLogs(); else errorLogsPlantilla">
+        <div class="table-wrapper" *ngIf="logs().length; else logsVacios">
+          <table>
+            <thead>
+              <tr>
+                <th>ID QR</th>
+                <th>IP Origen</th>
+                <th>Resultado</th>
+                <th>Fecha de acceso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let log of logs()">
+                <td>
+                  <code class="token-text">{{ log.codigoQrId }}</code>
+                </td>
+                <td>{{ log.ipOrigen }}</td>
+                <td>
+                  <span class="resultado-badge" [class]="resultadoClase(log.resultado)">
+                    {{ log.resultado }}
+                  </span>
+                </td>
+                <td>{{ formatearFecha(log.fechaAcceso) }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+</section>
+
+<!-- Plantillas de estado -->
+<ng-template #cargandoSesionesPlantilla>
+  <div class="state-card">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>Cargando sesiones...</p>
+  </div>
+</ng-template>
+
+<ng-template #errorSesionesPlantilla>
+  <div class="state-card error">
+    <i class="pi pi-exclamation-triangle"></i>
+    <p>{{ errorSesiones() }}</p>
+    <button type="button" class="primary-btn" (click)="recargarSesiones()">Reintentar</button>
+  </div>
+</ng-template>
+
+<ng-template #sesionesVacias>
+  <div class="state-card">
+    <i class="pi pi-users"></i>
+    <p>No hay sesiones activas en este momento.</p>
+  </div>
+</ng-template>
+
+<ng-template #cargandoLogsPlantilla>
+  <div class="state-card">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>Cargando logs...</p>
+  </div>
+</ng-template>
+
+<ng-template #errorLogsPlantilla>
+  <div class="state-card error">
+    <i class="pi pi-exclamation-triangle"></i>
+    <p>{{ errorLogs() }}</p>
+    <button type="button" class="primary-btn" (click)="recargarLogs()">Reintentar</button>
+  </div>
+</ng-template>
+
+<ng-template #logsVacios>
+  <div class="state-card">
+    <i class="pi pi-list"></i>
+    <p>No hay registros de acceso disponibles.</p>
+  </div>
+</ng-template>
+
+<p-toast position="bottom-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>

@@ -1,0 +1,94 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.entrada-shell {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-texto-oscuro) 0%, var(--color-primario) 60%, #8D6E63 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.entrada-card {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem 2.5rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.museo-logo {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--color-primario), var(--color-secundario));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2.5rem;
+}
+
+.bienvenida {
+  margin: 0;
+  font-size: 1.6rem;
+  font-family: var(--fuente-titulos);
+  color: var(--color-texto-oscuro);
+}
+
+.estado-cargando,
+.estado-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.spinner-grande {
+  font-size: 2rem;
+  color: var(--color-primario);
+}
+
+.estado-cargando p,
+.estado-error p {
+  margin: 0;
+  color: var(--color-texto-oscuro);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.subtexto {
+  color: var(--color-primario) !important;
+  font-size: 0.85rem !important;
+  opacity: 0.75;
+  font-weight: 400 !important;
+}
+
+.icono-error {
+  font-size: 2.5rem;
+  color: #c62828;
+}
+
+.error-mensaje {
+  color: #c62828 !important;
+  font-weight: 600 !important;
+}
+
+@media (max-width: 480px) {
+  .entrada-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .bienvenida {
+    font-size: 1.4rem;
+  }
+}

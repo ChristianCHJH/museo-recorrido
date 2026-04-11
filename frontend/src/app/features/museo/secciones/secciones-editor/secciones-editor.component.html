@@ -1,0 +1,289 @@
+<section class="sec-shell">
+  <header class="sec-header">
+    <div class="header-left">
+      <button type="button" class="back-btn" (click)="volver.emit()">
+        <i class="pi pi-arrow-left"></i>
+        Volver a exposiciones
+      </button>
+      <div class="copy">
+        <p class="eyebrow">Museo / Exposicion</p>
+        <h1>Secciones del recorrido</h1>
+        <p class="subtitle">Administra las secciones y su contenido multimedia.</p>
+      </div>
+    </div>
+    <div class="actions">
+      <button type="button" class="primary-btn" (click)="abrirCrear()">
+        <i class="pi pi-plus"></i>
+        Nueva seccion
+      </button>
+    </div>
+  </header>
+
+  <div class="sec-layout" [class.con-panel]="panelMultimediaVisible()">
+    <!-- Lista de secciones -->
+    <div class="sec-lista">
+      <ng-container *ngIf="!cargando(); else plantillaCargando">
+        <ng-container *ngIf="!error(); else plantillaError">
+          <div class="sec-card" *ngFor="let sec of secciones(); let i = index">
+            <div class="sec-card-header">
+              <div class="sec-orden">{{ sec.orden }}</div>
+              <div class="sec-info">
+                <span class="sec-titulo">{{ sec.titulo }}</span>
+                <span
+                  class="badge"
+                  [class.badge-activo]="sec.estado"
+                  [class.badge-inactivo]="!sec.estado"
+                >
+                  {{ sec.estado ? 'Activo' : 'Inactivo' }}
+                </span>
+              </div>
+              <div class="sec-actions">
+                <button
+                  type="button"
+                  class="icon"
+                  pTooltip="Ver multimedia"
+                  tooltipPosition="top"
+                  (click)="abrirMultimedia(sec)"
+                >
+                  <i class="pi pi-images"></i>
+                </button>
+                <button
+                  type="button"
+                  class="icon"
+                  pTooltip="Editar"
+                  tooltipPosition="top"
+                  (click)="abrirEditar(sec)"
+                >
+                  <i class="pi pi-pencil"></i>
+                </button>
+                <button
+                  type="button"
+                  class="icon"
+                  [pTooltip]="sec.estado ? 'Desactivar' : 'Activar'"
+                  tooltipPosition="top"
+                  (click)="confirmarCambioEstado(sec)"
+                >
+                  <i class="pi" [class.pi-eye]="sec.estado" [class.pi-eye-slash]="!sec.estado"></i>
+                </button>
+                <button
+                  type="button"
+                  class="icon delete"
+                  pTooltip="Eliminar"
+                  tooltipPosition="top"
+                  (click)="confirmarEliminar(sec)"
+                >
+                  <i class="pi pi-trash"></i>
+                </button>
+              </div>
+            </div>
+            <p class="sec-descripcion" *ngIf="sec.descripcion">{{ sec.descripcion }}</p>
+          </div>
+
+          <div class="state-card" *ngIf="secciones().length === 0">
+            <i class="pi pi-list"></i>
+            <p>No hay secciones en esta exposicion.</p>
+            <button type="button" class="primary-btn" (click)="abrirCrear()">
+              <i class="pi pi-plus"></i> Nueva seccion
+            </button>
+          </div>
+        </ng-container>
+      </ng-container>
+    </div>
+
+    <!-- Panel Multimedia -->
+    <aside class="panel-multimedia" *ngIf="panelMultimediaVisible()">
+      <div class="panel-header">
+        <div>
+          <p class="panel-eyebrow">Multimedia</p>
+          <h2 class="panel-titulo">{{ seccionMultimedia()?.titulo }}</h2>
+        </div>
+        <button type="button" class="icon" (click)="cerrarPanelMultimedia()">
+          <i class="pi pi-times"></i>
+        </button>
+      </div>
+
+      <div class="panel-acciones">
+        <button type="button" class="primary-btn" (click)="seleccionarArchivo()" [disabled]="subiendoArchivo()">
+          <i class="pi" [class.pi-upload]="!subiendoArchivo()" [class.pi-spin]="subiendoArchivo()" [class.pi-spinner]="subiendoArchivo()"></i>
+          {{ subiendoArchivo() ? 'Subiendo...' : 'Subir imagen' }}
+        </button>
+        <button type="button" class="ghost-btn" (click)="mostrarFormVideo.set(!mostrarFormVideo())">
+          <i class="pi pi-video"></i>
+          Video externo
+        </button>
+        <input
+          #inputArchivo
+          type="file"
+          accept="image/*"
+          style="display:none"
+          (change)="alSeleccionarArchivo($event)"
+        />
+      </div>
+
+      <div class="video-form" *ngIf="mostrarFormVideo()">
+        <div class="field">
+          <label>URL del video (YouTube / Vimeo)</label>
+          <input
+            type="url"
+            class="input-text"
+            placeholder="https://www.youtube.com/watch?v=..."
+            [value]="videoUrlInput()"
+            (input)="videoUrlInput.set($any($event.target).value)"
+          />
+        </div>
+        <div class="field">
+          <label>Titulo (opcional)</label>
+          <input
+            type="text"
+            class="input-text"
+            placeholder="Titulo del video"
+            [value]="videoTituloInput()"
+            (input)="videoTituloInput.set($any($event.target).value)"
+          />
+        </div>
+        <div class="video-form-actions">
+          <button type="button" class="ghost-btn small" (click)="mostrarFormVideo.set(false)">Cancelar</button>
+          <button type="button" class="primary-btn small" (click)="agregarVideo()">
+            <i class="pi pi-check"></i> Agregar
+          </button>
+        </div>
+      </div>
+
+      <div class="multimedia-lista" *ngIf="!cargandoMultimedia(); else cargandoMedia">
+        <div class="multimedia-card" *ngFor="let elem of multimedia()">
+          <div class="media-preview">
+            <img
+              *ngIf="elem.tipo === 'imagen' && elem.url"
+              [src]="'http://localhost:3000' + elem.url"
+              [alt]="elem.titulo || 'Imagen'"
+            />
+            <div class="media-video-thumb" *ngIf="esVideo(elem)">
+              <i class="pi pi-play-circle"></i>
+              <span>Video</span>
+            </div>
+          </div>
+          <div class="media-info">
+            <span class="media-titulo">{{ elem.titulo || 'Sin titulo' }}</span>
+            <span class="media-tipo">{{ elem.tipo }}</span>
+            <span class="badge-principal" *ngIf="elem.esPrincipal">Principal</span>
+          </div>
+          <div class="media-actions">
+            <button
+              type="button"
+              class="icon small"
+              pTooltip="Marcar como principal"
+              tooltipPosition="top"
+              [disabled]="elem.esPrincipal"
+              (click)="marcarPrincipal(elem)"
+            >
+              <i class="pi pi-star" [class.pi-star-fill]="elem.esPrincipal"></i>
+            </button>
+            <button
+              type="button"
+              class="icon small"
+              [pTooltip]="elem.estado ? 'Desactivar' : 'Activar'"
+              tooltipPosition="top"
+              (click)="toggleEstadoMultimedia(elem)"
+            >
+              <i class="pi" [class.pi-eye]="elem.estado" [class.pi-eye-slash]="!elem.estado"></i>
+            </button>
+            <button
+              type="button"
+              class="icon small delete"
+              pTooltip="Eliminar"
+              tooltipPosition="top"
+              (click)="confirmarEliminarMultimedia(elem)"
+            >
+              <i class="pi pi-trash"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="state-card small" *ngIf="multimedia().length === 0">
+          <i class="pi pi-images"></i>
+          <p>Sin multimedia en esta seccion.</p>
+        </div>
+      </div>
+
+      <ng-template #cargandoMedia>
+        <div class="state-card small">
+          <i class="pi pi-spin pi-spinner"></i>
+          <p>Cargando multimedia...</p>
+        </div>
+      </ng-template>
+    </aside>
+  </div>
+</section>
+
+<!-- Plantillas de estado -->
+<ng-template #plantillaCargando>
+  <div class="state-card">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>Cargando secciones...</p>
+  </div>
+</ng-template>
+
+<ng-template #plantillaError>
+  <div class="state-card error">
+    <i class="pi pi-exclamation-triangle"></i>
+    <p>{{ error() }}</p>
+    <button type="button" class="primary-btn" (click)="recargar()">Reintentar</button>
+  </div>
+</ng-template>
+
+<!-- Dialog Crear / Editar Seccion -->
+<p-dialog
+  [visible]="formularioVisible()"
+  (visibleChange)="formularioVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '480px', maxWidth: '95vw' }"
+  [dismissableMask]="false"
+  (onHide)="cerrarFormulario()"
+>
+  <ng-template pTemplate="header">
+    {{ modoFormulario() === 'crear' ? 'Nueva seccion' : 'Editar seccion' }}
+  </ng-template>
+
+  <form class="sec-form" [formGroup]="formulario" (ngSubmit)="guardar()">
+    <div class="field">
+      <label for="secTitulo">Titulo <span class="required">*</span></label>
+      <input
+        id="secTitulo"
+        type="text"
+        class="input-text"
+        placeholder="Ej: Sala de Ceramicas"
+        formControlName="titulo"
+      />
+      <small class="field-error" *ngIf="controles.titulo.invalid && controles.titulo.touched">
+        El titulo es requerido (minimo 2 caracteres).
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="secDescripcion">Descripcion</label>
+      <textarea
+        id="secDescripcion"
+        class="input-text textarea"
+        placeholder="Describe el contenido de esta seccion..."
+        rows="4"
+        formControlName="descripcion"
+      ></textarea>
+    </div>
+
+    <p class="form-error" *ngIf="errorFormulario()">{{ errorFormulario() }}</p>
+
+    <div class="dialog-actions">
+      <button type="button" class="ghost-btn" (click)="cerrarFormulario()" [disabled]="guardando()">
+        Cancelar
+      </button>
+      <button type="submit" class="primary-btn" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</p-dialog>
+
+<p-toast position="bottom-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>
