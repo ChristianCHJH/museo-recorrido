@@ -11,8 +11,8 @@
   border-radius: 12px;
   width: 48px;
   height: 48px;
-  background: var(--spa-surface);
-  color: var(--spa-text);
+  background: var(--color-primario);
+  color: var(--color-texto-claro);
   box-shadow: 0 8px 24px rgba(21, 41, 53, 0.12);
   display: none;
   align-items: center;
@@ -45,8 +45,8 @@
   left: 0;
   bottom: 0;
   width: 264px;
-  background: var(--spa-surface);
-  border-right: 1px solid color-mix(in srgb, var(--spa-border) 70%, transparent);
+  background: var(--color-primario);
+  border-right: 1px solid color-mix(in srgb, var(--color-secundario) 30%, transparent);
   padding: 1.75rem 1.5rem;
   display: flex;
   flex-direction: column;
@@ -70,8 +70,8 @@
   width: 56px;
   height: 56px;
   border-radius: 20px;
-  background: var(--spa-primary-soft);
-  color: var(--spa-primary);
+  background: color-mix(in srgb, var(--color-secundario) 20%, transparent);
+  color: var(--color-secundario);
   font-weight: 700;
   font-size: 1.2rem;
   display: flex;
@@ -88,18 +88,18 @@
 .brand-title {
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--spa-text);
+  color: var(--color-texto-claro);
 }
 
 .brand-subtitle {
   font-size: 0.85rem;
-  color: var(--spa-text-muted);
+  color: color-mix(in srgb, var(--color-texto-claro) 65%, transparent);
 }
 
 .ghost-button {
   border: none;
   background: transparent;
-  color: var(--spa-text-muted);
+  color: color-mix(in srgb, var(--color-texto-claro) 65%, transparent);
   padding: 0.3rem;
   border-radius: 0.5rem;
   cursor: pointer;
@@ -108,8 +108,8 @@
 }
 
 .ghost-button:hover {
-  background: color-mix(in srgb, var(--spa-border) 50%, transparent);
-  color: var(--spa-text);
+  background: color-mix(in srgb, var(--color-secundario) 20%, transparent);
+  color: var(--color-texto-claro);
 }
 
 .ghost-button.mobile-only {
@@ -133,13 +133,13 @@
   gap: 0.5rem;
   padding: 0.1rem 0.6rem;
   border-radius: 14px;
-  border: 1px solid color-mix(in srgb, var(--spa-border) 80%, transparent);
-  background: var(--spa-bg);
-  color: var(--spa-text-soft);
+  border: 1px solid color-mix(in srgb, var(--color-secundario) 40%, transparent);
+  background: color-mix(in srgb, var(--color-texto-oscuro) 20%, transparent);
+  color: color-mix(in srgb, var(--color-texto-claro) 65%, transparent);
 }
 
 .sidebar-search i {
-  color: var(--spa-text-muted);
+  color: color-mix(in srgb, var(--color-texto-claro) 65%, transparent);
 }
 
 .sidebar-search input {
@@ -147,8 +147,12 @@
   background: transparent;
   width: 100%;
   font-size: 0.95rem;
-  color: var(--spa-text);
+  color: var(--color-texto-claro);
   outline: none;
+}
+
+.sidebar-search input::placeholder {
+  color: color-mix(in srgb, var(--color-texto-claro) 50%, transparent);
 }
 
 .sidebar-nav {
@@ -166,7 +170,7 @@
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--spa-text-muted);
+  color: color-mix(in srgb, var(--color-texto-claro) 55%, transparent);
   margin: 0.9rem 0 0.2rem;
   display: flex;
   align-items: center;
@@ -190,7 +194,7 @@
   background: transparent;
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--spa-text-muted);
+  color: color-mix(in srgb, var(--color-texto-claro) 75%, transparent);
   cursor: pointer;
   transition: background 0.2s ease, color 0.2s ease;
 }
@@ -200,17 +204,17 @@
 }
 
 .nav-link:hover {
-  background: color-mix(in srgb, var(--spa-border) 35%, transparent);
-  color: var(--spa-text);
+  background: color-mix(in srgb, var(--color-secundario) 15%, transparent);
+  color: var(--color-texto-claro);
 }
 
 .nav-link.active {
-  background: var(--spa-primary-soft);
-  color: var(--spa-primary);
+  background: var(--color-secundario);
+  color: var(--color-texto-oscuro);
 }
 
 .nav-link.active .pi {
-  color: var(--spa-primary);
+  color: var(--color-texto-oscuro);
 }
 
 .sidebar-footer {
@@ -231,7 +235,7 @@
   gap: 0.85rem;
   border-radius: 16px;
   padding: 0.75rem 1.2rem 0.75rem 1rem;
-  background: color-mix(in srgb, var(--spa-bg) 70%, transparent);
+  background: color-mix(in srgb, var(--color-texto-oscuro) 25%, transparent);
   cursor: pointer;
   width: 100%;
 }
@@ -249,19 +253,19 @@
 
 .profile-info .name {
   font-weight: 600;
-  color: var(--spa-text);
+  color: var(--color-texto-claro);
 }
 
 .profile-info .email {
   font-size: 0.85rem;
-  color: var(--spa-text-muted);
+  color: color-mix(in srgb, var(--color-texto-claro) 65%, transparent);
 }
 
 .profile-caret {
   margin-left: auto;
   display: flex;
   align-items: center;
-  color: var(--spa-text-muted);
+  color: color-mix(in srgb, var(--color-texto-claro) 65%, transparent);
   font-size: 1.1rem;
 }
 
@@ -270,10 +274,10 @@
   right: 0;
   bottom: 100%;
   margin-bottom: 0.75rem;
-  background: var(--spa-surface);
+  background: var(--color-neutro);
   border-radius: 14px;
   box-shadow: 0 10px 30px rgba(13, 33, 49, 0.12);
-  border: 1px solid color-mix(in srgb, var(--spa-border) 60%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-primario) 30%, transparent);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -286,16 +290,16 @@
   padding: 0.75rem 1.1rem;
   text-align: left;
   font-size: 0.95rem;
-  color: var(--spa-text);
+  color: var(--color-texto-oscuro);
   cursor: pointer;
 }
 
 .profile-menu button:hover {
-  background: color-mix(in srgb, var(--spa-border) 30%, transparent);
+  background: color-mix(in srgb, var(--color-secundario) 20%, transparent);
 }
 
 .profile-menu .logout {
-  color: var(--spa-error);
+  color: #c62828;
 }
 
 @media (max-width: 1023px) {

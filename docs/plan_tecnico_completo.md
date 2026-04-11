@@ -715,7 +715,53 @@ Esta lógica aplica a cada QR de forma independiente. El museo puede tener algun
 
 ---
 
-## 10. Resumen ejecutivo del plan técnico
+## 10. Sistema de diseño — Heritage Archive
+
+El frontend sigue el sistema de diseño **Heritage Archive**, definido con los siguientes tokens. Estos valores son el punto de verdad para toda la UI, tanto del panel de administración como de la experiencia del visitante.
+
+### Paleta de colores
+
+| Rol | Variable CSS | Hex | Uso |
+| --- | --- | --- | --- |
+| Primary | `--color-primario` | `#5D4037` | Fondos de header, botones principales, énfasis |
+| Secondary | `--color-secundario` | `#C5B358` | Acentos dorados, íconos activos, subrayados |
+| Tertiary | `--color-terciario` | `#827717` | Elementos secundarios, hover states |
+| Neutral | `--color-neutro` | `#F5F5DC` | Fondos de página, superficies, pergamino |
+| Text oscuro | `--color-texto-oscuro` | `#3E2723` | Texto principal sobre fondos claros |
+| Text claro | `--color-texto-claro` | `#F5F5DC` | Texto sobre fondos oscuros |
+
+### Tipografía
+
+| Rol | Fuente | Uso |
+| --- | --- | --- |
+| Títulos y encabezados | `Noto Serif` | H1, H2, H3, nombres de secciones |
+| Cuerpo y etiquetas | `Work Sans` | Párrafos, labels, botones, navegación |
+
+Ambas fuentes se importan desde Google Fonts.
+
+### Componentes base (PrimeNG + Tailwind sobreescritos)
+
+| Componente | Estilo |
+| --- | --- |
+| Botón primary | Fondo `#5D4037`, texto blanco, borde redondeado suave |
+| Botón secondary | Borde `#5D4037`, fondo transparente |
+| Botón inverted | Fondo `#F5F5DC`, texto `#5D4037` |
+| Input / Search | Borde `#C5B358`, fondo `#F5F5DC` |
+| Barra de navegación | Fondo `#5D4037`, íconos en `#F5F5DC` |
+| Etiquetas / Labels | Fondo `#C5B358`, texto oscuro |
+
+### Administración del tema
+
+Los colores `colorPrimario`, `colorSecundario` y `colorAcento` se almacenan en `configuracion_museo` y el frontend los carga al iniciar para aplicarlos como CSS custom properties dinámicas (`document.documentElement.style.setProperty`). Esto permite que el administrador cambie el tema desde el panel sin redespliegue.
+
+### Referencia visual
+
+- **Experiencia del visitante**: fondo oscuro (`#3E2723`), texto claro, tipografía serif, sensación de pergamino y museo
+- **Panel de administración**: fondo neutro (`#F5F5DC`), sidebar con `#5D4037`, tablas limpias con acentos dorados
+
+---
+
+## 11. Resumen ejecutivo del plan técnico
 
 El sistema se construye en **6 fases** sobre la base de autenticación ya existente:
 

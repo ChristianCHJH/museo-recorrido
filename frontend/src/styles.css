@@ -1,28 +1,29 @@
-@import 'primeng/resources/themes/lara-light-teal/theme.css';
+@import 'primeng/resources/themes/lara-light-indigo/theme.css';
 @import 'primeng/resources/primeng.min.css';
 @import 'primeflex/primeflex.css';
 @import 'primeicons/primeicons.css';
 
 :root {
-  --spa-primary: #27c6b2;
-  --spa-primary-strong: #21d3c5;
-  --spa-primary-accent: #1fb7aa;
-  --spa-primary-soft: #e3f8f4;
-  --spa-bg: #f6f9fb;
-  --spa-bg-alt: #eef4f7;
-  --spa-bg-muted: #f0f3f5;
-  --spa-border: #d7e0e5;
-  --spa-border-strong: #bcc5cc;
-  --spa-text: #22313f;
-  --spa-text-muted: #6f7b84;
-  --spa-text-soft: #8a939c;
-  --spa-error: #ff6b6b;
-  --spa-surface: #ffffff;
-  --spa-shadow: rgba(28, 62, 78, 0.12);
+  /* Paleta Heritage Archive */
+  --color-primario: #5D4037;
+  --color-secundario: #C5B358;
+  --color-terciario: #827717;
+  --color-neutro: #F5F5DC;
+  --color-texto-oscuro: #3E2723;
+  --color-texto-claro: #F5F5DC;
 
-  font-family: 'Poppins', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color: var(--spa-text);
-  background-color: var(--spa-bg);
+  /* Tipografia Heritage Archive */
+  --fuente-titulos: 'Noto Serif', Georgia, serif;
+  --fuente-cuerpo: 'Work Sans', sans-serif;
+
+  /* Variables de PrimeNG alineadas al tema */
+  --primary-color: #5D4037;
+  --primary-color-text: #F5F5DC;
+  --surface-ground: #F5F5DC;
+  --surface-section: #FAF8F0;
+  --text-color: #3E2723;
+  --text-color-secondary: #5D4037;
+  --border-radius: 4px;
 }
 
 * {
@@ -32,11 +33,22 @@
 html,
 body {
   height: 100%;
-  margin: 0;
 }
 
 body {
-  background: linear-gradient(180deg, var(--spa-bg) 0%, var(--spa-bg-alt) 100%);
+  font-family: var(--fuente-cuerpo);
+  background: var(--color-neutro);
+  color: var(--color-texto-oscuro);
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--fuente-titulos);
 }
 
 a {

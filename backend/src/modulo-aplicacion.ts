@@ -11,6 +11,9 @@ import { UsuariosPermisosModulo } from './autenticacion/usuarios-permisos/usuari
 import { RefreshTokensModulo } from './autenticacion/refresh-tokens/refresh-tokens.modulo';
 import { AutenticacionModulo } from './autenticacion/autenticacion/autenticacion.modulo';
 import { JwtGuardia } from './autenticacion/autenticacion/guardias/jwt.guardia';
+import { ConfiguracionMuseoModulo } from './museo/configuracion-museo/configuracion-museo.modulo';
+import { ExposicionesModulo } from './museo/exposiciones/exposiciones.modulo';
+import { SeccionesRecorridoModulo } from './museo/secciones-recorrido/secciones-recorrido.modulo';
 
 @Module({
   imports: [
@@ -34,6 +37,9 @@ import { JwtGuardia } from './autenticacion/autenticacion/guardias/jwt.guardia';
     UsuariosPermisosModulo,
     RefreshTokensModulo,
     AutenticacionModulo,
+    ConfiguracionMuseoModulo,
+    ExposicionesModulo,
+    SeccionesRecorridoModulo,
   ],
   providers: [
     {
