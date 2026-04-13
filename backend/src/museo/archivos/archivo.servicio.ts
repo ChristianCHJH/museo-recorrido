@@ -5,7 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 const TIPOS_PERMITIDOS_IMAGEN = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const TIPOS_PERMITIDOS_VIDEO = ['video/mp4', 'video/webm', 'video/ogg'];
-const TIPOS_PERMITIDOS = [...TIPOS_PERMITIDOS_IMAGEN, ...TIPOS_PERMITIDOS_VIDEO];
+const TIPOS_PERMITIDOS_AUDIO = ['audio/mpeg', 'audio/mp3', 'audio/ogg', 'audio/wav', 'audio/webm', 'audio/aac'];
+const TIPOS_PERMITIDOS = [...TIPOS_PERMITIDOS_IMAGEN, ...TIPOS_PERMITIDOS_VIDEO, ...TIPOS_PERMITIDOS_AUDIO];
 const LIMITE_BYTES = 200 * 1024 * 1024; // 200 MB
 
 export interface ResultadoGuardado {

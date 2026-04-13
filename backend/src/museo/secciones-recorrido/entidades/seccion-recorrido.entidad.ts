@@ -90,6 +90,13 @@ export class SeccionRecorridoEntidad extends Model<
   declare imagenPrincipalUrl: CreationOptional<string | null>;
 
   @Column({
+    field: 'audio_url',
+    type: DataType.STRING(500),
+    allowNull: true,
+  })
+  declare audioUrl: CreationOptional<string | null>;
+
+  @Column({
     type: DataType.STRING(50),
     allowNull: false,
     defaultValue: 'estandar',

@@ -5,7 +5,8 @@ import {
   OnInit,
   Output,
   inject,
-  signal
+  signal,
+  computed
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -55,12 +56,16 @@ export class ExposicionesListaComponent implements OnInit {
   readonly exposicionSeleccionada = signal<Exposicion | null>(null);
   readonly guardando = signal(false);
   readonly errorFormulario = signal<string | null>(null);
+  readonly modoReordenar = signal(false);
+  readonly guardandoOrden = signal(false);
+  readonly listaReorden = signal<Exposicion[]>([]);
 
   @Output() verSecciones = new EventEmitter<Exposicion>();
 
   readonly formulario = this.fb.nonNullable.group({
-    titulo: ['', [Validators.required, Validators.minLength(2)]],
-    descripcion: ['']
+    nombre: ['', [Validators.required, Validators.minLength(2)]],
+    descripcion: [''],
+    tipo: ['permanente']
   });
 
   ngOnInit(): void {
@@ -71,7 +76,7 @@ export class ExposicionesListaComponent implements OnInit {
     this.modoFormulario.set('crear');
     this.exposicionSeleccionada.set(null);
     this.errorFormulario.set(null);
-    this.formulario.reset({ titulo: '', descripcion: '' });
+    this.formulario.reset({ nombre: '', descripcion: '', tipo: 'permanente' });
     this.formularioVisible.set(true);
   }
 
@@ -79,7 +84,7 @@ export class ExposicionesListaComponent implements OnInit {
     this.modoFormulario.set('editar');
     this.exposicionSeleccionada.set(expo);
     this.errorFormulario.set(null);
-    this.formulario.reset({ titulo: expo.titulo, descripcion: expo.descripcion ?? '' });
+    this.formulario.reset({ nombre: expo.nombre, descripcion: expo.descripcion ?? '', tipo: expo.tipo ?? 'permanente' });
     this.formularioVisible.set(true);
   }
 
@@ -95,8 +100,9 @@ export class ExposicionesListaComponent implements OnInit {
     }
     const valores = this.formulario.getRawValue();
     const dto: CrearExposicionDto = {
-      titulo: valores.titulo.trim(),
-      descripcion: valores.descripcion?.trim() || undefined
+      nombre: valores.nombre.trim(),
+      descripcion: valores.descripcion?.trim() || undefined,
+      tipo: valores.tipo || 'permanente'
     };
 
     this.guardando.set(true);
@@ -117,7 +123,7 @@ export class ExposicionesListaComponent implements OnInit {
           this.notificar(
             'success',
             esCrear ? 'Exposicion creada' : 'Exposicion actualizada',
-            `"${expo.titulo}" fue ${esCrear ? 'creada' : 'actualizada'} correctamente.`
+            `"${expo.nombre}" fue ${esCrear ? 'creada' : 'actualizada'} correctamente.`
           );
         },
         error: () => {
@@ -132,8 +138,8 @@ export class ExposicionesListaComponent implements OnInit {
     const activando = !expo.estado;
     this.servicioConfirmacion.confirm({
       message: activando
-        ? `Deseas activar "${expo.titulo}"?`
-        : `Deseas desactivar "${expo.titulo}"?`,
+        ? `Deseas activar "${expo.nombre}"?`
+        : `Deseas desactivar "${expo.nombre}"?`,
       header: activando ? 'Confirmar activacion' : 'Confirmar desactivacion',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: activando ? 'Si, activar' : 'Si, desactivar',
@@ -147,7 +153,7 @@ export class ExposicionesListaComponent implements OnInit {
 
   confirmarEliminar(expo: Exposicion): void {
     this.servicioConfirmacion.confirm({
-      message: `Deseas eliminar la exposicion "${expo.titulo}"? Esta accion no se puede deshacer.`,
+      message: `Deseas eliminar la exposicion "${expo.nombre}"? Esta accion no se puede deshacer.`,
       header: 'Confirmar eliminacion',
       icon: 'pi pi-exclamation-triangle',
       acceptLabel: 'Si, eliminar',
@@ -161,6 +167,47 @@ export class ExposicionesListaComponent implements OnInit {
 
   emitirVerSecciones(expo: Exposicion): void {
     this.verSecciones.emit(expo);
+  }
+
+  // Reordenar
+  activarReordenar(): void {
+    this.listaReorden.set([...this.exposiciones()].sort((a, b) => a.orden - b.orden));
+    this.modoReordenar.set(true);
+  }
+
+  cancelarReordenar(): void {
+    this.modoReordenar.set(false);
+  }
+
+  moverArriba(index: number): void {
+    if (index === 0) return;
+    const lista = [...this.listaReorden()];
+    [lista[index - 1], lista[index]] = [lista[index], lista[index - 1]];
+    this.listaReorden.set(lista);
+  }
+
+  moverAbajo(index: number): void {
+    const lista = this.listaReorden();
+    if (index === lista.length - 1) return;
+    const copia = [...lista];
+    [copia[index + 1], copia[index]] = [copia[index], copia[index + 1]];
+    this.listaReorden.set(copia);
+  }
+
+  guardarOrden(): void {
+    const items = this.listaReorden().map((e, i) => ({ id: e.id, orden: i + 1 }));
+    this.guardandoOrden.set(true);
+    this.servicio
+      .reordenar({ items })
+      .pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.guardandoOrden.set(false)))
+      .subscribe({
+        next: () => {
+          this.modoReordenar.set(false);
+          this.cargar();
+          this.notificar('success', 'Orden guardado', 'El orden de las exposiciones fue actualizado.');
+        },
+        error: () => this.notificar('error', 'Error al guardar orden', 'Intentalo nuevamente.')
+      });
   }
 
   recargar(): void {
@@ -196,7 +243,7 @@ export class ExposicionesListaComponent implements OnInit {
           this.notificar(
             'success',
             estado ? 'Exposicion activada' : 'Exposicion desactivada',
-            `"${expo.titulo}" fue ${estado ? 'activada' : 'desactivada'}.`
+            `"${expo.nombre}" fue ${estado ? 'activada' : 'desactivada'}.`
           );
         },
         error: () => this.notificar('error', 'Error al actualizar estado', 'Intentalo nuevamente.')
@@ -210,7 +257,7 @@ export class ExposicionesListaComponent implements OnInit {
       .subscribe({
         next: () => {
           this.cargar();
-          this.notificar('success', 'Exposicion eliminada', `"${expo.titulo}" fue eliminada.`);
+          this.notificar('success', 'Exposicion eliminada', `"${expo.nombre}" fue eliminada.`);
         },
         error: () => this.notificar('error', 'Error al eliminar', 'Intentalo nuevamente.')
       });

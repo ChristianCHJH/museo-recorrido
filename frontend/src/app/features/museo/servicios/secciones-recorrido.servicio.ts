@@ -7,19 +7,38 @@ import { environment } from '@env/environment';
 export interface SeccionRecorrido {
   id: string;
   exposicionId: string;
-  titulo: string;
-  descripcion: string;
-  audioUrl: string | null;
-  textoAlternativo: string | null;
+  nombre: string;
+  subtitulo: string | null;
+  descripcionBreve: string | null;
+  contenidoHistorico: string | null;
+  datosCuriosos: string | null;
+  personajesRelacionados: string | null;
+  periodoHistorico: string | null;
+  fraseDestacada: string | null;
   orden: number;
+  imagenPrincipalUrl: string | null;
+  audioUrl: string | null;
+  plantilla: string;
   estado: boolean;
   creadoEn: string;
 }
 
 export interface CrearSeccionDto {
   exposicionId: string;
-  titulo: string;
-  descripcion?: string;
+  nombre: string;
+  subtitulo?: string;
+  descripcionBreve?: string;
+  contenidoHistorico?: string;
+  datosCuriosos?: string;
+  personajesRelacionados?: string;
+  periodoHistorico?: string;
+  fraseDestacada?: string;
+  imagenPrincipalUrl?: string;
+  plantilla?: string;
+}
+
+export interface ReordenarSeccionesDto {
+  items: { id: string; orden: number }[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -46,6 +65,19 @@ export class SeccionesRecorridoServicio {
 
   cambiarEstado(id: string, estado: boolean): Observable<SeccionRecorrido> {
     return this.http.patch<SeccionRecorrido>(`api/museo/secciones/${id}/estado`, { estado });
+  }
+
+  reordenar(dto: ReordenarSeccionesDto): Observable<void> {
+    return this.http.patch<void>('api/museo/secciones/reordenar', dto);
+  }
+
+  subirAudio(id: string, archivo: File): Observable<SeccionRecorrido> {
+    const form = new FormData();
+    form.append('archivo', archivo);
+    return this.httpClient.post<SeccionRecorrido>(
+      `${this.apiUrl.replace(/\/$/, '')}/api/museo/secciones/${id}/audio`,
+      form
+    );
   }
 
   eliminar(id: string): Observable<void> {

@@ -13,6 +13,7 @@ import { ExposicionesListaComponent } from '@features/museo/exposiciones/exposic
 import { SeccionesEditorComponent } from '@features/museo/secciones/secciones-editor/secciones-editor.component';
 import { QrListaComponent } from '@features/museo/qr/qr-lista/qr-lista.component';
 import { VisitasPanelComponent } from '@features/museo/visitas/visitas-panel/visitas-panel.component';
+import { ConfiguracionMuseoComponent } from '@features/museo/configuracion/configuracion-museo/configuracion-museo.component';
 import { ElementoListaUsuario } from '@core/services/usuarios.servicio';
 import { Rol } from '@core/services/roles.servicio';
 import { Exposicion } from '@features/museo/servicios/exposiciones.servicio';
@@ -32,7 +33,8 @@ import { Exposicion } from '@features/museo/servicios/exposiciones.servicio';
     ExposicionesListaComponent,
     SeccionesEditorComponent,
     QrListaComponent,
-    VisitasPanelComponent
+    VisitasPanelComponent,
+    ConfiguracionMuseoComponent
   ],
   templateUrl: './panel.component.html',
   styleUrl: './panel.component.css'

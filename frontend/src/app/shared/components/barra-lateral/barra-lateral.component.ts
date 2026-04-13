@@ -56,7 +56,8 @@ export class BarraLateralComponent implements OnInit, AfterViewInit {
     { tipo: 'seccion', clave: 'museo', etiqueta: 'Museo' },
     { clave: 'exposiciones', etiqueta: 'Exposiciones', icono: 'pi-images', seccion: 'museo' },
     { clave: 'qr', etiqueta: 'Codigos QR', icono: 'pi-qrcode', seccion: 'museo' },
-    { clave: 'visitas', etiqueta: 'Visitas', icono: 'pi-chart-bar', seccion: 'museo' }
+    { clave: 'visitas', etiqueta: 'Visitas', icono: 'pi-chart-bar', seccion: 'museo' },
+    { clave: 'configuracion', etiqueta: 'Configuracion', icono: 'pi-cog', seccion: 'museo' }
   ];
 
   @Output() cambioAncho = new EventEmitter<number>();

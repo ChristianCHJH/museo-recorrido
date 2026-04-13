@@ -19,12 +19,12 @@
       <div class="header-deco"></div>
       <div class="header-contenido">
         <p class="visita-eyebrow">Recorrido del Museo</p>
-        <h1 class="visita-titulo">{{ seccion()!.titulo }}</h1>
+        <h1 class="visita-titulo">{{ seccion()!.nombre }}</h1>
       </div>
     </header>
 
     <div class="visita-contenido">
-      <p class="descripcion" *ngIf="seccion()!.descripcion">{{ seccion()!.descripcion }}</p>
+      <p class="descripcion" *ngIf="seccion()!.descripcionBreve">{{ seccion()!.descripcionBreve }}</p>
 
       <!-- Galeria multimedia -->
       <div class="galeria" *ngIf="elementosActivos().length > 0">
@@ -39,7 +39,7 @@
             <ng-container *ngIf="esImagenLocal(elem)">
               <img
                 [src]="imagenUrl(elem)"
-                [alt]="elem.titulo || seccion()!.titulo"
+                [alt]="elem.titulo || seccion()!.nombre"
                 class="media-imagen"
                 loading="lazy"
               />

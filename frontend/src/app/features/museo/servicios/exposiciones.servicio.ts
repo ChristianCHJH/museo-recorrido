@@ -4,9 +4,12 @@ import { HttpBaseService } from '@core/services/http-base.service';
 
 export interface Exposicion {
   id: string;
-  titulo: string;
-  descripcion: string;
+  nombre: string;
+  descripcion: string | null;
+  tipo: string;
   imagenPortadaUrl: string | null;
+  fechaInicio: string | null;
+  fechaFin: string | null;
   orden: number;
   estado: boolean;
   creadoEn: string;
@@ -14,8 +17,16 @@ export interface Exposicion {
 }
 
 export interface CrearExposicionDto {
-  titulo: string;
+  nombre: string;
   descripcion?: string;
+  tipo?: string;
+  imagenPortadaUrl?: string;
+  fechaInicio?: string;
+  fechaFin?: string;
+}
+
+export interface ReordenarExposicionesDto {
+  items: { id: string; orden: number }[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -42,6 +53,10 @@ export class ExposicionesServicio {
 
   cambiarEstado(id: string, estado: boolean): Observable<Exposicion> {
     return this.http.patch<Exposicion>(`api/museo/exposiciones/${id}/estado`, { estado });
+  }
+
+  reordenar(dto: ReordenarExposicionesDto): Observable<void> {
+    return this.http.patch<void>('api/museo/exposiciones/reordenar', dto);
   }
 
   eliminar(id: string): Observable<void> {

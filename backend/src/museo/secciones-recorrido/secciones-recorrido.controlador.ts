@@ -8,11 +8,15 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UploadedFile,
+  UseInterceptors,
   UnauthorizedException,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiConsumes, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { SeccionesRecorridoServicio } from './secciones-recorrido.servicio';
 import { SesionesVisitaServicio } from '../sesiones-visita/sesiones-visita.servicio';
+import { ArchivoServicio } from '../archivos/archivo.servicio';
 import { Publica } from '../../autenticacion/autenticacion/decoradores/publica.decorador';
 import {
   ActualizarSeccionRecorridoDto,
@@ -28,6 +32,7 @@ export class SeccionesRecorridoControlador {
   constructor(
     private readonly servicio: SeccionesRecorridoServicio,
     private readonly sesionesServicio: SesionesVisitaServicio,
+    private readonly archivoServicio: ArchivoServicio,
   ) {}
 
   @Get()
@@ -74,6 +79,17 @@ export class SeccionesRecorridoControlador {
   @Delete(':id')
   eliminar(@Param('id', ParseUUIDPipe) id: string) {
     return this.servicio.eliminar(id);
+  }
+
+  @Post(':id/audio')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('archivo'))
+  async subirAudio(
+    @Param('id', ParseUUIDPipe) id: string,
+    @UploadedFile() archivo: Express.Multer.File,
+  ) {
+    const resultado = await this.archivoServicio.guardar(archivo, 'secciones', id);
+    return this.servicio.actualizar(id, { audioUrl: resultado.url } as ActualizarSeccionRecorridoDto);
   }
 
   @Get('publica/:id')

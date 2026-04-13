@@ -68,6 +68,11 @@ export class CrearSeccionRecorridoDto {
   @IsString()
   imagenPrincipalUrl?: string;
 
+  @ApiPropertyOptional({ description: 'URL del audio narrado de la sección' })
+  @IsOptional()
+  @IsString()
+  audioUrl?: string;
+
   @ApiPropertyOptional({
     description: "Plantilla de visualización de la sección",
     example: 'estandar',
