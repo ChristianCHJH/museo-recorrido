@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { HttpBaseService } from '@core/services/http-base.service';
 
 export interface DatosInicioSesion {
@@ -14,12 +14,6 @@ export interface RespuestaInicioSesion {
   tipoToken: string;
   expiraEn: string;
   refreshToken: string;
-}
-
-interface RespuestaApi<T> {
-  exito: boolean;
-  mensaje: string;
-  datos: T;
 }
 
 interface TokensAlmacenados {
@@ -43,9 +37,8 @@ export class AutenticacionServicio {
       contrasena: datos.contrasena
     };
 
-    return this.http.post<RespuestaApi<RespuestaInicioSesion>>('api/autenticacion/login', cuerpo).pipe(
-      map((respuesta) => respuesta.datos),
-      tap((tokens) => this.persistirTokens(tokens, datos.recordarme))
+    return this.http.post<RespuestaInicioSesion>('api/autenticacion/login', cuerpo).pipe(
+      tap((respuesta) => this.persistirTokens(respuesta, datos.recordarme))
     );
   }
 
@@ -57,11 +50,8 @@ export class AutenticacionServicio {
     }
 
     return this.http
-      .post<RespuestaApi<RespuestaInicioSesion>>('api/autenticacion/refresh', { jti: tokenRefresco })
-      .pipe(
-        map((respuesta) => respuesta.datos),
-        tap((tokens) => this.persistirTokens(tokens))
-      );
+      .post<RespuestaInicioSesion>('api/autenticacion/refresh', { jti: tokenRefresco })
+      .pipe(tap((respuesta) => this.persistirTokens(respuesta)));
   }
 
   cerrarSesion(): void {
