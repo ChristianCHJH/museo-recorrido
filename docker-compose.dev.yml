@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: museo-backend-dev
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: host.docker.internal
+      DB_PORT: 5432
+      DB_USER: postgres
+      DB_PASS: admin
+      DB_NAME: museo_qr_db
+      DB_SCHEMA: public
+      JWT_SECRET: museo_qr_jwt_secret_2026
+      JWT_EXPIRATION: 15m
+      REFRESH_TOKEN_EXPIRATION: 7d
+      APP_URL: http://localhost:4200
+      NODE_ENV: development
+    volumes:
+      # Bind mount del código fuente (para desarrollo)
+      - ./backend/src:/app/src
+      # Persistencia de archivos subidos
+      - museo-uploads-dev:/app/uploads
+      # Logs del backend
+      - museo-logs-backend-dev:/app/logs
+      # Volumen anónimo para node_modules
+      - /app/node_modules
+    depends_on:
+      - frontend
+    networks:
+      - museo-network-dev
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: museo-frontend-dev
+    restart: unless-stopped
+    ports:
+      - "4200:4200"
+    environment:
+      API_URL: http://localhost:3000
+    volumes:
+      # Bind mount del código fuente (para desarrollo)
+      - ./frontend/src:/app/src
+      # Persistencia de caché de build
+      - museo-frontend-cache-dev:/app/.angular
+      # Volumen anónimo para node_modules
+      - /app/node_modules
+    networks:
+      - museo-network-dev
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:4200"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  museo-network-dev:
+    driver: bridge
+
+volumes:
+  museo-uploads-dev:
+    driver: local
+  museo-logs-backend-dev:
+    driver: local
+  museo-frontend-cache-dev:
+    driver: local
