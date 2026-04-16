@@ -10,6 +10,7 @@ import {
   inject,
   signal
 } from '@angular/core';
+import { environment } from '@env/environment';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -81,6 +82,7 @@ export class SeccionesEditorComponent implements OnInit {
 
   // Reordenar
   readonly modoReordenar = signal(false);
+  readonly apiUrl = environment.apiUrl;
   readonly listaReorden = signal<SeccionRecorrido[]>([]);
   readonly guardandoOrden = signal(false);
 

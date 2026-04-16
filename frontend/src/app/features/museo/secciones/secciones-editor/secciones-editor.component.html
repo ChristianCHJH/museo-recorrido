@@ -109,7 +109,7 @@
           <p class="audio-label"><i class="pi pi-volume-up"></i> Audio narrado</p>
           <div class="audio-player" *ngIf="seccionMultimedia()?.audioUrl">
             <audio controls style="width:100%">
-              <source [src]="'http://localhost:3000' + seccionMultimedia()!.audioUrl" />
+              <source [src]="apiUrl + seccionMultimedia()!.audioUrl" />
             </audio>
           </div>
           <p class="audio-vacio" *ngIf="!seccionMultimedia()?.audioUrl">Sin audio asignado</p>
@@ -152,7 +152,7 @@
         <div class="multimedia-lista" *ngIf="!cargandoMultimedia(); else cargandoMedia">
           <div class="multimedia-card" *ngFor="let elem of multimedia()">
             <div class="media-preview">
-              <img *ngIf="elem.tipo === 'imagen' && elem.url" [src]="'http://localhost:3000' + elem.url" [alt]="elem.titulo || 'Imagen'" />
+              <img *ngIf="elem.tipo === 'imagen' && elem.url" [src]="apiUrl + elem.url" [alt]="elem.titulo || 'Imagen'" />
               <div class="media-video-thumb" *ngIf="esVideo(elem)">
                 <i class="pi pi-play-circle"></i>
                 <span>Video</span>

@@ -1,5 +1,7 @@
 import 'dotenv/config';
+import * as path from 'path';
 import { NestFactory } from '@nestjs/core';
+import { NestExpressApplication } from '@nestjs/platform-express';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ModuloAplicacion } from './modulo-aplicacion';
@@ -7,7 +9,9 @@ import { RespuestaInterceptor } from './comun/interceptores/respuesta.intercepto
 import { ExcepcionHttpFiltro } from './comun/filtros/excepcion-http.filtro';
 
 async function iniciarServidor() {
-  const aplicacion = await NestFactory.create(ModuloAplicacion);
+  const aplicacion = await NestFactory.create<NestExpressApplication>(ModuloAplicacion);
+
+  aplicacion.useStaticAssets(path.join(process.cwd(), 'uploads'), { prefix: '/uploads' });
 
   aplicacion.enableCors({
     origin: true,
@@ -37,7 +41,8 @@ async function iniciarServidor() {
 
   const documento = SwaggerModule.createDocument(aplicacion, documentoConfig);
   SwaggerModule.setup('api/docs', aplicacion, documento);
-  aplicacion.getHttpAdapter().get('/api/openapi.json', (req, res) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  aplicacion.getHttpAdapter().get('/api/openapi.json', (req: any, res: any) => {
     res.type('application/json').send(documento);
   });
 
