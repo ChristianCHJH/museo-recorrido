@@ -30,6 +30,7 @@ import {
   ElementoMultimedia,
   MultimediaServicio
 } from '@features/museo/servicios/multimedia.servicio';
+import { SeccionPreviewComponent } from '../seccion-preview/seccion-preview.component';
 
 @Component({
   selector: 'spa-secciones-editor',
@@ -40,7 +41,8 @@ import {
     TooltipModule,
     DialogModule,
     ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    SeccionPreviewComponent
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './secciones-editor.component.html',
@@ -79,6 +81,12 @@ export class SeccionesEditorComponent implements OnInit {
   readonly mostrarFormVideo = signal(false);
   readonly subiendoArchivo = signal(false);
   readonly subiendoAudio = signal(false);
+
+  // Preview
+  readonly previewVisible = signal(false);
+  readonly seccionPreview = signal<SeccionRecorrido | null>(null);
+  readonly multimediaPreview = signal<ElementoMultimedia[]>([]);
+  readonly cargandoPreview = signal(false);
 
   // Reordenar
   readonly modoReordenar = signal(false);
@@ -255,6 +263,26 @@ export class SeccionesEditorComponent implements OnInit {
         next: () => { this.modoReordenar.set(false); this.cargar(); this.notificar('success', 'Orden guardado', 'El orden fue actualizado.'); },
         error: () => this.notificar('error', 'Error al guardar orden', 'Intentalo nuevamente.')
       });
+  }
+
+  // Preview
+  abrirPreview(seccion: SeccionRecorrido): void {
+    this.seccionPreview.set(seccion);
+    this.multimediaPreview.set([]);
+    this.previewVisible.set(true);
+    this.cargandoPreview.set(true);
+    this.multimediaServicio.obtenerPorSeccion(seccion.id)
+      .pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.cargandoPreview.set(false)))
+      .subscribe({
+        next: (lista) => this.multimediaPreview.set(lista),
+        error: () => {}
+      });
+  }
+
+  cerrarPreview(): void {
+    this.previewVisible.set(false);
+    this.seccionPreview.set(null);
+    this.multimediaPreview.set([]);
   }
 
   // Multimedia

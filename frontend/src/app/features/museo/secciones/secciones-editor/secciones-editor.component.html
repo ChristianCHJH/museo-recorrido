@@ -66,6 +66,9 @@
                   <span class="badge-audio" *ngIf="sec.audioUrl"><i class="pi pi-volume-up"></i> Audio</span>
                 </div>
                 <div class="sec-actions">
+                  <button type="button" class="icon preview" pTooltip="Vista previa" tooltipPosition="top" (click)="abrirPreview(sec)">
+                    <i class="pi pi-mobile"></i>
+                  </button>
                   <button type="button" class="icon" pTooltip="Ver multimedia" tooltipPosition="top" (click)="abrirMultimedia(sec)">
                     <i class="pi pi-images"></i>
                   </button>
@@ -277,6 +280,42 @@
       <button type="submit" class="primary-btn" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
     </div>
   </form>
+</p-dialog>
+
+<!-- Dialog Vista Previa -->
+<p-dialog
+  [visible]="previewVisible()"
+  (visibleChange)="previewVisible.set($event)"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '460px', maxWidth: '95vw' }"
+  [dismissableMask]="true"
+  (onHide)="cerrarPreview()"
+>
+  <ng-template pTemplate="header">
+    <div class="preview-dialog-header">
+      <i class="pi pi-mobile"></i>
+      <span>Vista previa — {{ seccionPreview()?.nombre }}</span>
+    </div>
+  </ng-template>
+
+  <div class="phone-frame-wrap">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="state-card small" *ngIf="cargandoPreview()">
+          <i class="pi pi-spin pi-spinner"></i>
+          <p>Cargando contenido...</p>
+        </div>
+        <spa-seccion-preview
+          *ngIf="!cargandoPreview() && seccionPreview()"
+          [seccion]="seccionPreview()!"
+          [multimedia]="multimediaPreview()"
+        />
+      </div>
+    </div>
+  </div>
 </p-dialog>
 
 <p-toast position="bottom-right"></p-toast>

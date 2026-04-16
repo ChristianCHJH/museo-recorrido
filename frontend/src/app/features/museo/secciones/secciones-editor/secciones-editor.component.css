@@ -251,6 +251,77 @@
   font-size: 0.8rem;
 }
 
+.icon.preview {
+  color: var(--color-primario);
+  border-color: rgba(93, 64, 55, 0.35);
+}
+
+.icon.preview:hover:not(:disabled) {
+  background: rgba(93, 64, 55, 0.08);
+  color: var(--color-primario);
+}
+
+/* Dialog preview */
+.preview-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--color-texto-oscuro);
+  font-size: 0.95rem;
+}
+
+.phone-frame-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 0 1rem;
+}
+
+.phone-frame {
+  background: #1c1c1e;
+  border-radius: 42px;
+  padding: 14px 10px 20px;
+  box-shadow:
+    0 0 0 2px #3a3a3c,
+    0 0 0 4px #1c1c1e,
+    0 24px 48px rgba(0, 0, 0, 0.35);
+  width: 360px;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.phone-notch {
+  width: 100px;
+  height: 22px;
+  background: #1c1c1e;
+  border-radius: 999px;
+  border: 2px solid #3a3a3c;
+  flex-shrink: 0;
+}
+
+.phone-screen {
+  width: 100%;
+  border-radius: 28px;
+  overflow: hidden;
+  height: 620px;
+  overflow-y: auto;
+  background: #f5f0e8;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(93, 64, 55, 0.25) transparent;
+}
+
+.phone-screen::-webkit-scrollbar {
+  width: 4px;
+}
+
+.phone-screen::-webkit-scrollbar-thumb {
+  background: rgba(93, 64, 55, 0.25);
+  border-radius: 4px;
+}
+
 /* Panel multimedia */
 .panel-multimedia {
   background: white;
