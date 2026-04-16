@@ -12,7 +12,6 @@ import {
 } from '@angular/core';
 import { environment } from '@env/environment';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { TooltipModule } from 'primeng/tooltip';
@@ -23,7 +22,6 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 
 import {
   SeccionRecorrido,
-  CrearSeccionDto,
   SeccionesRecorridoServicio
 } from '@features/museo/servicios/secciones-recorrido.servicio';
 import {
@@ -31,18 +29,19 @@ import {
   MultimediaServicio
 } from '@features/museo/servicios/multimedia.servicio';
 import { SeccionPreviewComponent } from '../seccion-preview/seccion-preview.component';
+import { SeccionFormLiveComponent } from '../seccion-form-live/seccion-form-live.component';
 
 @Component({
   selector: 'spa-secciones-editor',
   standalone: true,
   imports: [
     CommonModule,
-    ReactiveFormsModule,
     TooltipModule,
     DialogModule,
     ToastModule,
     ConfirmDialogModule,
-    SeccionPreviewComponent
+    SeccionPreviewComponent,
+    SeccionFormLiveComponent
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './secciones-editor.component.html',
@@ -55,7 +54,6 @@ export class SeccionesEditorComponent implements OnInit {
   @ViewChild('inputArchivo') inputArchivo!: ElementRef<HTMLInputElement>;
   @ViewChild('inputAudio') inputAudio!: ElementRef<HTMLInputElement>;
 
-  private readonly fb = inject(FormBuilder);
   private readonly servicio = inject(SeccionesRecorridoServicio);
   private readonly multimediaServicio = inject(MultimediaServicio);
   private readonly destruirRef = inject(DestroyRef);
@@ -66,12 +64,6 @@ export class SeccionesEditorComponent implements OnInit {
   readonly cargando = signal(true);
   readonly error = signal<string | null>(null);
 
-  readonly formularioVisible = signal(false);
-  readonly modoFormulario = signal<'crear' | 'editar'>('crear');
-  readonly seccionSeleccionada = signal<SeccionRecorrido | null>(null);
-  readonly guardando = signal(false);
-  readonly errorFormulario = signal<string | null>(null);
-
   readonly panelMultimediaVisible = signal(false);
   readonly seccionMultimedia = signal<SeccionRecorrido | null>(null);
   readonly multimedia = signal<ElementoMultimedia[]>([]);
@@ -81,6 +73,10 @@ export class SeccionesEditorComponent implements OnInit {
   readonly mostrarFormVideo = signal(false);
   readonly subiendoArchivo = signal(false);
   readonly subiendoAudio = signal(false);
+
+  // Live editor
+  readonly modoLiveEditor = signal(false);
+  readonly seccionParaEditar = signal<SeccionRecorrido | null>(null);
 
   // Preview
   readonly previewVisible = signal(false);
@@ -94,95 +90,30 @@ export class SeccionesEditorComponent implements OnInit {
   readonly listaReorden = signal<SeccionRecorrido[]>([]);
   readonly guardandoOrden = signal(false);
 
-  readonly formulario = this.fb.nonNullable.group({
-    nombre: ['', [Validators.required, Validators.minLength(2)]],
-    subtitulo: [''],
-    descripcionBreve: [''],
-    contenidoHistorico: [''],
-    datosCuriosos: [''],
-    personajesRelacionados: [''],
-    periodoHistorico: [''],
-    fraseDestacada: [''],
-    plantilla: ['estandar']
-  });
-
   ngOnInit(): void {
     this.cargar();
   }
 
   abrirCrear(): void {
-    this.modoFormulario.set('crear');
-    this.seccionSeleccionada.set(null);
-    this.errorFormulario.set(null);
-    this.formulario.reset({
-      nombre: '', subtitulo: '', descripcionBreve: '', contenidoHistorico: '',
-      datosCuriosos: '', personajesRelacionados: '', periodoHistorico: '', fraseDestacada: '', plantilla: 'estandar'
-    });
-    this.formularioVisible.set(true);
+    this.seccionParaEditar.set(null);
+    this.modoLiveEditor.set(true);
   }
 
   abrirEditar(seccion: SeccionRecorrido): void {
-    this.modoFormulario.set('editar');
-    this.seccionSeleccionada.set(seccion);
-    this.errorFormulario.set(null);
-    this.formulario.reset({
-      nombre: seccion.nombre,
-      subtitulo: seccion.subtitulo ?? '',
-      descripcionBreve: seccion.descripcionBreve ?? '',
-      contenidoHistorico: seccion.contenidoHistorico ?? '',
-      datosCuriosos: seccion.datosCuriosos ?? '',
-      personajesRelacionados: seccion.personajesRelacionados ?? '',
-      periodoHistorico: seccion.periodoHistorico ?? '',
-      fraseDestacada: seccion.fraseDestacada ?? '',
-      plantilla: seccion.plantilla ?? 'estandar'
-    });
-    this.formularioVisible.set(true);
+    this.seccionParaEditar.set(seccion);
+    this.modoLiveEditor.set(true);
   }
 
-  cerrarFormulario(): void {
-    if (this.guardando()) return;
-    this.formularioVisible.set(false);
+  alGuardarLive(): void {
+    this.modoLiveEditor.set(false);
+    this.seccionParaEditar.set(null);
+    this.cargar();
+    this.notificar('success', 'Seccion guardada', 'Los cambios fueron guardados correctamente.');
   }
 
-  guardar(): void {
-    if (this.formulario.invalid) {
-      this.formulario.markAllAsTouched();
-      return;
-    }
-    const v = this.formulario.getRawValue();
-    const dto: CrearSeccionDto = {
-      exposicionId: this.exposicionId,
-      nombre: v.nombre.trim(),
-      subtitulo: v.subtitulo?.trim() || undefined,
-      descripcionBreve: v.descripcionBreve?.trim() || undefined,
-      contenidoHistorico: v.contenidoHistorico?.trim() || undefined,
-      datosCuriosos: v.datosCuriosos?.trim() || undefined,
-      personajesRelacionados: v.personajesRelacionados?.trim() || undefined,
-      periodoHistorico: v.periodoHistorico?.trim() || undefined,
-      fraseDestacada: v.fraseDestacada?.trim() || undefined,
-      plantilla: v.plantilla || 'estandar'
-    };
-
-    this.guardando.set(true);
-    this.errorFormulario.set(null);
-
-    const esCrear = this.modoFormulario() === 'crear';
-    const peticion$ = esCrear
-      ? this.servicio.crear(dto)
-      : this.servicio.actualizar(this.seccionSeleccionada()!.id, dto);
-
-    peticion$.pipe(takeUntilDestroyed(this.destruirRef)).subscribe({
-      next: (sec) => {
-        this.guardando.set(false);
-        this.formularioVisible.set(false);
-        this.cargar();
-        this.notificar('success', esCrear ? 'Seccion creada' : 'Seccion actualizada', `"${sec.nombre}" fue ${esCrear ? 'creada' : 'actualizada'}.`);
-      },
-      error: () => {
-        this.guardando.set(false);
-        this.errorFormulario.set('No se pudo guardar. Intentalo nuevamente.');
-      }
-    });
+  alCancelarLive(): void {
+    this.modoLiveEditor.set(false);
+    this.seccionParaEditar.set(null);
   }
 
   confirmarCambioEstado(seccion: SeccionRecorrido): void {
@@ -339,7 +270,6 @@ export class SeccionesEditorComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.subiendoAudio.set(false)))
       .subscribe({
         next: (sec) => {
-          // Actualiza la sección en la lista y el panel
           const secciones = this.secciones().map(s => s.id === sec.id ? sec : s);
           this.secciones.set(secciones);
           this.seccionMultimedia.set(sec);
@@ -414,10 +344,6 @@ export class SeccionesEditorComponent implements OnInit {
 
   recargar(): void {
     this.cargar();
-  }
-
-  get controles() {
-    return this.formulario.controls;
   }
 
   private cargar(): void {

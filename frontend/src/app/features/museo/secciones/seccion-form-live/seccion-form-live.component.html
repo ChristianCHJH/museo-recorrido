@@ -1,0 +1,276 @@
+<section class="live-shell">
+
+  <!-- Header -->
+  <header class="live-header">
+    <div class="live-header-left">
+      <button type="button" class="back-btn" (click)="cancelar()">
+        <i class="pi pi-arrow-left"></i>
+        Volver a secciones
+      </button>
+      <div class="live-copy">
+        <p class="eyebrow">Museo / Exposicion / Secciones</p>
+        <h1>{{ modoEditar ? 'Editar seccion' : 'Nueva seccion' }}</h1>
+      </div>
+    </div>
+    <div class="live-header-actions">
+      <button type="button" class="ghost-btn" (click)="cancelar()" [disabled]="guardando()">
+        Cancelar
+      </button>
+      <button type="button" class="primary-btn" (click)="guardar()" [disabled]="guardando()">
+        <i class="pi" [class.pi-check]="!guardando()" [class.pi-spin]="guardando()" [class.pi-spinner]="guardando()"></i>
+        {{ guardando() ? 'Guardando...' : 'Guardar seccion' }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Body: dos columnas -->
+  <div class="live-body">
+
+    <!-- Columna izquierda: formulario -->
+    <div class="form-panel">
+      <form [formGroup]="formulario" (ngSubmit)="guardar()" class="sec-form">
+
+        <!-- Informacion basica -->
+        <div class="form-section">
+          <p class="form-section-label">Informacion basica</p>
+
+          <div class="field">
+            <label for="lnNombre">Nombre <span class="required">*</span></label>
+            <input id="lnNombre" type="text" class="input-text"
+              placeholder="Ej: Sala de Ceramicas"
+              formControlName="nombre" />
+            <small class="field-error" *ngIf="controles.nombre.invalid && controles.nombre.touched">
+              El nombre es requerido (minimo 2 caracteres).
+            </small>
+          </div>
+
+          <div class="field">
+            <label for="lnSubtitulo">Subtitulo</label>
+            <input id="lnSubtitulo" type="text" class="input-text"
+              placeholder="Ej: Coleccion siglo XVIII"
+              formControlName="subtitulo" />
+          </div>
+
+          <div class="field">
+            <label for="lnDescBreve">Descripcion breve</label>
+            <input id="lnDescBreve" type="text" class="input-text"
+              placeholder="Resumen corto visible al inicio"
+              formControlName="descripcionBreve" />
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="lnPeriodo">Periodo historico</label>
+              <input id="lnPeriodo" type="text" class="input-text"
+                placeholder="Ej: Siglo XVIII"
+                formControlName="periodoHistorico" />
+            </div>
+            <div class="field">
+              <label for="lnPlantilla">Plantilla</label>
+              <select id="lnPlantilla" class="input-text" formControlName="plantilla">
+                <option value="estandar">Estandar</option>
+                <option value="galeria">Galeria</option>
+                <option value="cronologia">Cronologia</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Contenido -->
+        <div class="form-section">
+          <p class="form-section-label">Contenido</p>
+
+          <div class="field">
+            <label for="lnContenido">Contenido historico</label>
+            <textarea id="lnContenido" class="input-text textarea"
+              placeholder="Relato historico detallado..."
+              rows="5"
+              formControlName="contenidoHistorico"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="lnFrase">Frase destacada</label>
+            <input id="lnFrase" type="text" class="input-text"
+              placeholder="Cita o frase memorable..."
+              formControlName="fraseDestacada" />
+          </div>
+        </div>
+
+        <!-- Informacion adicional -->
+        <div class="form-section">
+          <p class="form-section-label">Informacion adicional</p>
+
+          <div class="field">
+            <label for="lnPersonajes">Personajes relacionados</label>
+            <textarea id="lnPersonajes" class="input-text textarea"
+              placeholder="Nombres y roles de personajes historicos..."
+              rows="3"
+              formControlName="personajesRelacionados"></textarea>
+          </div>
+
+          <div class="field">
+            <label for="lnCuriosos">Datos curiosos</label>
+            <textarea id="lnCuriosos" class="input-text textarea"
+              placeholder="Curiosidades e informacion adicional..."
+              rows="3"
+              formControlName="datosCuriosos"></textarea>
+          </div>
+        </div>
+
+        <!-- Audio -->
+        <div class="form-section" *ngIf="modoEditar">
+          <p class="form-section-label">Audio narrado</p>
+
+          <div class="audio-preview" *ngIf="previewSeccion().audioUrl">
+            <audio controls style="width:100%">
+              <source [src]="apiUrl + previewSeccion().audioUrl" />
+            </audio>
+          </div>
+          <p class="audio-vacio" *ngIf="!previewSeccion().audioUrl">
+            <i class="pi pi-volume-off"></i> Sin audio asignado
+          </p>
+
+          <button type="button" class="ghost-btn small" (click)="seleccionarAudio()" [disabled]="subiendoAudio()">
+            <i class="pi" [class.pi-upload]="!subiendoAudio()" [class.pi-spin]="subiendoAudio()" [class.pi-spinner]="subiendoAudio()"></i>
+            {{ subiendoAudio() ? 'Subiendo...' : (previewSeccion().audioUrl ? 'Reemplazar audio' : 'Subir audio') }}
+          </button>
+          <input #inputAudio type="file" accept="audio/*" style="display:none" (change)="alSeleccionarAudio($event)" />
+        </div>
+
+        <!-- Multimedia -->
+        <div class="form-section" *ngIf="modoEditar">
+          <p class="form-section-label">Imagenes y videos</p>
+
+          <div class="multimedia-acciones">
+            <button type="button" class="primary-btn small" (click)="seleccionarArchivo()" [disabled]="subiendoArchivo()">
+              <i class="pi" [class.pi-upload]="!subiendoArchivo()" [class.pi-spin]="subiendoArchivo()" [class.pi-spinner]="subiendoArchivo()"></i>
+              {{ subiendoArchivo() ? 'Subiendo...' : 'Subir imagen' }}
+            </button>
+            <button type="button" class="ghost-btn small" (click)="mostrarFormVideo.set(!mostrarFormVideo())">
+              <i class="pi pi-video"></i>
+              Video externo
+            </button>
+            <input #inputArchivo type="file" accept="image/*" style="display:none" (change)="alSeleccionarArchivo($event)" />
+          </div>
+
+          <!-- Form video externo -->
+          <div class="video-form" *ngIf="mostrarFormVideo()">
+            <div class="field">
+              <label>URL del video (YouTube / Vimeo)</label>
+              <input type="url" class="input-text"
+                placeholder="https://www.youtube.com/watch?v=..."
+                [value]="videoUrlInput()"
+                (input)="videoUrlInput.set($any($event.target).value)" />
+            </div>
+            <div class="field">
+              <label>Titulo (opcional)</label>
+              <input type="text" class="input-text"
+                placeholder="Titulo del video"
+                [value]="videoTituloInput()"
+                (input)="videoTituloInput.set($any($event.target).value)" />
+            </div>
+            <div class="video-form-actions">
+              <button type="button" class="ghost-btn small" (click)="mostrarFormVideo.set(false)">Cancelar</button>
+              <button type="button" class="primary-btn small" (click)="agregarVideo()">
+                <i class="pi pi-check"></i> Agregar
+              </button>
+            </div>
+          </div>
+
+          <!-- Lista multimedia -->
+          <ng-container *ngIf="!cargandoMultimedia(); else cargandoMediaTpl">
+            <div class="multimedia-lista" *ngIf="multimedia().length > 0">
+              <div class="multimedia-card" *ngFor="let elem of multimedia()">
+                <div class="media-thumb">
+                  <img *ngIf="elem.tipo === 'imagen'" [src]="imagenThumbUrl(elem)" [alt]="elem.titulo || 'Imagen'" />
+                  <div class="media-video-thumb" *ngIf="esVideo(elem)">
+                    <i class="pi pi-play-circle"></i>
+                  </div>
+                </div>
+                <div class="media-info">
+                  <span class="media-titulo">{{ elem.titulo || 'Sin titulo' }}</span>
+                  <span class="media-tipo">{{ elem.tipo }}</span>
+                  <span class="badge-principal" *ngIf="elem.esPrincipal">Principal</span>
+                  <span class="badge-inactivo" *ngIf="!elem.estado">Inactivo</span>
+                </div>
+                <div class="media-actions">
+                  <button type="button" class="icon-btn"
+                    pTooltip="Marcar como principal" tooltipPosition="top"
+                    [disabled]="elem.esPrincipal"
+                    (click)="marcarPrincipal(elem)">
+                    <i class="pi" [class.pi-star-fill]="elem.esPrincipal" [class.pi-star]="!elem.esPrincipal"></i>
+                  </button>
+                  <button type="button" class="icon-btn"
+                    [pTooltip]="elem.estado ? 'Desactivar' : 'Activar'" tooltipPosition="top"
+                    (click)="toggleEstadoMultimedia(elem)">
+                    <i class="pi" [class.pi-eye]="elem.estado" [class.pi-eye-slash]="!elem.estado"></i>
+                  </button>
+                  <button type="button" class="icon-btn delete"
+                    pTooltip="Eliminar" tooltipPosition="top"
+                    (click)="confirmarEliminarMultimedia(elem)">
+                    <i class="pi pi-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="multimedia-vacio" *ngIf="multimedia().length === 0">
+              <i class="pi pi-images"></i>
+              <p>Sin multimedia. Sube una imagen o agrega un video.</p>
+            </div>
+          </ng-container>
+
+          <ng-template #cargandoMediaTpl>
+            <div class="multimedia-vacio">
+              <i class="pi pi-spin pi-spinner"></i>
+              <p>Cargando multimedia...</p>
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Hint en modo crear -->
+        <div class="form-section hint-section" *ngIf="!modoEditar">
+          <i class="pi pi-info-circle"></i>
+          <p>Guarda la seccion para poder agregar imagenes, videos y audio.</p>
+        </div>
+
+        <p class="form-error" *ngIf="errorFormulario()">{{ errorFormulario() }}</p>
+
+        <div class="form-footer">
+          <button type="button" class="ghost-btn" (click)="cancelar()" [disabled]="guardando()">
+            Cancelar
+          </button>
+          <button type="submit" class="primary-btn" [disabled]="guardando()">
+            <i class="pi" [class.pi-check]="!guardando()" [class.pi-spin]="guardando()" [class.pi-spinner]="guardando()"></i>
+            {{ guardando() ? 'Guardando...' : 'Guardar seccion' }}
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Columna derecha: preview en vivo -->
+    <div class="preview-panel">
+      <div class="preview-label">
+        <i class="pi pi-mobile"></i>
+        <span>Vista previa en tiempo real</span>
+        <span class="preview-badge">Live</span>
+      </div>
+
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <spa-seccion-preview
+            [seccion]="previewSeccion()"
+            [multimedia]="multimedia()"
+          />
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<p-toast position="bottom-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>
