@@ -3,6 +3,7 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -12,6 +13,7 @@ import {
   InferCreationAttributes,
 } from 'sequelize';
 import { ExposicionEntidad } from '../../exposiciones/entidades/exposicion.entidad';
+import { SeccionBloqueEntidad } from '../../secciones-bloques/entidades/seccion-bloque.entidad';
 
 @Table({
   tableName: 'secciones_recorrido',
@@ -49,35 +51,11 @@ export class SeccionRecorridoEntidad extends Model<
   declare descripcionBreve: CreationOptional<string | null>;
 
   @Column({
-    field: 'contenido_historico',
-    type: DataType.TEXT,
-    allowNull: true,
-  })
-  declare contenidoHistorico: CreationOptional<string | null>;
-
-  @Column({ field: 'datos_curiosos', type: DataType.TEXT, allowNull: true })
-  declare datosCuriosos: CreationOptional<string | null>;
-
-  @Column({
-    field: 'personajes_relacionados',
-    type: DataType.TEXT,
-    allowNull: true,
-  })
-  declare personajesRelacionados: CreationOptional<string | null>;
-
-  @Column({
     field: 'periodo_historico',
     type: DataType.STRING(200),
     allowNull: true,
   })
   declare periodoHistorico: CreationOptional<string | null>;
-
-  @Column({
-    field: 'frase_destacada',
-    type: DataType.STRING(500),
-    allowNull: true,
-  })
-  declare fraseDestacada: CreationOptional<string | null>;
 
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
   declare orden: CreationOptional<number>;
@@ -88,20 +66,6 @@ export class SeccionRecorridoEntidad extends Model<
     allowNull: true,
   })
   declare imagenPrincipalUrl: CreationOptional<string | null>;
-
-  @Column({
-    field: 'audio_url',
-    type: DataType.STRING(500),
-    allowNull: true,
-  })
-  declare audioUrl: CreationOptional<string | null>;
-
-  @Column({
-    type: DataType.STRING(50),
-    allowNull: false,
-    defaultValue: 'estandar',
-  })
-  declare plantilla: CreationOptional<string>;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   declare estado: CreationOptional<boolean>;
@@ -124,4 +88,7 @@ export class SeccionRecorridoEntidad extends Model<
     defaultValue: DataType.NOW,
   })
   declare actualizadoEn: CreationOptional<Date>;
+
+  @HasMany(() => SeccionBloqueEntidad, { as: 'bloques', foreignKey: 'seccionId' })
+  bloques: SeccionBloqueEntidad[];
 }

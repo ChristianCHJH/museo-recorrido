@@ -29,8 +29,8 @@ export class ElementoMultimediaEntidad extends Model<
   declare id: CreationOptional<string>;
 
   @ForeignKey(() => SeccionRecorridoEntidad)
-  @Column({ field: 'seccion_id', type: DataType.UUID, allowNull: false })
-  declare seccionId: string;
+  @Column({ field: 'seccion_id', type: DataType.UUID, allowNull: true })
+  declare seccionId: CreationOptional<string | null>;
 
   @BelongsTo(() => SeccionRecorridoEntidad)
   seccion: SeccionRecorridoEntidad;
@@ -58,6 +58,9 @@ export class ElementoMultimediaEntidad extends Model<
 
   @Column({ field: 'peso_bytes', type: DataType.BIGINT, allowNull: true })
   declare pesoBytes: CreationOptional<bigint | null>;
+
+  @Column({ field: 'es_publico', type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
+  declare esPublico: CreationOptional<boolean>;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   declare estado: CreationOptional<boolean>;

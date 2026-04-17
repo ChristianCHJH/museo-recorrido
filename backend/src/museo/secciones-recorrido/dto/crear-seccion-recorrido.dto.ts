@@ -33,30 +33,10 @@ export class CrearSeccionRecorridoDto {
   @IsString()
   descripcionBreve?: string;
 
-  @ApiPropertyOptional({ description: 'Contenido histórico detallado de la sección' })
-  @IsOptional()
-  @IsString()
-  contenidoHistorico?: string;
-
-  @ApiPropertyOptional({ description: 'Datos curiosos relacionados con la sección' })
-  @IsOptional()
-  @IsString()
-  datosCuriosos?: string;
-
-  @ApiPropertyOptional({ description: 'Personajes históricos relacionados con la sección' })
-  @IsOptional()
-  @IsString()
-  personajesRelacionados?: string;
-
   @ApiPropertyOptional({ description: 'Período histórico al que refiere la sección', example: 'Siglo XVIII' })
   @IsOptional()
   @IsString()
   periodoHistorico?: string;
-
-  @ApiPropertyOptional({ description: 'Frase o cita destacada de la sección' })
-  @IsOptional()
-  @IsString()
-  fraseDestacada?: string;
 
   @ApiPropertyOptional({ description: 'Orden de visualización dentro de la exposición', example: 1 })
   @IsOptional()
@@ -67,19 +47,6 @@ export class CrearSeccionRecorridoDto {
   @IsOptional()
   @IsString()
   imagenPrincipalUrl?: string;
-
-  @ApiPropertyOptional({ description: 'URL del audio narrado de la sección' })
-  @IsOptional()
-  @IsString()
-  audioUrl?: string;
-
-  @ApiPropertyOptional({
-    description: "Plantilla de visualización de la sección",
-    example: 'estandar',
-  })
-  @IsOptional()
-  @IsString()
-  plantilla?: string;
 }
 
 export class ActualizarSeccionRecorridoDto extends PartialType(CrearSeccionRecorridoDto) {}

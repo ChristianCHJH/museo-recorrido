@@ -17,6 +17,7 @@ import { SeccionesRecorridoModulo } from './museo/secciones-recorrido/secciones-
 import { ElementosMultimediaModulo } from './museo/elementos-multimedia/elementos-multimedia.modulo';
 import { CodigosQrModulo } from './museo/codigos-qr/codigos-qr.modulo';
 import { SesionesVisitaModulo } from './museo/sesiones-visita/sesiones-visita.modulo';
+import { SeccionesBloquesModulo } from './museo/secciones-bloques/secciones-bloques.modulo';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { SesionesVisitaModulo } from './museo/sesiones-visita/sesiones-visita.mo
     ElementosMultimediaModulo,
     CodigosQrModulo,
     SesionesVisitaModulo,
+    SeccionesBloquesModulo,
   ],
   providers: [
     {
