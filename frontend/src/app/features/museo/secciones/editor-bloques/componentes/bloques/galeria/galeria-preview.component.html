@@ -1,0 +1,26 @@
+<ng-container *ngIf="tieneImagenes; else sinImagenes">
+  <div class="galeria">
+    <h2 class="seccion-subtitulo" *ngIf="config.titulo?.es">{{ config.titulo!.es }}</h2>
+    <div
+      class="galeria-lista"
+      [ngClass]="{ 'galeria-carrusel': config.disposicion === 'carrusel' }">
+      <div class="media-item" *ngFor="let img of config.imagenes">
+        <img
+          [src]="img.url"
+          [alt]="img.titulo?.es || 'Imagen'"
+          class="media-imagen"
+          loading="lazy" />
+        <div class="media-caption" *ngIf="img.titulo?.es || img.caption?.es">
+          <span class="caption-titulo" *ngIf="img.titulo?.es">{{ img.titulo!.es }}</span>
+          <span class="caption-desc" *ngIf="img.caption?.es">{{ img.caption!.es }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #sinImagenes>
+  <p class="bloque-placeholder">
+    <i class="pi pi-images"></i> Sin imágenes
+  </p>
+</ng-template>

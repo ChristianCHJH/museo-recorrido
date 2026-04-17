@@ -1,0 +1,28 @@
+<form [formGroup]="formulario" class="flex flex-col gap-4">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Texto <span class="text-red-500">*</span>
+    </label>
+    <textarea
+      pInputTextarea
+      formControlName="textoEs"
+      rows="4"
+      placeholder="Escribe el dato curioso o hecho interesante..."
+      class="w-full resize-y"></textarea>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Etiqueta <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <input
+      pInputText
+      type="text"
+      formControlName="etiquetaEs"
+      placeholder="¿Sabías qué...?"
+      class="w-full" />
+    <small class="text-xs opacity-60">Si no se completa, se mostrará "¿Sabías qué...?" por defecto.</small>
+  </div>
+
+</form>

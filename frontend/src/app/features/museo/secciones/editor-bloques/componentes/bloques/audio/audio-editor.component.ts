@@ -1,0 +1,78 @@
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  inject
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DestroyRef } from '@angular/core';
+import { InputTextModule } from 'primeng/inputtext';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ConfigAudio } from '../../../modelos/bloque.modelo';
+
+@Component({
+  selector: 'spa-audio-editor',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    InputNumberModule
+  ],
+  templateUrl: './audio-editor.component.html'
+})
+export class AudioEditorComponent implements OnInit, OnChanges {
+  @Input() config: ConfigAudio = { url: '' };
+  @Output() configChange = new EventEmitter<ConfigAudio>();
+
+  private readonly fb = inject(FormBuilder);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly formulario = this.fb.nonNullable.group({
+    url: [''],
+    etiquetaEs: [''],
+    duracion: [null as number | null]
+  });
+
+  ngOnInit(): void {
+    this.sincronizarDesdeConfig();
+
+    this.formulario.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.emitirCambio());
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['config'] && !changes['config'].firstChange) {
+      this.sincronizarDesdeConfig();
+    }
+  }
+
+  private sincronizarDesdeConfig(): void {
+    this.formulario.setValue({
+      url: this.config?.url ?? '',
+      etiquetaEs: this.config?.etiqueta?.es ?? '',
+      duracion: this.config?.duracion ?? null
+    }, { emitEvent: false });
+  }
+
+  private emitirCambio(): void {
+    const v = this.formulario.getRawValue();
+    const nueva: ConfigAudio = {
+      url: v.url
+    };
+    if (v.etiquetaEs.trim()) {
+      nueva.etiqueta = { es: v.etiquetaEs };
+    }
+    if (v.duracion !== null && v.duracion !== undefined) {
+      nueva.duracion = v.duracion;
+    }
+    this.configChange.emit(nueva);
+  }
+}

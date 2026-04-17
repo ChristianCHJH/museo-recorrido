@@ -1,0 +1,94 @@
+<form [formGroup]="formulario" class="flex flex-col gap-4">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Título de la sección <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <input
+      pInputText
+      type="text"
+      formControlName="tituloEs"
+      placeholder="Ej: Personajes relacionados"
+      class="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-3">
+    <div
+      *ngFor="let item of personajesArray.controls; let i = index"
+      [formGroup]="$any(item)"
+      class="flex flex-col gap-2 p-3 rounded-lg border"
+      style="border-color: rgba(93,64,55,0.15); background: var(--surface-section, #faf8f0)">
+
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold uppercase tracking-wide opacity-60" style="color: var(--color-primario)">
+          Personaje {{ i + 1 }}
+        </span>
+        <p-button
+          icon="pi pi-trash"
+          severity="danger"
+          [text]="true"
+          [rounded]="true"
+          size="small"
+          (onClick)="eliminarPersonaje(i)" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
+          Nombre <span class="text-red-500">*</span>
+        </label>
+        <input
+          pInputText
+          type="text"
+          formControlName="nombre"
+          placeholder="Nombre del personaje"
+          class="w-full" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
+          Rol <span class="text-xs font-normal opacity-60">(opcional)</span>
+        </label>
+        <input
+          pInputText
+          type="text"
+          formControlName="rolEs"
+          placeholder="Ej: Emperador, Sacerdote..."
+          class="w-full" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
+          Descripción <span class="text-xs font-normal opacity-60">(opcional)</span>
+        </label>
+        <textarea
+          pInputTextarea
+          formControlName="descripcionEs"
+          rows="2"
+          placeholder="Breve descripción del personaje..."
+          class="w-full resize-y"></textarea>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
+          URL imagen <span class="text-xs font-normal opacity-60">(opcional)</span>
+        </label>
+        <input
+          pInputText
+          type="text"
+          formControlName="imagenUrl"
+          placeholder="https://... o /uploads/..."
+          class="w-full" />
+      </div>
+
+    </div>
+  </div>
+
+  <p-button
+    label="Agregar personaje"
+    icon="pi pi-plus"
+    severity="secondary"
+    [outlined]="true"
+    styleClass="w-full"
+    (onClick)="agregarPersonaje()" />
+
+</form>

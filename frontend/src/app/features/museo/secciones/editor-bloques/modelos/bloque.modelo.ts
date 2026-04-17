@@ -25,6 +25,60 @@ export interface ConfigFraseDestacada {
   autor?: TextoMultiIdioma;
 }
 
+export interface ConfigSabiasQue {
+  texto: TextoMultiIdioma;
+  etiqueta?: TextoMultiIdioma;
+}
+
+export interface ConfigAudio {
+  url: string;
+  etiqueta?: TextoMultiIdioma;
+  duracion?: number;
+  elementoMultimediaId?: string;
+}
+
+export interface ConfigImagenDestacada {
+  url: string;
+  titulo?: TextoMultiIdioma;
+  caption?: TextoMultiIdioma;
+  altura?: 'sm' | 'md' | 'lg';
+  elementoMultimediaId?: string;
+}
+
+export interface ConfigPersonajeItem {
+  nombre: string;
+  rol?: TextoMultiIdioma;
+  descripcion?: TextoMultiIdioma;
+  imagenUrl?: string;
+  elementoMultimediaId?: string;
+}
+
+export interface ConfigPersonajes {
+  titulo?: TextoMultiIdioma;
+  personajes: ConfigPersonajeItem[];
+}
+
+export interface ConfigGaleriaItem {
+  url: string;
+  titulo?: TextoMultiIdioma;
+  caption?: TextoMultiIdioma;
+  elementoMultimediaId?: string;
+}
+
+export interface ConfigGaleria {
+  titulo?: TextoMultiIdioma;
+  disposicion: 'grid' | 'carrusel';
+  imagenes: ConfigGaleriaItem[];
+}
+
+export interface ConfigVideo {
+  origen: 'youtube' | 'vimeo' | 'local';
+  url: string;
+  titulo?: TextoMultiIdioma;
+  caption?: TextoMultiIdioma;
+  elementoMultimediaId?: string;
+}
+
 export interface Bloque {
   id?: string;
   tipo: TipoBloque;

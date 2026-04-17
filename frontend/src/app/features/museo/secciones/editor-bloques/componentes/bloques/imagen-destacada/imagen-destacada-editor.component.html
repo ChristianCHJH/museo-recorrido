@@ -1,0 +1,56 @@
+<form [formGroup]="formulario" class="flex flex-col gap-4">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      URL de la imagen <span class="text-red-500">*</span>
+    </label>
+    <input
+      pInputText
+      type="text"
+      formControlName="url"
+      placeholder="https://... o /uploads/..."
+      class="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Título <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <input
+      pInputText
+      type="text"
+      formControlName="tituloEs"
+      placeholder="Título de la imagen"
+      class="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Caption <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <input
+      pInputText
+      type="text"
+      formControlName="captionEs"
+      placeholder="Descripción breve de la imagen"
+      class="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Altura
+    </label>
+    <p-dropdown
+      formControlName="altura"
+      [options]="opcionesAltura"
+      optionLabel="label"
+      optionValue="value"
+      styleClass="w-full" />
+  </div>
+
+  <div class="flex items-start gap-2 p-3 rounded-lg text-xs" style="background: #f0f4ff; color: #3b4fa0;">
+    <i class="pi pi-info-circle mt-0.5 flex-shrink-0"></i>
+    <span>En Fase 5 se podrá seleccionar la imagen desde la biblioteca de medios.</span>
+  </div>
+
+</form>

@@ -1,0 +1,29 @@
+<ng-container *ngIf="tieneUrl; else sinVideo">
+  <div class="extra-bloque">
+    <h2 class="seccion-subtitulo" *ngIf="config.titulo?.es">{{ config.titulo!.es }}</h2>
+
+    <div class="video-wrapper" *ngIf="!esLocal">
+      <iframe
+        [src]="embedUrl"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        class="media-iframe">
+      </iframe>
+    </div>
+
+    <div class="video-wrapper" *ngIf="esLocal">
+      <video [src]="config.url" controls class="media-video"></video>
+    </div>
+
+    <div class="media-caption" *ngIf="config.caption?.es">
+      <span class="caption-desc">{{ config.caption!.es }}</span>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #sinVideo>
+  <p class="bloque-placeholder">
+    <i class="pi pi-video"></i> Sin video
+  </p>
+</ng-template>

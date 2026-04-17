@@ -1,0 +1,51 @@
+<form [formGroup]="formulario" class="flex flex-col gap-4">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Origen
+    </label>
+    <p-dropdown
+      formControlName="origen"
+      [options]="opcionesOrigen"
+      optionLabel="label"
+      optionValue="value"
+      styleClass="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      URL del video <span class="text-red-500">*</span>
+    </label>
+    <input
+      pInputText
+      type="text"
+      formControlName="url"
+      placeholder="https://www.youtube.com/watch?v=... o /uploads/..."
+      class="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Título <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <input
+      pInputText
+      type="text"
+      formControlName="tituloEs"
+      placeholder="Título del video"
+      class="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Caption <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <input
+      pInputText
+      type="text"
+      formControlName="captionEs"
+      placeholder="Descripción breve del video"
+      class="w-full" />
+  </div>
+
+</form>
