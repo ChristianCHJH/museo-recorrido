@@ -1,0 +1,179 @@
+/* ── Filtros ─────────────────────────────────────── */
+.filtros-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.busqueda-wrap {
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+}
+
+.busqueda-wrap .pi-search {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+  pointer-events: none;
+}
+
+.busqueda-wrap input {
+  padding-left: 2.25rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Grids ───────────────────────────────────────── */
+.media-grid,
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+@media (min-width: 576px) {
+  .media-grid, .skeleton-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 768px) {
+  .media-grid, .skeleton-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ── Skeleton item ───────────────────────────────── */
+.skeleton-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+/* ── Tarjeta media ───────────────────────────────── */
+.tarjeta-media {
+  border: 2px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  background: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.tarjeta-media:hover {
+  border-color: rgba(93, 64, 55, 0.3);
+}
+
+.tarjeta-media--seleccionada {
+  border-color: var(--color-primario, #5d4037);
+  box-shadow: 0 0 0 2px rgba(93, 64, 55, 0.2);
+}
+
+/* ── Thumbnail ───────────────────────────────────── */
+.tarjeta-media-thumb {
+  width: 100%;
+  height: 7rem;
+  overflow: hidden;
+  position: relative;
+  background: #f0f0f0;
+}
+
+.tarjeta-media-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tarjeta-media-thumb-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+}
+
+.tarjeta-media-thumb-icon--audio {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.tarjeta-media-thumb-icon--video {
+  background: #1f2937;
+  color: white;
+}
+
+.tarjeta-media-thumb-icon--otro {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+/* ── Check overlay ───────────────────────────────── */
+.tarjeta-media-check {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: var(--color-primario, #5d4037);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: white;
+}
+
+/* ── Nombre ──────────────────────────────────────── */
+.tarjeta-media-nombre {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-texto-oscuro, #2c1a0e);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 0.35rem 0.5rem;
+  margin: 0;
+}
+
+/* ── Estado vacío ────────────────────────────────── */
+.media-vacia {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 3rem 1rem;
+  opacity: 0.5;
+  text-align: center;
+}
+
+.media-vacia p {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-texto-oscuro, #2c1a0e);
+}
+
+/* ── Paginación ──────────────────────────────────── */
+.paginacion {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(93, 64, 55, 0.1);
+}
+
+.paginacion-info {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  color: var(--color-texto-oscuro);
+}
+
+.paginacion-btns {
+  display: flex;
+  gap: 0.5rem;
+}

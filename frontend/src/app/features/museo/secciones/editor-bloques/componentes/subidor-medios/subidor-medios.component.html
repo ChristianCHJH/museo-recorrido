@@ -2,9 +2,11 @@
 
 <p-dialog
   [visible]="visible"
+  (visibleChange)="visible = $event"
   header="Subir archivo"
   [modal]="true"
   [closable]="true"
+  [draggable]="false"
   (onHide)="cerrar()"
   styleClass="w-full max-w-md">
 

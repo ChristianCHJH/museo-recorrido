@@ -12,9 +12,9 @@
     cdkDropList
     [cdkDropListData]="bloques"
     (cdkDropListDropped)="alSoltar($event)"
-    class="flex flex-col gap-3">
+    class="flex flex-column gap-3">
 
-    <ng-container *ngFor="let bloque of bloques; let i = index">
+    <ng-container *ngFor="let bloque of bloques; let i = index; trackBy: trackById">
 
       <!-- Botón insertar antes (solo entre bloques) -->
       <button

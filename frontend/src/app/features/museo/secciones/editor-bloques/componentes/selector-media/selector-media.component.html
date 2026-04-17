@@ -1,16 +1,16 @@
 <p-dialog
   [visible]="visible"
+  (visibleChange)="visible = $event"
   header="Biblioteca de medios"
   [modal]="true"
   [closable]="true"
+  [draggable]="false"
   (onHide)="cerrar()"
-  styleClass="w-full max-w-4xl">
+  [style]="{ width: '90vw', maxWidth: '860px' }">
 
   <!-- Barra de filtros -->
-  <div class="flex flex-wrap items-center gap-2 mb-4">
-
-    <!-- Búsqueda -->
-    <span class="p-input-icon-left flex-1 min-w-48">
+  <div class="filtros-bar">
+    <span class="p-input-icon-left busqueda-wrap">
       <i class="pi pi-search"></i>
       <input
         pInputText
@@ -21,30 +21,26 @@
         class="w-full" />
     </span>
 
-    <!-- Tipo -->
     <p-dropdown
       [formControl]="controlTipo"
       [options]="opcionesTipo"
       optionLabel="label"
       optionValue="value"
-      [disabled]="!!tipoFiltrado"
-      styleClass="min-w-36" />
+      [disabled]="!!tipoFiltrado" />
 
-    <!-- Subir nuevo -->
     <p-button
       label="Subir nuevo"
       icon="pi pi-upload"
       severity="primary"
       (onClick)="subidorVisible.set(true)" />
-
   </div>
 
   <!-- Estado de carga: skeletons -->
   @if (cargando()) {
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+    <div class="skeleton-grid">
       @for (sk of [1,2,3,4,5,6,7,8]; track sk) {
-        <div class="flex flex-col gap-2">
-          <p-skeleton height="7rem" styleClass="w-full rounded-lg" />
+        <div class="skeleton-item">
+          <p-skeleton height="7rem" />
           <p-skeleton height="1rem" width="80%" />
         </div>
       }
@@ -53,17 +49,15 @@
 
   <!-- Estado vacío -->
   @if (!cargando() && items().length === 0) {
-    <div class="flex flex-col items-center gap-3 py-12 opacity-50">
-      <i class="pi pi-images text-4xl" style="color: var(--color-primario)"></i>
-      <p class="text-sm font-semibold m-0" style="color: var(--color-texto-oscuro)">
-        No hay medios. Sube el primero.
-      </p>
+    <div class="media-vacia">
+      <i class="pi pi-images" style="font-size:2.5rem; color: var(--color-primario)"></i>
+      <p>No hay medios. Sube el primero.</p>
     </div>
   }
 
   <!-- Grid de resultados -->
   @if (!cargando() && items().length > 0) {
-    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+    <div class="media-grid">
       @for (item of items(); track item.id) {
         <div
           class="tarjeta-media"
@@ -74,71 +68,45 @@
           [pTooltip]="nombreVisible(item)"
           tooltipPosition="top">
 
-          <!-- Miniatura o ícono -->
           <div class="tarjeta-media-thumb">
             @if (item.tipo === 'imagen') {
-              <img
-                [src]="item.urlMiniatura ?? item.url"
-                [alt]="nombreVisible(item)"
-                class="w-full h-full object-cover" />
+              <img [src]="item.urlMiniatura ?? item.url" [alt]="nombreVisible(item)" />
             } @else {
-              <div
-                class="w-full h-full flex items-center justify-center"
-                [ngClass]="fondoTipoMedia(item.tipo)">
-                <i
-                  class="pi text-2xl"
-                  [ngClass]="[iconoTipoMedia(item.tipo), colorIconoTipoMedia(item.tipo)]"></i>
+              <div [class]="claseThumbnailIcon(item.tipo)">
+                <i [class]="'pi ' + iconoTipoMedia(item.tipo)"></i>
               </div>
             }
-
-            <!-- Checkmark selección -->
             @if (estaSeleccionado(item)) {
               <div class="tarjeta-media-check">
-                <i class="pi pi-check text-white text-xs"></i>
+                <i class="pi pi-check"></i>
               </div>
             }
           </div>
 
-          <!-- Nombre -->
           <p class="tarjeta-media-nombre">{{ nombreVisible(item) }}</p>
-
         </div>
       }
     </div>
 
-    <!-- Paginación -->
     @if (totalPaginas() > 1) {
-      <div class="flex items-center justify-between mt-4 pt-4 border-t" style="border-color: rgba(93,64,55,0.1)">
-        <span class="text-xs opacity-60">
+      <div class="paginacion">
+        <span class="paginacion-info">
           Página {{ pagina() }} de {{ totalPaginas() }} — {{ total() }} elementos
         </span>
-        <div class="flex gap-2">
-          <p-button
-            icon="pi pi-angle-left"
-            severity="secondary"
-            [text]="true"
-            [disabled]="!hayAnterior()"
-            (onClick)="irAPagina(-1)" />
-          <p-button
-            icon="pi pi-angle-right"
-            severity="secondary"
-            [text]="true"
-            [disabled]="!haySiguiente()"
-            (onClick)="irAPagina(1)" />
+        <div class="paginacion-btns">
+          <p-button icon="pi pi-angle-left" severity="secondary" [text]="true"
+            [disabled]="!hayAnterior()" (onClick)="irAPagina(-1)" />
+          <p-button icon="pi pi-angle-right" severity="secondary" [text]="true"
+            [disabled]="!haySiguiente()" (onClick)="irAPagina(1)" />
         </div>
       </div>
     }
   }
 
-  <!-- Footer solo en modo multiple -->
   @if (modo === 'multiple') {
     <ng-template pTemplate="footer">
-      <div class="flex justify-end gap-2">
-        <p-button
-          label="Cancelar"
-          icon="pi pi-times"
-          severity="secondary"
-          (onClick)="cerrar()" />
+      <div class="flex justify-content-end gap-2">
+        <p-button label="Cancelar" icon="pi pi-times" severity="secondary" (onClick)="cerrar()" />
         <p-button
           [label]="'Seleccionar (' + contadorSeleccionados() + ')'"
           icon="pi pi-check"
@@ -151,7 +119,6 @@
 
 </p-dialog>
 
-<!-- Subidor embebido -->
 <spa-subidor-medios
   [visible]="subidorVisible()"
   (visibleChange)="subidorVisible.set($event)"

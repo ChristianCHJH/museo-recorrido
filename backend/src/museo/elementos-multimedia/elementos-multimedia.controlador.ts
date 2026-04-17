@@ -85,8 +85,7 @@ export class ElementosMultimediaControlador {
 
   @Get('biblioteca')
   async obtenerBiblioteca(@Query() filtros: FiltrarMediaDto) {
-    const resultado = await this.servicio.obtenerBiblioteca(filtros);
-    return { datos: resultado, mensaje: 'Biblioteca obtenida correctamente', exito: true };
+    return this.servicio.obtenerBiblioteca(filtros);
   }
 
   @Post('biblioteca/subir')
@@ -96,14 +95,12 @@ export class ElementosMultimediaControlador {
     @UploadedFile() archivo: Express.Multer.File,
     @Body() dto: SubirArchivoLibreriaDto,
   ) {
-    const datos = await this.servicio.subirABiblioteca(archivo, dto);
-    return { datos, mensaje: 'Archivo subido a la biblioteca correctamente', exito: true };
+    return this.servicio.subirABiblioteca(archivo, dto);
   }
 
   @Get('biblioteca/:id')
   async obtenerMediaPorId(@Param('id', ParseUUIDPipe) id: string) {
-    const datos = await this.servicio.obtenerUnoPorId(id);
-    return { datos, mensaje: 'Medio obtenido correctamente', exito: true };
+    return this.servicio.obtenerUnoPorId(id);
   }
 
   @Patch('biblioteca/:id')
@@ -111,14 +108,12 @@ export class ElementosMultimediaControlador {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() dto: ActualizarMediaDto,
   ) {
-    const datos = await this.servicio.actualizarMedia(id, dto);
-    return { datos, mensaje: 'Medio actualizado correctamente', exito: true };
+    return this.servicio.actualizarMedia(id, dto);
   }
 
   @Delete('biblioteca/:id')
   async eliminarMedia(@Param('id', ParseUUIDPipe) id: string) {
     await this.servicio.eliminarMedia(id);
-    return { datos: null, mensaje: 'Medio eliminado correctamente', exito: true };
   }
 
   // ─── Endpoints por elemento individual (rutas genéricas con :id) ─────────────

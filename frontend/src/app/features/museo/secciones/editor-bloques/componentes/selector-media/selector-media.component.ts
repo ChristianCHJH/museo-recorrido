@@ -37,7 +37,8 @@ import { SubidorMediosComponent } from '../subidor-medios/subidor-medios.compone
     TooltipModule,
     SubidorMediosComponent
   ],
-  templateUrl: './selector-media.component.html'
+  templateUrl: './selector-media.component.html',
+  styleUrl: './selector-media.component.css'
 })
 export class SelectorMediaComponent implements OnChanges, OnDestroy {
   @Input() visible = false;
@@ -200,16 +201,10 @@ export class SelectorMediaComponent implements OnChanges, OnDestroy {
     return 'pi pi-image';
   }
 
-  fondoTipoMedia(tipo: string): string {
-    if (tipo === 'audio') return 'bg-yellow-100';
-    if (tipo === 'video') return 'bg-gray-800';
-    return 'bg-gray-100';
-  }
-
-  colorIconoTipoMedia(tipo: string): string {
-    if (tipo === 'audio') return 'text-yellow-700';
-    if (tipo === 'video') return 'text-white';
-    return 'text-gray-500';
+  claseThumbnailIcon(tipo: string): string {
+    if (tipo === 'audio') return 'tarjeta-media-thumb-icon tarjeta-media-thumb-icon--audio';
+    if (tipo.startsWith('video')) return 'tarjeta-media-thumb-icon tarjeta-media-thumb-icon--video';
+    return 'tarjeta-media-thumb-icon tarjeta-media-thumb-icon--otro';
   }
 
   nombreVisible(item: ElementoMedia): string {

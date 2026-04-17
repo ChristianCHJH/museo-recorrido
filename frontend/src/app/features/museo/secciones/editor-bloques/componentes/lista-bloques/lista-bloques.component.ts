@@ -73,6 +73,10 @@ export class ListaBloquesComponent {
     this.bloquesChange.emit(lista);
   }
 
+  trackById(_index: number, bloque: Bloque): string {
+    return bloque.id ?? String(_index);
+  }
+
   moverAbajo(index: number): void {
     if (index === this.bloques.length - 1) return;
     const lista = [...this.bloques];

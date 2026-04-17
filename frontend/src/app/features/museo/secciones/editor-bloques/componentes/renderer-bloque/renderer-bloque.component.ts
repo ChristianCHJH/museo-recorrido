@@ -37,6 +37,7 @@ export class RendererBloqueComponent implements OnChanges, OnDestroy {
 
   private componenteRef: ComponentRef<any> | null = null;
   private suscripcion: Subscription | null = null;
+  private pendingConfig: any = null;
 
   get tipoRegistrado(): boolean {
     return !!(this.bloque?.tipo && REGISTRO_BLOQUES[this.bloque.tipo]);
@@ -68,15 +69,19 @@ export class RendererBloqueComponent implements OnChanges, OnDestroy {
       this.componenteRef = this.contenedor.createComponent(clase);
     }
 
-    // Pasar el input config
+    // Pasar el input config (omitir si es el mismo objeto que acabamos de emitir)
     if (this.componenteRef) {
-      this.componenteRef.setInput('config', this.bloque.config);
+      if (this.bloque.config !== this.pendingConfig) {
+        this.componenteRef.setInput('config', this.bloque.config);
+      }
+      this.pendingConfig = null;
 
       // Suscribirse al output configChange solo en modo edicion
       if (this.modoEdicion && !this.suscripcion) {
         const instancia = this.componenteRef.instance;
         if (instancia.configChange) {
           this.suscripcion = instancia.configChange.subscribe((nuevoConfig: any) => {
+            this.pendingConfig = nuevoConfig;
             this.configChange.emit(nuevoConfig);
           });
         }
