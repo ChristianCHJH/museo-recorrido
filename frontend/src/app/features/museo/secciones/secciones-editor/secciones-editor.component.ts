@@ -10,6 +10,7 @@ import {
   inject,
   signal
 } from '@angular/core';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { environment } from '@env/environment';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -38,6 +39,7 @@ import { EditorBloquesComponent } from '../editor-bloques/editor-bloques.compone
   standalone: true,
   imports: [
     CommonModule,
+    ReactiveFormsModule,
     TooltipModule,
     DialogModule,
     ToastModule,
@@ -61,6 +63,7 @@ export class SeccionesEditorComponent implements OnInit {
   private readonly destruirRef = inject(DestroyRef);
   private readonly servicioMensajes = inject(MessageService);
   private readonly servicioConfirmacion = inject(ConfirmationService);
+  private readonly fb = inject(FormBuilder);
 
   readonly secciones = signal<SeccionRecorrido[]>([]);
   readonly cargando = signal(true);
@@ -80,6 +83,16 @@ export class SeccionesEditorComponent implements OnInit {
   readonly modoLiveEditor = signal(false);
   readonly seccionParaEditar = signal<SeccionRecorrido | null>(null);
 
+  // Formulario de creación rápida
+  readonly modoCrear = signal(false);
+  readonly creando = signal(false);
+  readonly formularioCrear = this.fb.nonNullable.group({
+    nombre: ['', [Validators.required, Validators.minLength(2)]],
+    subtitulo: [''],
+    descripcionBreve: [''],
+    periodoHistorico: ['']
+  });
+
   // Preview
   readonly previewVisible = signal(false);
   readonly seccionPreview = signal<SeccionRecorrido | null>(null);
@@ -97,8 +110,37 @@ export class SeccionesEditorComponent implements OnInit {
   }
 
   abrirCrear(): void {
-    this.seccionParaEditar.set(null);
-    this.modoLiveEditor.set(true);
+    this.formularioCrear.reset();
+    this.modoCrear.set(true);
+  }
+
+  confirmarCrear(): void {
+    if (this.formularioCrear.invalid) {
+      this.formularioCrear.markAllAsTouched();
+      return;
+    }
+    const v = this.formularioCrear.getRawValue();
+    this.creando.set(true);
+    this.servicio.crear({
+      exposicionId: this.exposicionId,
+      nombre: v.nombre.trim(),
+      subtitulo: v.subtitulo.trim() || undefined,
+      descripcionBreve: v.descripcionBreve.trim() || undefined,
+      periodoHistorico: v.periodoHistorico.trim() || undefined
+    }).pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.creando.set(false)))
+      .subscribe({
+        next: (nueva) => {
+          this.modoCrear.set(false);
+          this.seccionParaEditar.set(nueva);
+          this.modoLiveEditor.set(true);
+        },
+        error: () => this.notificar('error', 'Error al crear', 'No se pudo crear la sección.')
+      });
+  }
+
+  cancelarCrear(): void {
+    this.modoCrear.set(false);
+    this.formularioCrear.reset();
   }
 
   abrirEditar(seccion: SeccionRecorrido): void {

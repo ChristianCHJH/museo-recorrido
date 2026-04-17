@@ -10,17 +10,12 @@ export interface SeccionRecorrido {
   nombre: string;
   subtitulo: string | null;
   descripcionBreve: string | null;
-  contenidoHistorico: string | null;
-  datosCuriosos: string | null;
-  personajesRelacionados: string | null;
   periodoHistorico: string | null;
-  fraseDestacada: string | null;
   orden: number;
   imagenPrincipalUrl: string | null;
-  audioUrl: string | null;
-  plantilla: string;
   estado: boolean;
   creadoEn: string;
+  bloques?: import('@features/museo/secciones/editor-bloques/modelos/bloque.modelo').Bloque[];
 }
 
 export interface CrearSeccionDto {

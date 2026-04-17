@@ -84,15 +84,9 @@ export class SeccionFormLiveComponent implements OnInit {
     nombre: 'Sin nombre',
     subtitulo: null,
     descripcionBreve: null,
-    contenidoHistorico: null,
-    datosCuriosos: null,
-    personajesRelacionados: null,
     periodoHistorico: null,
-    fraseDestacada: null,
     orden: 0,
     imagenPrincipalUrl: null,
-    audioUrl: null,
-    plantilla: 'estandar',
     estado: true,
     creadoEn: new Date().toISOString()
   });
@@ -101,12 +95,7 @@ export class SeccionFormLiveComponent implements OnInit {
     nombre: ['', [Validators.required, Validators.minLength(2)]],
     subtitulo: [''],
     descripcionBreve: [''],
-    contenidoHistorico: [''],
-    datosCuriosos: [''],
-    personajesRelacionados: [''],
-    periodoHistorico: [''],
-    fraseDestacada: [''],
-    plantilla: ['estandar']
+    periodoHistorico: ['']
   });
 
   get controles() {
@@ -123,12 +112,7 @@ export class SeccionFormLiveComponent implements OnInit {
         nombre: this.seccion.nombre,
         subtitulo: this.seccion.subtitulo ?? '',
         descripcionBreve: this.seccion.descripcionBreve ?? '',
-        contenidoHistorico: this.seccion.contenidoHistorico ?? '',
-        datosCuriosos: this.seccion.datosCuriosos ?? '',
-        personajesRelacionados: this.seccion.personajesRelacionados ?? '',
-        periodoHistorico: this.seccion.periodoHistorico ?? '',
-        fraseDestacada: this.seccion.fraseDestacada ?? '',
-        plantilla: this.seccion.plantilla ?? 'estandar'
+        periodoHistorico: this.seccion.periodoHistorico ?? ''
       });
       this.cargarMultimedia(this.seccion.id);
     }
@@ -155,12 +139,7 @@ export class SeccionFormLiveComponent implements OnInit {
       nombre: v.nombre.trim(),
       subtitulo: v.subtitulo?.trim() || undefined,
       descripcionBreve: v.descripcionBreve?.trim() || undefined,
-      contenidoHistorico: v.contenidoHistorico?.trim() || undefined,
-      datosCuriosos: v.datosCuriosos?.trim() || undefined,
-      personajesRelacionados: v.personajesRelacionados?.trim() || undefined,
-      periodoHistorico: v.periodoHistorico?.trim() || undefined,
-      fraseDestacada: v.fraseDestacada?.trim() || undefined,
-      plantilla: v.plantilla || 'estandar'
+      periodoHistorico: v.periodoHistorico?.trim() || undefined
     };
 
     this.guardando.set(true);
@@ -212,24 +191,8 @@ export class SeccionFormLiveComponent implements OnInit {
     this.inputAudio.nativeElement.click();
   }
 
-  alSeleccionarAudio(evento: Event): void {
-    const input = evento.target as HTMLInputElement;
-    const archivo = input.files?.[0];
-    if (!archivo || !this.seccion) return;
-
-    this.subiendoAudio.set(true);
-    this.servicio.subirAudio(this.seccion.id, archivo)
-      .pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.subiendoAudio.set(false)))
-      .subscribe({
-        next: (sec) => {
-          // Actualizar audioUrl en la seccion local para que el preview lo muestre
-          this.seccion = sec;
-          this.previewSeccion.update(p => ({ ...p, audioUrl: sec.audioUrl }));
-          this.notificar('success', 'Audio subido', 'El audio fue asignado a la seccion.');
-          input.value = '';
-        },
-        error: () => this.notificar('error', 'Error al subir audio', 'Verifica el archivo e intentalo nuevamente.')
-      });
+  alSeleccionarAudio(_evento: Event): void {
+    // Audio ahora se gestiona como bloque en EditorBloquesComponent
   }
 
   // ── Video externo ────────────────────────────────────────
@@ -320,15 +283,9 @@ export class SeccionFormLiveComponent implements OnInit {
       nombre: String(values['nombre'] ?? '').trim() || 'Sin nombre',
       subtitulo: String(values['subtitulo'] ?? '').trim() || null,
       descripcionBreve: String(values['descripcionBreve'] ?? '').trim() || null,
-      contenidoHistorico: String(values['contenidoHistorico'] ?? '').trim() || null,
-      datosCuriosos: String(values['datosCuriosos'] ?? '').trim() || null,
-      personajesRelacionados: String(values['personajesRelacionados'] ?? '').trim() || null,
       periodoHistorico: String(values['periodoHistorico'] ?? '').trim() || null,
-      fraseDestacada: String(values['fraseDestacada'] ?? '').trim() || null,
       orden: this.seccion?.orden ?? 0,
       imagenPrincipalUrl: this.seccion?.imagenPrincipalUrl ?? null,
-      audioUrl: this.seccion?.audioUrl ?? null,
-      plantilla: String(values['plantilla'] ?? 'estandar') || 'estandar',
       estado: this.seccion?.estado ?? true,
       creadoEn: this.seccion?.creadoEn ?? new Date().toISOString()
     };

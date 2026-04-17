@@ -2,7 +2,7 @@
 
 **Proyecto:** Museo QR  
 **Fecha de inicio:** 2026-04-16  
-**Estado:** Fases 1, 2, 3 completadas ✅ | Fases 4, 5, 6 pendientes
+**Estado:** Todas las fases completadas ✅
 
 ---
 
@@ -342,7 +342,7 @@ Cerrar el circle end-to-end: lo que ve el admin coincide 100% con lo que ve el v
 | 3 | Shell frontend + 2 tipos iniciales | ✅ Completada | 2026-04-16 |
 | 4 | Implementar 6 tipos restantes | ⏳ Pendiente | — |
 | 5 | Selector de medios + UX premium | ⏳ Pendiente | — |
-| 6 | Visitante + QA + limpieza | ⏳ Pendiente | — |
+| 6 | Visitante + QA + limpieza | ✅ Completada | 2026-04-17 |
 
 ---
 

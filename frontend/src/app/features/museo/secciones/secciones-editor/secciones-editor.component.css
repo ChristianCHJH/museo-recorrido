@@ -564,3 +564,73 @@
     max-height: none;
   }
 }
+
+/* ── Formulario de creación rápida ─────────────────────── */
+.crear-seccion-shell {
+  padding: 1.5rem 2rem;
+  max-width: 680px;
+}
+
+.crear-seccion-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.75rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,.08);
+}
+
+.crear-seccion-hint {
+  color: #666;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.campo-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.campo-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #333;
+}
+
+.requerido {
+  color: #e53e3e;
+  margin-left: 2px;
+}
+
+.campo-error {
+  color: #e53e3e;
+  font-size: 0.8rem;
+}
+
+.crear-seccion-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.secondary-btn {
+  background: transparent;
+  color: var(--color-primario, #7c5c2e);
+  border: 1px solid var(--color-primario, #7c5c2e);
+  padding: 0.625rem 1.25rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.secondary-btn:hover {
+  background: rgba(124,92,46,.06);
+}

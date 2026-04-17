@@ -8,24 +8,62 @@
   />
 </ng-container>
 
-<!-- Modo crear: mientras no haya seccionParaEditar usa el flujo antiguo via form live desconectado -->
-<!-- En Fase 4 se habilitara la creacion directamente desde el editor de bloques -->
-<ng-container *ngIf="modoLiveEditor() && !seccionParaEditar()">
-  <!-- Temporalmente redirigir a crear seccion -->
-  <div class="p-4">
-    <p style="color: var(--color-primario); font-style: italic;">
-      Para crear una nueva seccion, primero guardala desde el formulario basico.
-      Esta funcionalidad se completara en la Fase 4.
-    </p>
-    <button type="button" class="back-btn" (click)="alCancelarLive()">
-      <i class="pi pi-arrow-left"></i>
-      Volver
-    </button>
+<!-- Formulario de creación rápida antes de abrir el editor de bloques -->
+<ng-container *ngIf="modoCrear()">
+  <div class="crear-seccion-shell">
+    <header class="sec-header" style="margin-bottom:1.5rem">
+      <button type="button" class="back-btn" (click)="cancelarCrear()">
+        <i class="pi pi-arrow-left"></i> Volver
+      </button>
+      <div>
+        <p class="sec-breadcrumb">MUSEO / EXPOSICION / SECCIONES</p>
+        <h2 class="sec-title">Nueva sección</h2>
+      </div>
+    </header>
+
+    <form [formGroup]="formularioCrear" (ngSubmit)="confirmarCrear()" class="crear-seccion-form">
+      <p class="crear-seccion-hint">
+        <i class="pi pi-info-circle"></i>
+        Ingresa los datos básicos. Luego podrás agregar bloques de contenido.
+      </p>
+
+      <div class="campo-grupo">
+        <label class="campo-label">Nombre <span class="requerido">*</span></label>
+        <input pInputText formControlName="nombre" placeholder="Ej: Sala de Cerámicas" class="w-full" />
+        <small class="campo-error" *ngIf="formularioCrear.controls.nombre.invalid && formularioCrear.controls.nombre.touched">
+          El nombre es requerido (mínimo 2 caracteres).
+        </small>
+      </div>
+
+      <div class="campo-grupo">
+        <label class="campo-label">Subtítulo</label>
+        <input pInputText formControlName="subtitulo" placeholder="Ej: Colección siglo XVIII" class="w-full" />
+      </div>
+
+      <div class="campo-grupo">
+        <label class="campo-label">Descripción breve</label>
+        <input pInputText formControlName="descripcionBreve" placeholder="Resumen visible al inicio" class="w-full" />
+      </div>
+
+      <div class="campo-grupo">
+        <label class="campo-label">Período histórico</label>
+        <input pInputText formControlName="periodoHistorico" placeholder="Ej: Siglo XVIII" class="w-full" />
+      </div>
+
+      <div class="crear-seccion-acciones">
+        <button type="button" class="secondary-btn" (click)="cancelarCrear()">Cancelar</button>
+        <button type="submit" class="primary-btn" [disabled]="creando()">
+          <i class="pi pi-spin pi-spinner" *ngIf="creando()"></i>
+          <i class="pi pi-arrow-right" *ngIf="!creando()"></i>
+          {{ creando() ? 'Creando...' : 'Crear y agregar contenido' }}
+        </button>
+      </div>
+    </form>
   </div>
 </ng-container>
 
 <!-- ── Vista lista ──────────────────────────────────────── -->
-<ng-container *ngIf="!modoLiveEditor()">
+<ng-container *ngIf="!modoLiveEditor() && !modoCrear()">
   <section class="sec-shell">
     <header class="sec-header">
       <div class="header-left">
@@ -91,7 +129,6 @@
                     <span class="badge" [class.badge-activo]="sec.estado" [class.badge-inactivo]="!sec.estado">
                       {{ sec.estado ? 'Activo' : 'Inactivo' }}
                     </span>
-                    <span class="badge-audio" *ngIf="sec.audioUrl"><i class="pi pi-volume-up"></i> Audio</span>
                   </div>
                   <div class="sec-actions">
                     <button type="button" class="icon preview" pTooltip="Vista previa" tooltipPosition="top" (click)="abrirPreview(sec)">
@@ -134,23 +171,6 @@
               <i class="pi pi-times"></i>
             </button>
           </div>
-
-          <div class="audio-section">
-            <p class="audio-label"><i class="pi pi-volume-up"></i> Audio narrado</p>
-            <div class="audio-player" *ngIf="seccionMultimedia()?.audioUrl">
-              <audio controls style="width:100%">
-                <source [src]="apiUrl + seccionMultimedia()!.audioUrl" />
-              </audio>
-            </div>
-            <p class="audio-vacio" *ngIf="!seccionMultimedia()?.audioUrl">Sin audio asignado</p>
-            <button type="button" class="ghost-btn small" (click)="seleccionarAudio()" [disabled]="subiendoAudio()">
-              <i class="pi" [class.pi-upload]="!subiendoAudio()" [class.pi-spin]="subiendoAudio()" [class.pi-spinner]="subiendoAudio()"></i>
-              {{ subiendoAudio() ? 'Subiendo...' : (seccionMultimedia()?.audioUrl ? 'Reemplazar audio' : 'Subir audio') }}
-            </button>
-            <input #inputAudio type="file" accept="audio/*" style="display:none" (change)="alSeleccionarAudio($event)" />
-          </div>
-
-          <div class="panel-divider"></div>
 
           <div class="panel-acciones">
             <button type="button" class="primary-btn" (click)="seleccionarArchivo()" [disabled]="subiendoArchivo()">
