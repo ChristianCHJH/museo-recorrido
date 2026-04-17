@@ -1,0 +1,20 @@
+<div class="bloque-texto">
+
+  <ng-container *ngIf="tieneContenido || tieneTitulo; else sinContenido">
+    <h2 *ngIf="tieneTitulo && nivel === 'h2'" class="bloque-titulo">
+      {{ config.titulo!.es }}
+    </h2>
+    <h3 *ngIf="tieneTitulo && nivel === 'h3'" class="bloque-titulo bloque-titulo-h3">
+      {{ config.titulo!.es }}
+    </h3>
+
+    <p *ngIf="tieneContenido" class="bloque-parrafo">
+      {{ config.contenido.es }}
+    </p>
+  </ng-container>
+
+  <ng-template #sinContenido>
+    <p class="bloque-placeholder">Sin contenido</p>
+  </ng-template>
+
+</div>

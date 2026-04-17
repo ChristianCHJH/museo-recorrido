@@ -1,11 +1,27 @@
-<!-- ── Live editor ──────────────────────────────────────── -->
-<ng-container *ngIf="modoLiveEditor()">
-  <spa-seccion-form-live
+<!-- ── Editor de bloques (Fase 3) ────────────────────────── -->
+<ng-container *ngIf="modoLiveEditor() && seccionParaEditar()">
+  <spa-editor-bloques
+    [seccion]="seccionParaEditar()!"
     [exposicionId]="exposicionId"
-    [seccion]="seccionParaEditar()"
     (guardado)="alGuardarLive()"
     (cancelado)="alCancelarLive()"
   />
+</ng-container>
+
+<!-- Modo crear: mientras no haya seccionParaEditar usa el flujo antiguo via form live desconectado -->
+<!-- En Fase 4 se habilitara la creacion directamente desde el editor de bloques -->
+<ng-container *ngIf="modoLiveEditor() && !seccionParaEditar()">
+  <!-- Temporalmente redirigir a crear seccion -->
+  <div class="p-4">
+    <p style="color: var(--color-primario); font-style: italic;">
+      Para crear una nueva seccion, primero guardala desde el formulario basico.
+      Esta funcionalidad se completara en la Fase 4.
+    </p>
+    <button type="button" class="back-btn" (click)="alCancelarLive()">
+      <i class="pi pi-arrow-left"></i>
+      Volver
+    </button>
+  </div>
 </ng-container>
 
 <!-- ── Vista lista ──────────────────────────────────────── -->

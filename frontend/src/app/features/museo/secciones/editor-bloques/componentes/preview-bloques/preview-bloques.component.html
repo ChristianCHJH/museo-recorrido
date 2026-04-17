@@ -1,0 +1,37 @@
+<div class="visita-shell">
+
+  <!-- Header (replica seccion-preview) -->
+  <header class="visita-header">
+    <div class="header-deco"></div>
+    <div class="header-contenido">
+      <p class="visita-eyebrow">Recorrido del Museo</p>
+      <h1 class="visita-titulo">{{ nombreSeccion || 'Vista previa' }}</h1>
+    </div>
+  </header>
+
+  <!-- Contenido dinámico por bloques -->
+  <div class="visita-contenido">
+
+    <ng-container *ngIf="bloquesOrdenados.length === 0">
+      <div class="sin-contenido">
+        <i class="pi pi-image"></i>
+        <p>Esta seccion aun no tiene bloques.</p>
+      </div>
+    </ng-container>
+
+    <ng-container *ngFor="let bloque of bloquesOrdenados">
+      <ng-container *ngIf="esTipoRegistrado(bloque.tipo)">
+        <ng-container
+          *ngComponentOutlet="componentePreviewDe(bloque.tipo); inputs: inputsDe(bloque)" />
+      </ng-container>
+    </ng-container>
+
+  </div>
+
+  <!-- Footer (replica seccion-preview) -->
+  <footer class="visita-footer">
+    <i class="pi pi-building-columns"></i>
+    <span>Museo — Recorrido Virtual</span>
+  </footer>
+
+</div>

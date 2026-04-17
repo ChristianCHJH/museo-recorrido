@@ -1,0 +1,22 @@
+<div class="paleta-shell">
+
+  <p class="paleta-titulo">
+    <i class="pi pi-plus-circle"></i>
+    Agregar bloque
+  </p>
+
+  <div class="paleta-lista">
+    <button
+      *ngFor="let def of tiposDisponibles"
+      type="button"
+      class="paleta-card"
+      (click)="agregarBloque.emit(def.tipo)">
+      <i [class]="def.icono + ' paleta-icono'"></i>
+      <div class="paleta-info">
+        <span class="paleta-label">{{ def.label }}</span>
+        <span class="paleta-desc">{{ def.descripcion }}</span>
+      </div>
+    </button>
+  </div>
+
+</div>

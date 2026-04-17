@@ -29,7 +29,9 @@ import {
   MultimediaServicio
 } from '@features/museo/servicios/multimedia.servicio';
 import { SeccionPreviewComponent } from '../seccion-preview/seccion-preview.component';
-import { SeccionFormLiveComponent } from '../seccion-form-live/seccion-form-live.component';
+// SeccionFormLiveComponent desconectado en Fase 3 — disponible para Fase 4 si se necesita
+// import { SeccionFormLiveComponent } from '../seccion-form-live/seccion-form-live.component';
+import { EditorBloquesComponent } from '../editor-bloques/editor-bloques.component';
 
 @Component({
   selector: 'spa-secciones-editor',
@@ -41,7 +43,7 @@ import { SeccionFormLiveComponent } from '../seccion-form-live/seccion-form-live
     ToastModule,
     ConfirmDialogModule,
     SeccionPreviewComponent,
-    SeccionFormLiveComponent
+    EditorBloquesComponent
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './secciones-editor.component.html',

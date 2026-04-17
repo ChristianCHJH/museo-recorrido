@@ -1,0 +1,15 @@
+<div class="bloque-frase">
+
+  <ng-container *ngIf="tieneTexto; else sinContenido">
+    <blockquote class="frase-destacada">
+      <i class="pi pi-quote-left"></i>
+      <p>{{ config.texto.es }}</p>
+    </blockquote>
+    <p *ngIf="tieneAutor" class="frase-autor">— {{ config.autor!.es }}</p>
+  </ng-container>
+
+  <ng-template #sinContenido>
+    <p class="bloque-placeholder">Sin frase</p>
+  </ng-template>
+
+</div>
