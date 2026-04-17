@@ -4,12 +4,21 @@
     <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
       URL del audio <span class="text-red-500">*</span>
     </label>
-    <input
-      pInputText
-      type="text"
-      formControlName="url"
-      placeholder="https://... o /uploads/..."
-      class="w-full" />
+    <div class="flex gap-2">
+      <input
+        pInputText
+        type="text"
+        formControlName="url"
+        placeholder="https://... o /uploads/..."
+        class="flex-1" />
+      <p-button
+        icon="pi pi-folder-open"
+        severity="info"
+        [outlined]="true"
+        pTooltip="Seleccionar de biblioteca"
+        tooltipPosition="top"
+        (onClick)="selectorVisible.set(true)" />
+    </div>
   </div>
 
   <div class="flex flex-col gap-1">
@@ -36,9 +45,11 @@
       placeholder="Ej: 120" />
   </div>
 
-  <div class="flex items-start gap-2 p-3 rounded-lg text-xs" style="background: #f0f4ff; color: #3b4fa0;">
-    <i class="pi pi-info-circle mt-0.5 flex-shrink-0"></i>
-    <span>En Fase 5 se podrá seleccionar el archivo desde la biblioteca de medios.</span>
-  </div>
-
 </form>
+
+<spa-selector-media
+  [visible]="selectorVisible()"
+  (visibleChange)="selectorVisible.set($event)"
+  tipoFiltrado="audio"
+  modo="uno"
+  (seleccionado)="alSeleccionarDesdeLibreria($event)" />

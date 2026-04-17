@@ -2,8 +2,9 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { TooltipModule } from 'primeng/tooltip';
-import { Bloque } from '../../modelos/bloque.modelo';
-import { REGISTRO_BLOQUES } from '../../registro/registro-bloques';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { Bloque, TipoBloque } from '../../modelos/bloque.modelo';
+import { REGISTRO_BLOQUES, DefinicionBloque } from '../../registro/registro-bloques';
 import { ToolbarBloqueComponent } from '../toolbar-bloque/toolbar-bloque.component';
 import { RendererBloqueComponent } from '../renderer-bloque/renderer-bloque.component';
 
@@ -14,6 +15,7 @@ import { RendererBloqueComponent } from '../renderer-bloque/renderer-bloque.comp
     CommonModule,
     DragDropModule,
     TooltipModule,
+    OverlayPanelModule,
     ToolbarBloqueComponent,
     RendererBloqueComponent
   ],
@@ -24,7 +26,22 @@ export class ListaBloquesComponent {
   @Output() bloquesChange = new EventEmitter<Bloque[]>();
   @Output() eliminarBloque = new EventEmitter<string>();
   @Output() duplicarBloque = new EventEmitter<string>();
-  @Output() agregarEnPosicion = new EventEmitter<number>();
+  @Output() agregarEnPosicion = new EventEmitter<{ posicion: number; tipo: TipoBloque }>();
+
+  readonly tiposDisponibles: DefinicionBloque[] = Object.values(REGISTRO_BLOQUES);
+
+  // Posición pendiente mientras el OverlayPanel está abierto
+  private posicionPendiente = 0;
+
+  abrirMiniPaleta(evento: MouseEvent, posicion: number, op: any): void {
+    this.posicionPendiente = posicion;
+    op.toggle(evento);
+  }
+
+  alElegirTipo(tipo: TipoBloque, op: any): void {
+    op.hide();
+    this.agregarEnPosicion.emit({ posicion: this.posicionPendiente, tipo });
+  }
 
   labelTipo(tipo: string): string {
     return REGISTRO_BLOQUES[tipo]?.label ?? tipo;

@@ -6,7 +6,8 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
-  inject
+  inject,
+  signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -14,7 +15,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
+import { ButtonModule } from 'primeng/button';
 import { ConfigImagenDestacada } from '../../../modelos/bloque.modelo';
+import { SelectorMediaComponent } from '../../selector-media/selector-media.component';
+import { ElementoMedia } from '@features/museo/servicios/biblioteca-media.servicio';
 
 @Component({
   selector: 'spa-imagen-destacada-editor',
@@ -23,7 +27,9 @@ import { ConfigImagenDestacada } from '../../../modelos/bloque.modelo';
     CommonModule,
     ReactiveFormsModule,
     InputTextModule,
-    DropdownModule
+    DropdownModule,
+    ButtonModule,
+    SelectorMediaComponent
   ],
   templateUrl: './imagen-destacada-editor.component.html'
 })
@@ -33,6 +39,8 @@ export class ImagenDestacadaEditorComponent implements OnInit, OnChanges {
 
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+
+  readonly selectorVisible = signal(false);
 
   readonly opcionesAltura = [
     { label: 'Pequeña', value: 'sm' },
@@ -68,6 +76,19 @@ export class ImagenDestacadaEditorComponent implements OnInit, OnChanges {
       captionEs: this.config?.caption?.es ?? '',
       altura: this.config?.altura ?? 'md'
     }, { emitEvent: false });
+  }
+
+  alSeleccionarDesdeLibreria(elemento: ElementoMedia): void {
+    this.formulario.patchValue({ url: elemento.url }, { emitEvent: false });
+    const v = this.formulario.getRawValue();
+    const nueva: ConfigImagenDestacada = {
+      url: elemento.url,
+      altura: v.altura as 'sm' | 'md' | 'lg',
+      elementoMultimediaId: elemento.id
+    };
+    if (v.tituloEs.trim()) nueva.titulo = { es: v.tituloEs };
+    if (v.captionEs.trim()) nueva.caption = { es: v.captionEs };
+    this.configChange.emit(nueva);
   }
 
   private emitirCambio(): void {

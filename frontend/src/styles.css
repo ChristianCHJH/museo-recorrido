@@ -214,6 +214,7 @@ a {
   border: 1px solid rgba(93, 64, 55, 0.1);
   transition: box-shadow 0.2s;
   position: relative;
+  animation: bloque-enter 0.18s ease-out;
 }
 
 .bloque-card:hover {
@@ -347,5 +348,102 @@ a {
   background: #fef3c7;
   padding: 0.6rem 0.85rem;
   border-radius: 6px;
+}
+
+/* ── Selector de medios ─────────────────────────────── */
+.tarjeta-media {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  overflow: hidden;
+}
+
+.tarjeta-media:hover {
+  border-color: var(--color-secundario, #c5b358);
+  box-shadow: 0 2px 8px rgba(93, 64, 55, 0.12);
+}
+
+.tarjeta-media--seleccionada {
+  border-color: var(--color-primario, #5d4037);
+  box-shadow: 0 0 0 1px var(--color-primario, #5d4037);
+}
+
+.tarjeta-media-thumb {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #f3f4f6;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.tarjeta-media-check {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.3rem;
+  background: var(--color-primario, #5d4037);
+  border-radius: 50%;
+  width: 1.4rem;
+  height: 1.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tarjeta-media-nombre {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-texto-oscuro, #3e2723);
+  margin: 0;
+  padding: 0 0.25rem 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes bloque-enter {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Mini-paleta del OverlayPanel ───────────────────── */
+.mini-paleta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 180px;
+}
+
+.mini-paleta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  font-size: 0.84rem;
+  font-weight: 500;
+  color: var(--color-texto-oscuro, #3e2723);
+  transition: background 0.15s;
+  width: 100%;
+}
+
+.mini-paleta-item:hover {
+  background: var(--color-neutro, #f5f0e8);
+  color: var(--color-primario, #5d4037);
+}
+
+.mini-paleta-item i {
+  font-size: 0.9rem;
+  color: var(--color-primario, #5d4037);
+  flex-shrink: 0;
 }
 

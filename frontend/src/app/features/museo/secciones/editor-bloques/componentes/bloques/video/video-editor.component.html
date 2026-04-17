@@ -9,19 +9,31 @@
       [options]="opcionesOrigen"
       optionLabel="label"
       optionValue="value"
-      styleClass="w-full" />
+      styleClass="w-full"
+      (onChange)="alCambiarOrigen($event.value)" />
   </div>
 
   <div class="flex flex-col gap-1">
     <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
       URL del video <span class="text-red-500">*</span>
     </label>
-    <input
-      pInputText
-      type="text"
-      formControlName="url"
-      placeholder="https://www.youtube.com/watch?v=... o /uploads/..."
-      class="w-full" />
+    <div class="flex gap-2">
+      <input
+        pInputText
+        type="text"
+        formControlName="url"
+        placeholder="https://www.youtube.com/watch?v=... o /uploads/..."
+        class="flex-1" />
+      @if (esLocal()) {
+        <p-button
+          icon="pi pi-folder-open"
+          severity="info"
+          [outlined]="true"
+          pTooltip="Seleccionar de biblioteca"
+          tooltipPosition="top"
+          (onClick)="selectorVisible.set(true)" />
+      }
+    </div>
   </div>
 
   <div class="flex flex-col gap-1">
@@ -49,3 +61,10 @@
   </div>
 
 </form>
+
+<spa-selector-media
+  [visible]="selectorVisible()"
+  (visibleChange)="selectorVisible.set($event)"
+  tipoFiltrado="video"
+  modo="uno"
+  (seleccionado)="alSeleccionarDesdeLibreria($event)" />

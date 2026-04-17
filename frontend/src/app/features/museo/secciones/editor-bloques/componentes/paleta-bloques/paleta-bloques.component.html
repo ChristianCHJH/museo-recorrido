@@ -5,9 +5,21 @@
     Agregar bloque
   </p>
 
+  <!-- Búsqueda -->
+  <span class="p-input-icon-left w-full">
+    <i class="pi pi-search"></i>
+    <input
+      pInputText
+      type="text"
+      placeholder="Buscar tipo..."
+      [ngModel]="textoBusqueda()"
+      (ngModelChange)="alBuscar($event)"
+      class="w-full" />
+  </span>
+
   <div class="paleta-lista">
     <button
-      *ngFor="let def of tiposDisponibles"
+      *ngFor="let def of tiposDisponibles()"
       type="button"
       class="paleta-card"
       (click)="agregarBloque.emit(def.tipo)">
@@ -17,6 +29,13 @@
         <span class="paleta-desc">{{ def.descripcion }}</span>
       </div>
     </button>
+
+    <!-- Sin resultados -->
+    @if (tiposDisponibles().length === 0) {
+      <p class="text-xs text-center opacity-50 py-3 m-0" style="color: var(--color-primario)">
+        Sin resultados para "{{ textoBusqueda() }}"
+      </p>
+    }
   </div>
 
 </div>

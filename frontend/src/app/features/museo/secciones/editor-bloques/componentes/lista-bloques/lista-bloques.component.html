@@ -23,7 +23,7 @@
         class="btn-insertar"
         pTooltip="Agregar bloque aqui"
         tooltipPosition="right"
-        (click)="agregarEnPosicion.emit(i)">
+        (click)="abrirMiniPaleta($event, i, op)">
         <i class="pi pi-plus"></i>
       </button>
 
@@ -74,10 +74,24 @@
       class="btn-insertar btn-insertar-final"
       pTooltip="Agregar bloque al final"
       tooltipPosition="right"
-      (click)="agregarEnPosicion.emit(bloques.length)">
+      (click)="abrirMiniPaleta($event, bloques.length, op)">
       <i class="pi pi-plus"></i>
     </button>
 
   </div>
 
 </div>
+
+<!-- OverlayPanel compartido — una sola instancia para todos los botones "+" -->
+<p-overlayPanel #op>
+  <div class="mini-paleta">
+    <button
+      *ngFor="let def of tiposDisponibles"
+      type="button"
+      class="mini-paleta-item"
+      (click)="alElegirTipo(def.tipo, op)">
+      <i [class]="def.icono"></i>
+      <span>{{ def.label }}</span>
+    </button>
+  </div>
+</p-overlayPanel>

@@ -6,7 +6,8 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
-  inject
+  inject,
+  signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -14,7 +15,10 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ButtonModule } from 'primeng/button';
 import { ConfigAudio } from '../../../modelos/bloque.modelo';
+import { SelectorMediaComponent } from '../../selector-media/selector-media.component';
+import { ElementoMedia } from '@features/museo/servicios/biblioteca-media.servicio';
 
 @Component({
   selector: 'spa-audio-editor',
@@ -23,7 +27,9 @@ import { ConfigAudio } from '../../../modelos/bloque.modelo';
     CommonModule,
     ReactiveFormsModule,
     InputTextModule,
-    InputNumberModule
+    InputNumberModule,
+    ButtonModule,
+    SelectorMediaComponent
   ],
   templateUrl: './audio-editor.component.html'
 })
@@ -33,6 +39,8 @@ export class AudioEditorComponent implements OnInit, OnChanges {
 
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+
+  readonly selectorVisible = signal(false);
 
   readonly formulario = this.fb.nonNullable.group({
     url: [''],
@@ -60,6 +68,18 @@ export class AudioEditorComponent implements OnInit, OnChanges {
       etiquetaEs: this.config?.etiqueta?.es ?? '',
       duracion: this.config?.duracion ?? null
     }, { emitEvent: false });
+  }
+
+  alSeleccionarDesdeLibreria(elemento: ElementoMedia): void {
+    this.formulario.patchValue({ url: elemento.url }, { emitEvent: false });
+    const v = this.formulario.getRawValue();
+    const nueva: ConfigAudio = {
+      url: elemento.url,
+      elementoMultimediaId: elemento.id
+    };
+    if (v.etiquetaEs.trim()) nueva.etiqueta = { es: v.etiquetaEs };
+    if (v.duracion !== null && v.duracion !== undefined) nueva.duracion = v.duracion;
+    this.configChange.emit(nueva);
   }
 
   private emitirCambio(): void {

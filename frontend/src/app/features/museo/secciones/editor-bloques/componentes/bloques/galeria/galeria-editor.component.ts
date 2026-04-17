@@ -6,7 +6,8 @@ import {
   OnInit,
   OnChanges,
   SimpleChanges,
-  inject
+  inject,
+  signal
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -16,6 +17,8 @@ import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { ConfigGaleria, ConfigGaleriaItem } from '../../../modelos/bloque.modelo';
+import { SelectorMediaComponent } from '../../selector-media/selector-media.component';
+import { ElementoMedia } from '@features/museo/servicios/biblioteca-media.servicio';
 
 @Component({
   selector: 'spa-galeria-editor',
@@ -25,7 +28,8 @@ import { ConfigGaleria, ConfigGaleriaItem } from '../../../modelos/bloque.modelo
     ReactiveFormsModule,
     InputTextModule,
     DropdownModule,
-    ButtonModule
+    ButtonModule,
+    SelectorMediaComponent
   ],
   templateUrl: './galeria-editor.component.html'
 })
@@ -35,6 +39,8 @@ export class GaleriaEditorComponent implements OnInit, OnChanges {
 
   private readonly fb = inject(FormBuilder);
   private readonly destroyRef = inject(DestroyRef);
+
+  readonly selectorVisible = signal(false);
 
   readonly opcionesDisposicion = [
     { label: 'Cuadrícula', value: 'grid' },
@@ -69,7 +75,8 @@ export class GaleriaEditorComponent implements OnInit, OnChanges {
     return this.fb.nonNullable.group({
       url: [img?.url ?? ''],
       tituloEs: [img?.titulo?.es ?? ''],
-      captionEs: [img?.caption?.es ?? '']
+      captionEs: [img?.caption?.es ?? ''],
+      elementoMultimediaId: [img?.elementoMultimediaId ?? '']
     });
   }
 
@@ -96,6 +103,15 @@ export class GaleriaEditorComponent implements OnInit, OnChanges {
     this.imagenesArray.push(this.crearFilaImagen());
   }
 
+  alSeleccionarDesdeLibreria(elementos: ElementoMedia[]): void {
+    elementos.forEach(el => {
+      this.imagenesArray.push(this.crearFilaImagen({
+        url: el.url,
+        elementoMultimediaId: el.id
+      }));
+    });
+  }
+
   eliminarImagen(index: number): void {
     this.imagenesArray.removeAt(index);
   }
@@ -108,6 +124,7 @@ export class GaleriaEditorComponent implements OnInit, OnChanges {
         const item: ConfigGaleriaItem = { url: img.url };
         if (img.tituloEs?.trim()) item.titulo = { es: img.tituloEs };
         if (img.captionEs?.trim()) item.caption = { es: img.captionEs };
+        if (img.elementoMultimediaId?.trim()) item.elementoMultimediaId = img.elementoMultimediaId;
         return item;
       })
     };

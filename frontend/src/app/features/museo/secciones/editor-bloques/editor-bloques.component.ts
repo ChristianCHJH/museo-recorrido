@@ -94,14 +94,15 @@ export class EditorBloquesComponent implements OnInit {
     this.hayChangesSinGuardar.set(true);
   }
 
-  alAgregarEnPosicion(posicion: number): void {
-    // Agrega el primer tipo disponible en la posicion indicada (usuario elige tipo luego desde paleta)
-    // Por ahora abre la paleta virtualmente insertando un bloque texto en esa posicion
+  alAgregarEnPosicion({ posicion, tipo }: { posicion: number; tipo: TipoBloque }): void {
+    const definicion = REGISTRO_BLOQUES[tipo];
+    if (!definicion) return;
+
     const nuevo: Bloque = {
       id: crypto.randomUUID(),
-      tipo: TipoBloque.TEXTO,
+      tipo,
       orden: posicion + 1,
-      config: structuredClone(REGISTRO_BLOQUES[TipoBloque.TEXTO].defaultConfig),
+      config: structuredClone(definicion.defaultConfig),
       estado: true
     };
 
