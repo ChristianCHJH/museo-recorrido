@@ -45,6 +45,9 @@ export class ElementoMultimediaEntidad extends Model<
   declare urlMiniatura: CreationOptional<string | null>;
 
   @Column({ type: DataType.STRING(200), allowNull: true })
+  declare nombre: CreationOptional<string | null>;
+
+  @Column({ type: DataType.STRING(200), allowNull: true })
   declare titulo: CreationOptional<string | null>;
 
   @Column({ type: DataType.STRING(500), allowNull: true })

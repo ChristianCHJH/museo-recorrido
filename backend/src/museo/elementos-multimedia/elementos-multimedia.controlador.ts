@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
@@ -19,6 +20,11 @@ import {
   CambiarEstadoElementoDto,
   ReordenarMultimediaDto,
 } from './dto/elementos-multimedia.dto';
+import {
+  ActualizarMediaDto,
+  FiltrarMediaDto,
+  SubirArchivoLibreriaDto,
+} from './dto/biblioteca-media.dto';
 import { ArchivoServicio } from '../archivos/archivo.servicio';
 
 @ApiTags('museo/multimedia')
@@ -72,6 +78,50 @@ export class ElementosMultimediaControlador {
   ) {
     return this.servicio.reordenar(seccionId, dto);
   }
+
+  // ─── Biblioteca de medios ────────────────────────────────────────────────────
+  // Estas rutas deben declararse ANTES de las rutas genéricas :id para evitar
+  // que 'biblioteca' sea capturado como parámetro UUID.
+
+  @Get('biblioteca')
+  async obtenerBiblioteca(@Query() filtros: FiltrarMediaDto) {
+    const resultado = await this.servicio.obtenerBiblioteca(filtros);
+    return { datos: resultado, mensaje: 'Biblioteca obtenida correctamente', exito: true };
+  }
+
+  @Post('biblioteca/subir')
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('archivo'))
+  async subirABiblioteca(
+    @UploadedFile() archivo: Express.Multer.File,
+    @Body() dto: SubirArchivoLibreriaDto,
+  ) {
+    const datos = await this.servicio.subirABiblioteca(archivo, dto);
+    return { datos, mensaje: 'Archivo subido a la biblioteca correctamente', exito: true };
+  }
+
+  @Get('biblioteca/:id')
+  async obtenerMediaPorId(@Param('id', ParseUUIDPipe) id: string) {
+    const datos = await this.servicio.obtenerUnoPorId(id);
+    return { datos, mensaje: 'Medio obtenido correctamente', exito: true };
+  }
+
+  @Patch('biblioteca/:id')
+  async actualizarMedia(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: ActualizarMediaDto,
+  ) {
+    const datos = await this.servicio.actualizarMedia(id, dto);
+    return { datos, mensaje: 'Medio actualizado correctamente', exito: true };
+  }
+
+  @Delete('biblioteca/:id')
+  async eliminarMedia(@Param('id', ParseUUIDPipe) id: string) {
+    await this.servicio.eliminarMedia(id);
+    return { datos: null, mensaje: 'Medio eliminado correctamente', exito: true };
+  }
+
+  // ─── Endpoints por elemento individual (rutas genéricas con :id) ─────────────
 
   @Patch(':id')
   actualizar(

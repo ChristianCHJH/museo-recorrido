@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { ElementoMultimediaEntidad } from './entidades/elemento-multimedia.entidad';
 import {
@@ -8,6 +9,13 @@ import {
   CambiarEstadoElementoDto,
   ReordenarMultimediaDto,
 } from './dto/elementos-multimedia.dto';
+import {
+  ActualizarMediaDto,
+  FiltrarMediaDto,
+  ResultadoBibliotecaMedia,
+  SubirArchivoLibreriaDto,
+} from './dto/biblioteca-media.dto';
+import { ArchivoServicio } from '../archivos/archivo.servicio';
 
 @Injectable()
 export class ElementosMultimediaServicio {
@@ -16,6 +24,7 @@ export class ElementosMultimediaServicio {
     private readonly modelo: typeof ElementoMultimediaEntidad,
     @InjectConnection()
     private readonly sequelize: Sequelize,
+    private readonly archivoServicio: ArchivoServicio,
   ) {}
 
   async obtenerPorSeccion(seccionId: string): Promise<ElementoMultimediaEntidad[]> {
@@ -89,6 +98,80 @@ export class ElementosMultimediaServicio {
         );
       }
     });
+  }
+
+  async obtenerBiblioteca(filtros: FiltrarMediaDto): Promise<ResultadoBibliotecaMedia> {
+    const pagina = filtros.pagina ?? 1;
+    const limite = filtros.limite ?? 20;
+    const offset = (pagina - 1) * limite;
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const clausulaWhere: any = { eliminado: false };
+
+    if (filtros.tipo) {
+      clausulaWhere.tipo = filtros.tipo;
+    }
+
+    if (filtros.busqueda) {
+      const patron = `%${filtros.busqueda}%`;
+      clausulaWhere[Op.or] = [
+        { titulo: { [Op.iLike]: patron } },
+        { descripcion: { [Op.iLike]: patron } },
+        { nombre: { [Op.iLike]: patron } },
+      ];
+    }
+
+    const { count, rows } = await this.modelo.findAndCountAll({
+      where: clausulaWhere,
+      order: [['creadoEn', 'DESC']],
+      limit: limite,
+      offset,
+    });
+
+    return { items: rows, total: count, pagina, limite };
+  }
+
+  async obtenerUnoPorId(id: string): Promise<ElementoMultimediaEntidad> {
+    const elemento = await this.modelo.findOne({ where: { id, eliminado: false } });
+    if (!elemento) {
+      throw new NotFoundException(`Medio con id ${id} no encontrado`);
+    }
+    return elemento;
+  }
+
+  async actualizarMedia(id: string, dto: ActualizarMediaDto): Promise<ElementoMultimediaEntidad> {
+    const elemento = await this.obtenerUnoPorId(id);
+    return elemento.update({ ...dto, actualizadoEn: new Date() } as any);
+  }
+
+  async eliminarMedia(id: string): Promise<void> {
+    const elemento = await this.obtenerUnoPorId(id);
+    await elemento.update({ eliminado: true });
+  }
+
+  async subirABiblioteca(
+    archivo: Express.Multer.File,
+    dto: SubirArchivoLibreriaDto,
+  ): Promise<ElementoMultimediaEntidad> {
+    const { url, pesoBytes } = await this.archivoServicio.guardar(archivo, 'multimedia', 'biblioteca');
+    const tipo = this.detectarTipoDesdeArchivo(archivo.mimetype);
+
+    return this.modelo.create({
+      seccionId: null,
+      tipo,
+      url,
+      pesoBytes,
+      nombre: dto.nombre ?? null,
+      descripcion: dto.descripcion ?? null,
+      esPublico: dto.esPublico ?? true,
+    } as any);
+  }
+
+  private detectarTipoDesdeArchivo(mimetype: string): string {
+    if (mimetype.startsWith('image/')) return 'imagen';
+    if (mimetype.startsWith('audio/')) return 'audio';
+    if (mimetype.startsWith('video/')) return 'video_local';
+    return 'imagen';
   }
 
   private detectarTipoVideoExterno(url: string): string {
