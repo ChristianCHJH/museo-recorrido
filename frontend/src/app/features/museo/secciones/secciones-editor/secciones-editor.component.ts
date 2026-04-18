@@ -239,8 +239,23 @@ export class SeccionesEditorComponent implements OnInit {
     this.qrVista.set(null);
   }
 
-  descargarQrUrl(qrId: string): string {
-    return this.servicioQr.descargarUrl(qrId);
+  descargarQr(qrId: string): void {
+    this.servicioQr
+      .descargarQr(qrId)
+      .pipe(takeUntilDestroyed(this.destruirRef))
+      .subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `qr-${qrId}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        },
+        error: () => this.notificar('error', 'Error al descargar', 'No se pudo descargar el QR.')
+      });
   }
 
   imagenQrUrl(qr: any): string | null {

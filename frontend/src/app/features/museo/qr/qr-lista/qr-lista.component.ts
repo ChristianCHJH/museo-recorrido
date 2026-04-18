@@ -179,8 +179,23 @@ export class QrListaComponent implements OnInit {
     });
   }
 
-  descargarUrl(qr: CodigoQr): string {
-    return this.servicio.descargarUrl(qr.id);
+  descargar(qr: CodigoQr): void {
+    this.servicio
+      .descargarQr(qr.id)
+      .pipe(takeUntilDestroyed(this.destruirRef))
+      .subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${qr.nombreDescriptivo}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        },
+        error: () => this.notificar('error', 'Error al descargar', 'No se pudo descargar el QR.')
+      });
   }
 
   imagenQrUrl(qr: CodigoQr): string | null {

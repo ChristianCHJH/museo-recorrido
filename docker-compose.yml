@@ -28,8 +28,6 @@ services:
       - museo-logs-backend:/app/logs
       # Volumen anónimo para node_modules (mejor performance en Docker)
       - /app/node_modules
-    depends_on:
-      - frontend
     networks:
       - museo-network
     healthcheck:
@@ -53,6 +51,8 @@ services:
       - museo-frontend-cache:/app/.angular
       # Volumen anónimo para node_modules
       - /app/node_modules
+    depends_on:
+      - backend
     networks:
       - museo-network
     healthcheck:

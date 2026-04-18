@@ -241,10 +241,10 @@
         </div>
       </div>
       <div class="qr-acciones">
-        <a [href]="descargarQrUrl(qrVista().id)" target="_blank" class="primary-btn">
+        <button type="button" (click)="descargarQr(qrVista().id)" class="primary-btn">
           <i class="pi pi-download"></i>
           Descargar QR
-        </a>
+        </button>
       </div>
     </div>
   </p-dialog>

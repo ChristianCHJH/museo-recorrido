@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { HttpBaseService } from '@core/services/http-base.service';
 import { environment } from '@env/environment';
 
@@ -29,6 +30,7 @@ export interface CrearQrDto {
 @Injectable({ providedIn: 'root' })
 export class CodigosQrServicio {
   private readonly http = inject(HttpBaseService);
+  private readonly httpClient = inject(HttpClient);
   private readonly baseUrl = `${environment.apiUrl.replace(/\/$/, '')}/api`;
 
   obtenerTodos(): Observable<CodigoQr[]> {
@@ -56,7 +58,9 @@ export class CodigosQrServicio {
     return this.http.delete<void>(`api/museo/qr/${id}`);
   }
 
-  descargarUrl(id: string): string {
-    return `${this.baseUrl}/museo/qr/${id}/descargar`;
+  descargarQr(id: string): Observable<Blob> {
+    return this.httpClient.get(`${this.baseUrl}/museo/qr/${id}/descargar`, {
+      responseType: 'blob'
+    });
   }
 }

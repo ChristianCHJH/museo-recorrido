@@ -56,16 +56,16 @@
                   <span class="text-muted" *ngIf="!imagenQrUrl(qr)">Sin imagen</span>
                 </td>
                 <td class="row-actions">
-                  <a
-                    [href]="descargarUrl(qr)"
-                    target="_blank"
+                  <button
+                    type="button"
                     class="icon"
                     pTooltip="Descargar QR"
                     tooltipPosition="top"
+                    (click)="descargar(qr)"
                     *ngIf="qr.imagenQrUrl"
                   >
                     <i class="pi pi-download"></i>
-                  </a>
+                  </button>
                   <button
                     type="button"
                     class="icon"
