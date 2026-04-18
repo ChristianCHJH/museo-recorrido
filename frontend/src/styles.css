@@ -215,6 +215,10 @@ a {
   transition: box-shadow 0.2s;
   position: relative;
   animation: bloque-enter 0.18s ease-out;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .bloque-card:hover {
@@ -265,6 +269,8 @@ a {
 
 .bloque-card-content {
   padding: 1rem 0.85rem;
+  overflow-x: auto;
+  min-width: 0;
 }
 
 .drag-placeholder {

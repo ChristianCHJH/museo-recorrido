@@ -62,7 +62,8 @@
               "buildTarget": "proyecto_spa_bk:build:production"
             },
             "development": {
-              "buildTarget": "proyecto_spa_bk:build:development"
+              "buildTarget": "proyecto_spa_bk:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

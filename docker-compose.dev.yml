@@ -53,6 +53,8 @@ services:
     volumes:
       # Bind mount del código fuente (para desarrollo)
       - ./frontend/src:/app/src
+      # Proxy config (para evitar rebuild al cambiar rutas)
+      - ./frontend/proxy.conf.json:/app/proxy.conf.json
       # Volumen anónimo para node_modules y caché Angular (efímero, evita cache stale en Windows)
       - /app/node_modules
       - /app/.angular
