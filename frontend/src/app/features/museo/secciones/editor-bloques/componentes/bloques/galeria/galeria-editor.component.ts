@@ -20,6 +20,7 @@ import { ButtonModule } from 'primeng/button';
 import { ConfigGaleria, ConfigGaleriaItem } from '../../../modelos/bloque.modelo';
 import { SelectorMediaComponent } from '../../selector-media/selector-media.component';
 import { ElementoMedia } from '@features/museo/servicios/biblioteca-media.servicio';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'spa-galeria-editor',
@@ -130,6 +131,7 @@ export class GaleriaEditorComponent implements OnInit, OnChanges {
         }
       });
       this.currentImageIndex.set(null);
+      this.emitirCambio();
     } else {
       // Agregar nuevas imágenes
       elementos.forEach(el => {
@@ -143,6 +145,11 @@ export class GaleriaEditorComponent implements OnInit, OnChanges {
 
   eliminarImagen(index: number): void {
     this.imagenesArray.removeAt(index);
+  }
+
+  urlCompleta(url: string): string {
+    if (!url) return '';
+    return url.startsWith('http') ? url : `${environment.apiUrl}${url}`;
   }
 
   private emitirCambio(): void {

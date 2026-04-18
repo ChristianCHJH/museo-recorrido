@@ -4,8 +4,8 @@
     <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
       Imagen <span class="text-red-500">*</span>
     </label>
-    @if (formulario.get('url')?.value) {
-      <img [src]="formulario.get('url')?.value" alt="Miniatura" style="max-height:200px; width:auto; border-radius:4px; object-fit:contain;">
+    @if (formulario.get('url')?.value; as url) {
+      <img [src]="urlCompleta(url)" alt="Miniatura" style="max-height:200px; width:auto; border-radius:4px; object-fit:contain;">
     }
     <p-button
       label="Seleccionar de biblioteca"

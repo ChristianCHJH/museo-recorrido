@@ -47,8 +47,8 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        @if (item.get('url')?.value) {
-          <img [src]="item.get('url')?.value" alt="Miniatura" style="max-height:120px; width:auto; border-radius:4px; object-fit:contain;">
+        @if (item.get('url')?.value; as url) {
+          <img [src]="urlCompleta(url)" alt="Miniatura" style="max-height:120px; width:auto; border-radius:4px; object-fit:contain;">
         }
         <p-button
           label="Imagen"

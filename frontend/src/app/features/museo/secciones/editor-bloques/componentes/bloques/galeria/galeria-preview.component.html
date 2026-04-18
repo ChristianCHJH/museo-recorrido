@@ -6,7 +6,7 @@
       [ngClass]="{ 'galeria-carrusel': config.disposicion === 'carrusel' }">
       <div class="media-item" *ngFor="let img of config.imagenes">
         <img
-          [src]="img.url"
+          [src]="urlCompleta(img.url)"
           [alt]="img.titulo?.es || 'Imagen'"
           class="media-imagen"
           loading="lazy" />

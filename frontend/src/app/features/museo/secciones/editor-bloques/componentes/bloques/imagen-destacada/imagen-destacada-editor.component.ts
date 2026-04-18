@@ -20,6 +20,7 @@ import { ButtonModule } from 'primeng/button';
 import { ConfigImagenDestacada } from '../../../modelos/bloque.modelo';
 import { SelectorMediaComponent } from '../../selector-media/selector-media.component';
 import { ElementoMedia } from '@features/museo/servicios/biblioteca-media.servicio';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'spa-imagen-destacada-editor',
@@ -82,15 +83,12 @@ export class ImagenDestacadaEditorComponent implements OnInit, OnChanges {
 
   alSeleccionarDesdeLibreria(elemento: ElementoMedia): void {
     this.formulario.patchValue({ url: elemento.url }, { emitEvent: false });
-    const v = this.formulario.getRawValue();
-    const nueva: ConfigImagenDestacada = {
-      url: elemento.url,
-      altura: v.altura as 'sm' | 'md' | 'lg',
-      elementoMultimediaId: elemento.id
-    };
-    if (v.tituloEs.trim()) nueva.titulo = { es: v.tituloEs };
-    if (v.captionEs.trim()) nueva.caption = { es: v.captionEs };
-    this.configChange.emit(nueva);
+    this.emitirCambio();
+  }
+
+  urlCompleta(url: string): string {
+    if (!url) return '';
+    return url.startsWith('http') ? url : `${environment.apiUrl}${url}`;
   }
 
   private emitirCambio(): void {

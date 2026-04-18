@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfigGaleria } from '../../../modelos/bloque.modelo';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'spa-galeria-preview',
@@ -25,5 +26,10 @@ export class GaleriaPreviewComponent {
 
   get tieneImagenes(): boolean {
     return !!(this.config?.imagenes?.length);
+  }
+
+  urlCompleta(url: string): string {
+    if (!url) return '';
+    return url.startsWith('http') ? url : `${environment.apiUrl}${url}`;
   }
 }

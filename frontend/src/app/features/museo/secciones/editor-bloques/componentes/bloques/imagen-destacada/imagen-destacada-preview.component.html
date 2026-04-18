@@ -1,7 +1,7 @@
 <ng-container *ngIf="tieneUrl; else sinImagen">
   <div class="media-item">
     <img
-      [src]="config.url"
+      [src]="urlCompleta(config.url)"
       [alt]="config.titulo?.es || 'Imagen'"
       class="imagen-destacada"
       [ngClass]="alturaClase"

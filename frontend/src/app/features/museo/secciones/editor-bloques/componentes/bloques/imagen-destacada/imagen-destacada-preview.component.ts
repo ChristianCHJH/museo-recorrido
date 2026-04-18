@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfigImagenDestacada } from '../../../modelos/bloque.modelo';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'spa-imagen-destacada-preview',
@@ -32,5 +33,10 @@ export class ImagenDestacadaPreviewComponent {
 
   get alturaClase(): string {
     return 'altura-' + (this.config?.altura ?? 'md');
+  }
+
+  urlCompleta(url: string): string {
+    if (!url) return '';
+    return url.startsWith('http') ? url : `${environment.apiUrl}${url}`;
   }
 }

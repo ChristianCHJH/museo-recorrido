@@ -74,14 +74,7 @@ export class AudioEditorComponent implements OnInit, OnChanges {
 
   alSeleccionarDesdeLibreria(elemento: ElementoMedia): void {
     this.formulario.patchValue({ url: elemento.url }, { emitEvent: false });
-    const v = this.formulario.getRawValue();
-    const nueva: ConfigAudio = {
-      url: elemento.url,
-      elementoMultimediaId: elemento.id
-    };
-    if (v.etiquetaEs.trim()) nueva.etiqueta = { es: v.etiquetaEs };
-    if (v.duracion !== null && v.duracion !== undefined) nueva.duracion = v.duracion;
-    this.configChange.emit(nueva);
+    this.emitirCambio();
   }
 
   private emitirCambio(): void {
