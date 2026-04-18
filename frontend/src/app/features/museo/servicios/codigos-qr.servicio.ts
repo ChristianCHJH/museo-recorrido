@@ -24,7 +24,7 @@ export interface SeccionDisponible {
 
 export interface CrearQrDto {
   nombreDescriptivo: string;
-  seccionId?: string;
+  seccionId?: string | null;
 }
 
 @Injectable({ providedIn: 'root' })

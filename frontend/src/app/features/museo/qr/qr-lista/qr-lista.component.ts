@@ -104,7 +104,7 @@ export class QrListaComponent implements OnInit {
     const valores = this.formulario.getRawValue();
     const dto: CrearQrDto = {
       nombreDescriptivo: valores.nombreDescriptivo.trim(),
-      seccionId: valores.seccionId?.trim() || undefined
+      seccionId: valores.seccionId?.trim() || null
     };
 
     this.guardando.set(true);
