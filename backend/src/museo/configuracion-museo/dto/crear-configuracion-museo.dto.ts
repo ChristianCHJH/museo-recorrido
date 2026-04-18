@@ -78,7 +78,7 @@ export class CrearConfiguracionMuseoDto {
 
   @ApiPropertyOptional({
     description: 'Duración de la sesión de visita en minutos',
-    example: 120,
+    example: 15,
   })
   @IsOptional()
   @IsInt()

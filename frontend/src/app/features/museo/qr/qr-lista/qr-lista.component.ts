@@ -202,6 +202,29 @@ export class QrListaComponent implements OnInit {
       });
   }
 
+  regenerarQr(qr: CodigoQr): void {
+    this.servicioConfirmacion.confirm({
+      message: `Deseas regenerar el codigo QR de "${qr.nombreDescriptivo}"? Se generara un nuevo codigo y la imagen anterior dejara de funcionar.`,
+      header: 'Regenerar codigo QR',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Si, regenerar',
+      rejectLabel: 'Cancelar',
+      defaultFocus: 'reject',
+      accept: () => {
+        this.servicio
+          .regenerar(qr.id)
+          .pipe(takeUntilDestroyed(this.destruirRef))
+          .subscribe({
+            next: () => {
+              this.cargar();
+              this.notificar('success', 'QR regenerado', `Se genero un nuevo codigo para "${qr.nombreDescriptivo}".`);
+            },
+            error: () => this.notificar('error', 'Error al regenerar', 'No se pudo regenerar el QR. Intentalo nuevamente.')
+          });
+      }
+    });
+  }
+
   imagenQrUrl(qr: CodigoQr): string | null {
     if (!qr.imagenQrUrl) return null;
     return `${this.apiBase}${qr.imagenQrUrl}`;

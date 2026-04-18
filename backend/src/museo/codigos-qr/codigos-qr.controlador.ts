@@ -76,4 +76,9 @@ export class CodigosQrControlador {
   eliminar(@Param('id', ParseUUIDPipe) id: string) {
     return this.servicio.eliminar(id);
   }
+
+  @Post(':id/regenerar')
+  regenerar(@Param('id', ParseUUIDPipe) id: string) {
+    return this.servicio.regenerar(id);
+  }
 }

@@ -2,6 +2,8 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpBaseService } from '@core/services/http-base.service';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '@env/environment';
 import { Bloque } from '../modelos/bloque.modelo';
 
 interface RespuestaApi<T> {
@@ -13,9 +15,17 @@ interface RespuestaApi<T> {
 @Injectable({ providedIn: 'root' })
 export class BloquesServicio {
   private readonly http = inject(HttpBaseService);
+  private readonly httpClient = inject(HttpClient);
+  private readonly baseUrl = `${environment.apiUrl.replace(/\/$/, '')}/api`;
 
   obtenerPorSeccion(seccionId: string): Observable<Bloque[]> {
     return this.http.get<RespuestaApi<Bloque[]>>(`api/museo/secciones/${seccionId}/bloques`).pipe(map(r => r.datos));
+  }
+
+  obtenerPorSeccionPublico(seccionId: string, token: string): Observable<Bloque[]> {
+    return this.httpClient.get<RespuestaApi<Bloque[]>>(`${this.baseUrl}/museo/secciones/${seccionId}/bloques-publico`, {
+      headers: { 'X-Visita-Token': token }
+    }).pipe(map(r => r.datos));
   }
 
   guardarLote(seccionId: string, bloques: Bloque[]): Observable<Bloque[]> {

@@ -3,14 +3,18 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
   Put,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiHeader, ApiTags } from '@nestjs/swagger';
 import { SeccionesBloquesServicio } from './secciones-bloques.servicio';
+import { SesionesVisitaServicio } from '../sesiones-visita/sesiones-visita.servicio';
+import { Publica } from '../../autenticacion/autenticacion/decoradores/publica.decorador';
 import {
   ActualizarBloqueDto,
   BloqueDto,
@@ -22,10 +26,26 @@ import {
 @ApiBearerAuth()
 @Controller('museo/secciones')
 export class SeccionesBloquesControlador {
-  constructor(private readonly servicio: SeccionesBloquesServicio) {}
+  constructor(
+    private readonly servicio: SeccionesBloquesServicio,
+    private readonly sesionesServicio: SesionesVisitaServicio,
+  ) {}
 
   @Get(':id/bloques')
   async obtenerBloques(@Param('id', ParseUUIDPipe) id: string) {
+    const datos = await this.servicio.obtenerPorSeccion(id);
+    return { datos, mensaje: 'Bloques obtenidos correctamente', exito: true };
+  }
+
+  @Get(':id/bloques-publico')
+  @Publica()
+  @ApiHeader({ name: 'X-Visita-Token', description: 'Token de sesión de visita', required: true })
+  async obtenerBloquesPublico(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Headers('x-visita-token') token: string,
+  ) {
+    if (!token) throw new UnauthorizedException('Token de visita requerido');
+    await this.sesionesServicio.verificarToken(token);
     const datos = await this.servicio.obtenerPorSeccion(id);
     return { datos, mensaje: 'Bloques obtenidos correctamente', exito: true };
   }

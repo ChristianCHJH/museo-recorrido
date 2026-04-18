@@ -66,8 +66,13 @@ export class SeccionVisitanteComponent implements OnInit {
   }
 
   private cargarBloques(seccionId: string): void {
+    const token = this.sesionesServicio.obtenerToken();
+    if (!token) {
+      return;
+    }
+
     this.bloquesServicio
-      .obtenerPorSeccion(seccionId)
+      .obtenerPorSeccionPublico(seccionId, token)
       .pipe(takeUntilDestroyed(this.destruirRef))
       .subscribe({
         next: (lista) => this.bloques.set(lista),

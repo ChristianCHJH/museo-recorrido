@@ -69,6 +69,17 @@ export class CodigosQrServicio {
     await qr.update({ eliminado: true });
   }
 
+  async regenerar(id: string): Promise<CodigoQrEntidad> {
+    const qr = await this.obtenerPorId(id);
+    const nuevosCodigo = uuidv4();
+    const nuevaImagenUrl = await this.generarImagenQr(nuevosCodigo);
+    return qr.update({
+      codigo: nuevosCodigo,
+      imagenQrUrl: nuevaImagenUrl,
+      actualizadoEn: new Date(),
+    });
+  }
+
   async obtenerImagenQr(id: string): Promise<{ buffer: Buffer; nombre: string }> {
     const qr = await this.obtenerPorId(id);
     if (!qr.imagenQrUrl) throw new NotFoundException('El QR no tiene imagen generada');

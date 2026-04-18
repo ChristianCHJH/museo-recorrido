@@ -63,4 +63,8 @@ export class CodigosQrServicio {
       responseType: 'blob'
     });
   }
+
+  regenerar(id: string): Observable<CodigoQr> {
+    return this.http.post<CodigoQr>(`api/museo/qr/${id}/regenerar`, {});
+  }
 }

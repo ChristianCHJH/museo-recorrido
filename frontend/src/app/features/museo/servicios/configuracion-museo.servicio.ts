@@ -10,6 +10,7 @@ export interface ConfiguracionMuseo {
   colorPrimario: string | null;
   colorSecundario: string | null;
   tipografiaUrl: string | null;
+  duracionSesionVisitaMinutos: number;
 }
 
 @Injectable({ providedIn: 'root' })
