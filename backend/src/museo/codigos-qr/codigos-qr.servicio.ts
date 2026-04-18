@@ -100,12 +100,14 @@ export class CodigosQrServicio {
       .map(q => q.seccionId)
       .filter((id): id is string => id !== null);
 
+    const whereCondition: any = { eliminado: false };
+    if (ocupadosIds.length > 0) {
+      whereCondition.id = { [Op.notIn]: ocupadosIds };
+    }
+
     return this.modeloSeccion.findAll({
       attributes: ['id', 'nombre', 'subtitulo'],
-      where: {
-        eliminado: false,
-        id: { [Op.notIn]: ocupadosIds.length > 0 ? ocupadosIds : [''] },
-      },
+      where: whereCondition,
       order: [['nombre', 'ASC']],
       raw: true,
     });
