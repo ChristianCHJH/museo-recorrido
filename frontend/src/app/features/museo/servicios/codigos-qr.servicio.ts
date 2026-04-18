@@ -10,7 +10,7 @@ export interface CodigoQr {
   nombreDescriptivo: string;
   imagenQrUrl: string | null;
   seccionId: string | null;
-  seccion?: { id: string; nombre: string } | null;
+  seccion?: { id: string; nombre: string; subtitulo: string | null } | null;
   activo: boolean;
   totalEscaneos: number;
   creadoEn: string;

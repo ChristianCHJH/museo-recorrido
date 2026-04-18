@@ -159,19 +159,32 @@
     </div>
 
     <div class="field">
-      <label for="seccionId">Sección del recorrido (opcional)</label>
-      <select
-        id="seccionId"
-        class="input-text"
-        formControlName="seccionId"
-        [disabled]="cargandoSecciones()"
-      >
-        <option value="">Sin sección asignada</option>
-        <option *ngFor="let seccion of seccionesDisponibles()" [value]="seccion.id">
-          {{ seccion.nombre }}{{ seccion.subtitulo ? ' — ' + seccion.subtitulo : '' }}
-        </option>
-      </select>
-      <small class="field-hint">Deja vacío para crear un QR sin sección asignada.</small>
+      <label>Sección del recorrido (opcional)</label>
+      <ng-container *ngIf="modoFormulario() === 'editar' && qrSeleccionado()?.seccionId">
+        <div class="seccion-vinculada">
+          <div class="seccion-info">
+            <span class="seccion-nombre">{{ qrSeleccionado()?.seccion?.nombre }}</span>
+            <small class="text-muted">{{ qrSeleccionado()?.seccion?.subtitulo }}</small>
+          </div>
+          <button type="button" class="ghost-btn" (click)="desvincularSeccion()">
+            <i class="pi pi-times"></i> Desvincular
+          </button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="modoFormulario() === 'crear' || !qrSeleccionado()?.seccionId">
+        <select
+          id="seccionId"
+          class="input-text"
+          formControlName="seccionId"
+          [disabled]="cargandoSecciones()"
+        >
+          <option value="">Sin sección asignada</option>
+          <option *ngFor="let seccion of seccionesDisponibles()" [value]="seccion.id">
+            {{ seccion.nombre }}{{ seccion.subtitulo ? ' — ' + seccion.subtitulo : '' }}
+          </option>
+        </select>
+        <small class="field-hint">Deja vacío para crear un QR sin sección asignada.</small>
+      </ng-container>
     </div>
 
     <p class="form-error" *ngIf="errorFormulario()">{{ errorFormulario() }}</p>

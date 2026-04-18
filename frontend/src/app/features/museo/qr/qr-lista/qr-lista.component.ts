@@ -92,6 +92,10 @@ export class QrListaComponent implements OnInit {
     this.formularioVisible.set(false);
   }
 
+  desvincularSeccion(): void {
+    this.formulario.patchValue({ seccionId: '' });
+  }
+
   guardar(): void {
     if (this.formulario.invalid) {
       this.formulario.markAllAsTouched();
