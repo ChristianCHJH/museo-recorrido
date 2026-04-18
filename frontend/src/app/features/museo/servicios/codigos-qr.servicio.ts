@@ -9,9 +9,16 @@ export interface CodigoQr {
   nombreDescriptivo: string;
   imagenQrUrl: string | null;
   seccionId: string | null;
+  seccion?: { id: string; nombre: string } | null;
   activo: boolean;
   totalEscaneos: number;
   creadoEn: string;
+}
+
+export interface SeccionDisponible {
+  id: string;
+  nombre: string;
+  subtitulo: string | null;
 }
 
 export interface CrearQrDto {
@@ -26,6 +33,11 @@ export class CodigosQrServicio {
 
   obtenerTodos(): Observable<CodigoQr[]> {
     return this.http.get<CodigoQr[]>('api/museo/qr');
+  }
+
+  obtenerSeccionesDisponibles(excluirQrId?: string): Observable<SeccionDisponible[]> {
+    const options = excluirQrId ? { params: { excluirQrId } } : {};
+    return this.http.get<SeccionDisponible[]>('api/museo/qr/secciones-disponibles', options);
   }
 
   crear(dto: CrearQrDto): Observable<CodigoQr> {

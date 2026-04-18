@@ -136,6 +136,13 @@
                   </div>
                 </div>
                 <p class="sec-descripcion" *ngIf="sec.descripcionBreve">{{ sec.descripcionBreve }}</p>
+                <div class="sec-qr-info" *ngIf="sec.codigoQr || !sec.codigoQr">
+                  <div *ngIf="sec.codigoQr" class="sec-qr-badge" (click)="abrirVistaQr(sec.codigoQr)" role="button" tabindex="0">
+                    <i class="pi pi-qrcode"></i>
+                    <span>{{ sec.codigoQr.nombreDescriptivo }}</span>
+                  </div>
+                  <span *ngIf="!sec.codigoQr" class="sec-qr-ninguno">Sin QR</span>
+                </div>
               </div>
 
               <div class="state-card" *ngIf="secciones().length === 0">
@@ -195,6 +202,49 @@
             [bloques]="bloquesPreview()"
           />
         </div>
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- Dialog Vista QR -->
+  <p-dialog
+    [visible]="qrVistaVisible()"
+    (visibleChange)="qrVistaVisible.set($event)"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '400px', maxWidth: '95vw' }"
+    [dismissableMask]="true"
+    (onHide)="cerrarVistaQr()"
+  >
+    <ng-template pTemplate="header">
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <i class="pi pi-qrcode"></i>
+        <span>{{ qrVista()?.nombreDescriptivo }}</span>
+      </div>
+    </ng-template>
+
+    <div class="qr-vista-content" *ngIf="qrVista()">
+      <div class="qr-imagen" *ngIf="imagenQrUrl(qrVista())">
+        <img [src]="imagenQrUrl(qrVista())" [alt]="'QR ' + qrVista().nombreDescriptivo" />
+      </div>
+      <div class="qr-detalles">
+        <div class="qr-campo">
+          <label>Código</label>
+          <code>{{ qrVista().codigo }}</code>
+        </div>
+        <div class="qr-campo">
+          <label>Estado</label>
+          <span class="badge" [class.badge-activo]="qrVista().activo" [class.badge-inactivo]="!qrVista().activo">
+            {{ qrVista().activo ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+      </div>
+      <div class="qr-acciones">
+        <a [href]="descargarQrUrl(qrVista().id)" target="_blank" class="primary-btn">
+          <i class="pi pi-download"></i>
+          Descargar QR
+        </a>
       </div>
     </div>
   </p-dialog>

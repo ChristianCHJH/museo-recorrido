@@ -18,6 +18,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import {
   CodigoQr,
   CrearQrDto,
+  SeccionDisponible,
   CodigosQrServicio
 } from '@features/museo/servicios/codigos-qr.servicio';
 
@@ -51,6 +52,8 @@ export class QrListaComponent implements OnInit {
   readonly qrSeleccionado = signal<CodigoQr | null>(null);
   readonly guardando = signal(false);
   readonly errorFormulario = signal<string | null>(null);
+  readonly seccionesDisponibles = signal<SeccionDisponible[]>([]);
+  readonly cargandoSecciones = signal(false);
 
   readonly formulario = this.fb.nonNullable.group({
     nombreDescriptivo: ['', [Validators.required, Validators.minLength(2)]],
@@ -69,6 +72,7 @@ export class QrListaComponent implements OnInit {
     this.errorFormulario.set(null);
     this.formulario.reset({ nombreDescriptivo: '', seccionId: '' });
     this.formularioVisible.set(true);
+    this.cargarSeccionesDisponibles();
   }
 
   abrirEditar(qr: CodigoQr): void {
@@ -80,6 +84,7 @@ export class QrListaComponent implements OnInit {
       seccionId: qr.seccionId ?? ''
     });
     this.formularioVisible.set(true);
+    this.cargarSeccionesDisponibles(qr.id);
   }
 
   cerrarFormulario(): void {
@@ -203,6 +208,23 @@ export class QrListaComponent implements OnInit {
       .subscribe({
         next: (lista) => this.codigos.set(lista),
         error: () => this.error.set('No se pudieron cargar los codigos QR. Intentalo nuevamente.')
+      });
+  }
+
+  private cargarSeccionesDisponibles(excluirQrId?: string): void {
+    this.cargandoSecciones.set(true);
+    this.servicio
+      .obtenerSeccionesDisponibles(excluirQrId)
+      .pipe(takeUntilDestroyed(this.destruirRef))
+      .subscribe({
+        next: (secciones) => {
+          this.seccionesDisponibles.set(secciones);
+          this.cargandoSecciones.set(false);
+        },
+        error: () => {
+          this.seccionesDisponibles.set([]);
+          this.cargandoSecciones.set(false);
+        }
       });
   }
 

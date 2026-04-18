@@ -16,6 +16,7 @@ export interface SeccionRecorrido {
   estado: boolean;
   creadoEn: string;
   bloques?: import('@features/museo/secciones/editor-bloques/modelos/bloque.modelo').Bloque[];
+  codigoQr?: { id: string; nombreDescriptivo: string; codigo: string; activo: boolean; imagenQrUrl: string | null } | null;
 }
 
 export interface CrearSeccionDto {

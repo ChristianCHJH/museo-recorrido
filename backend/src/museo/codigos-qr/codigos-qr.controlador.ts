@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   Res,
 } from '@nestjs/common';
 import { Response } from 'express';
@@ -23,6 +24,11 @@ export class CodigosQrControlador {
   @Get()
   obtenerTodos() {
     return this.servicio.obtenerTodos();
+  }
+
+  @Get('secciones-disponibles')
+  obtenerSeccionesDisponibles(@Query('excluirQrId') excluirQrId?: string) {
+    return this.servicio.obtenerSeccionesDisponibles(excluirQrId);
   }
 
   @Get('estadisticas/:id')

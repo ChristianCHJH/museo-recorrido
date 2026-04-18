@@ -4,6 +4,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -14,6 +15,7 @@ import {
 } from 'sequelize';
 import { ExposicionEntidad } from '../../exposiciones/entidades/exposicion.entidad';
 import { SeccionBloqueEntidad } from '../../secciones-bloques/entidades/seccion-bloque.entidad';
+import { CodigoQrEntidad } from '../../codigos-qr/entidades/codigo-qr.entidad';
 
 @Table({
   tableName: 'secciones_recorrido',
@@ -91,4 +93,7 @@ export class SeccionRecorridoEntidad extends Model<
 
   @HasMany(() => SeccionBloqueEntidad, { as: 'bloques', foreignKey: 'seccionId' })
   bloques: SeccionBloqueEntidad[];
+
+  @HasOne(() => CodigoQrEntidad, { foreignKey: 'seccionId' })
+  codigoQr: CodigoQrEntidad;
 }

@@ -38,8 +38,8 @@
                   <code class="codigo-text">{{ qr.codigo }}</code>
                 </td>
                 <td>
-                  <span *ngIf="qr.seccionId" class="seccion-badge">{{ qr.seccionId }}</span>
-                  <span *ngIf="!qr.seccionId" class="text-muted">Sin asignar</span>
+                  <span *ngIf="qr.seccion" class="seccion-badge">{{ qr.seccion.nombre }}</span>
+                  <span *ngIf="!qr.seccion" class="text-muted">Sin asignar</span>
                 </td>
                 <td class="center-col">
                   <span class="escaneos-badge">{{ qr.totalEscaneos }}</span>
@@ -159,15 +159,19 @@
     </div>
 
     <div class="field">
-      <label for="seccionId">ID de seccion (opcional)</label>
-      <input
+      <label for="seccionId">Sección del recorrido (opcional)</label>
+      <select
         id="seccionId"
-        type="text"
         class="input-text"
-        placeholder="UUID de la seccion a vincular"
         formControlName="seccionId"
-      />
-      <small class="field-hint">Deja vacio para crear un QR sin seccion asignada.</small>
+        [disabled]="cargandoSecciones()"
+      >
+        <option value="">Sin sección asignada</option>
+        <option *ngFor="let seccion of seccionesDisponibles()" [value]="seccion.id">
+          {{ seccion.nombre }}{{ seccion.subtitulo ? ' — ' + seccion.subtitulo : '' }}
+        </option>
+      </select>
+      <small class="field-hint">Deja vacío para crear un QR sin sección asignada.</small>
     </div>
 
     <p class="form-error" *ngIf="errorFormulario()">{{ errorFormulario() }}</p>

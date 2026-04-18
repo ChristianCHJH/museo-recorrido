@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Op } from 'sequelize';
 import { v4 as uuidv4 } from 'uuid';
 import { CodigoQrEntidad } from './entidades/codigo-qr.entidad';
 import { SeccionRecorridoEntidad } from '../secciones-recorrido/entidades/seccion-recorrido.entidad';
@@ -13,6 +14,8 @@ export class CodigosQrServicio {
   constructor(
     @InjectModel(CodigoQrEntidad)
     private readonly modelo: typeof CodigoQrEntidad,
+    @InjectModel(SeccionRecorridoEntidad)
+    private readonly modeloSeccion: typeof SeccionRecorridoEntidad,
     private readonly archivoServicio: ArchivoServicio,
   ) {}
 
@@ -81,6 +84,31 @@ export class CodigosQrServicio {
 
   async incrementarEscaneos(id: string): Promise<void> {
     await this.modelo.increment('totalEscaneos', { where: { id } });
+  }
+
+  async obtenerSeccionesDisponibles(excluirQrId?: string): Promise<any[]> {
+    const seccionesOcupadas = await this.modelo.findAll({
+      attributes: ['seccionId'],
+      where: {
+        seccionId: { [Op.ne]: null },
+        eliminado: false,
+        ...(excluirQrId && { id: { [Op.ne]: excluirQrId } } ),
+      },
+      raw: true,
+    });
+    const ocupadosIds = seccionesOcupadas
+      .map(q => q.seccionId)
+      .filter((id): id is string => id !== null);
+
+    return this.modeloSeccion.findAll({
+      attributes: ['id', 'nombre', 'subtitulo'],
+      where: {
+        eliminado: false,
+        id: { [Op.notIn]: ocupadosIds.length > 0 ? ocupadosIds : [''] },
+      },
+      order: [['nombre', 'ASC']],
+      raw: true,
+    });
   }
 
   private async generarImagenQr(codigo: string): Promise<string> {

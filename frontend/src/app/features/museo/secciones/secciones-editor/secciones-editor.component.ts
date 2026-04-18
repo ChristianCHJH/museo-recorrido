@@ -24,6 +24,7 @@ import {
   SeccionRecorrido,
   SeccionesRecorridoServicio
 } from '@features/museo/servicios/secciones-recorrido.servicio';
+import { CodigosQrServicio } from '@features/museo/servicios/codigos-qr.servicio';
 import { SeccionPreviewComponent } from '../seccion-preview/seccion-preview.component';
 // SeccionFormLiveComponent desconectado en Fase 3 — disponible para Fase 4 si se necesita
 // import { SeccionFormLiveComponent } from '../seccion-form-live/seccion-form-live.component';
@@ -49,6 +50,7 @@ export class SeccionesEditorComponent implements OnInit {
   @Output() volver = new EventEmitter<void>();
 
   private readonly servicio = inject(SeccionesRecorridoServicio);
+  private readonly servicioQr = inject(CodigosQrServicio);
   private readonly destruirRef = inject(DestroyRef);
   private readonly servicioMensajes = inject(MessageService);
   private readonly servicioConfirmacion = inject(ConfirmationService);
@@ -74,6 +76,11 @@ export class SeccionesEditorComponent implements OnInit {
   readonly seccionPreview = signal<SeccionRecorrido | null>(null);
   readonly bloquesPreview = signal<any[]>([]);
   readonly cargandoPreview = signal(false);
+
+  // Vista QR
+  readonly qrVistaVisible = signal(false);
+  readonly qrVista = signal<any>(null);
+  readonly apiBase = 'http://localhost:3000';
 
   // Reordenar
   readonly modoReordenar = signal(false);
@@ -222,6 +229,24 @@ export class SeccionesEditorComponent implements OnInit {
     this.bloquesPreview.set([]);
   }
 
+  abrirVistaQr(qr: any): void {
+    this.qrVista.set(qr);
+    this.qrVistaVisible.set(true);
+  }
+
+  cerrarVistaQr(): void {
+    this.qrVistaVisible.set(false);
+    this.qrVista.set(null);
+  }
+
+  descargarQrUrl(qrId: string): string {
+    return this.servicioQr.descargarUrl(qrId);
+  }
+
+  imagenQrUrl(qr: any): string | null {
+    if (!qr || !qr.imagenQrUrl) return null;
+    return `${this.apiBase}${qr.imagenQrUrl}`;
+  }
 
   recargar(): void {
     this.cargar();

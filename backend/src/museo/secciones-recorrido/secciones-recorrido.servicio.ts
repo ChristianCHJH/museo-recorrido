@@ -4,6 +4,7 @@ import { Sequelize } from 'sequelize-typescript';
 import { SeccionRecorridoEntidad } from './entidades/seccion-recorrido.entidad';
 import { ExposicionEntidad } from '../exposiciones/entidades/exposicion.entidad';
 import { SeccionBloqueEntidad } from '../secciones-bloques/entidades/seccion-bloque.entidad';
+import { CodigoQrEntidad } from '../codigos-qr/entidades/codigo-qr.entidad';
 import {
   ActualizarSeccionRecorridoDto,
   CambiarEstadoSeccionDto,
@@ -30,6 +31,7 @@ export class SeccionesRecorridoServicio {
   async obtenerPorExposicion(exposicionId: string): Promise<SeccionRecorridoEntidad[]> {
     return this.modelo.findAll({
       where: { exposicionId, eliminado: false },
+      include: [{ model: CodigoQrEntidad, required: false }],
       order: [['orden', 'ASC']],
     });
   }
