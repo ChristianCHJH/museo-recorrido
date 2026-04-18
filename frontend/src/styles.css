@@ -30,6 +30,23 @@
   box-sizing: border-box;
 }
 
+/* PrimeFlex usa flex-column, no flex-col (Tailwind). Este alias lo hace compatible. */
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.items-start { align-items: flex-start; }
+.items-center { align-items: center; }
+.items-end { align-items: flex-end; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.justify-end { justify-content: flex-end; }
+.flex-1 { flex: 1; }
+.flex-shrink-0 { flex-shrink: 0; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.min-w-0 { min-width: 0; }
+.resize-none { resize: none; }
+.resize-y { resize: vertical; }
+
 html,
 body {
   height: 100%;
