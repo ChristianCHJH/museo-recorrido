@@ -1,3 +1,5 @@
+<p-toast position="bottom-right" />
+
 <p-dialog
   [visible]="visible"
   (visibleChange)="visible = $event"
@@ -25,8 +27,7 @@
       [formControl]="controlTipo"
       [options]="opcionesTipo"
       optionLabel="label"
-      optionValue="value"
-      [disabled]="!!tipoFiltrado" />
+      optionValue="value" />
 
     <p-button
       label="Subir nuevo"
@@ -70,7 +71,7 @@
 
           <div class="tarjeta-media-thumb">
             @if (item.tipo === 'imagen') {
-              <img [src]="item.urlMiniatura ?? item.url" [alt]="nombreVisible(item)" />
+              <img [src]="urlCompleta(item.urlMiniatura ?? item.url)" [alt]="nombreVisible(item)" />
             } @else {
               <div [class]="claseThumbnailIcon(item.tipo)">
                 <i [class]="'pi ' + iconoTipoMedia(item.tipo)"></i>
@@ -122,4 +123,5 @@
 <spa-subidor-medios
   [visible]="subidorVisible()"
   (visibleChange)="subidorVisible.set($event)"
-  (subido)="alSubirNuevo($event)" />
+  (subido)="alSubirNuevo($event)"
+  (errorSubida)="alErrorSubida()" />

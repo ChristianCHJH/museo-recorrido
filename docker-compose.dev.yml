@@ -4,7 +4,7 @@ services:
   backend:
     build:
       context: ./backend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: museo-backend-dev
     restart: unless-stopped
     ports:
@@ -43,7 +43,7 @@ services:
   frontend:
     build:
       context: ./frontend
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: museo-frontend-dev
     restart: unless-stopped
     ports:
@@ -53,10 +53,9 @@ services:
     volumes:
       # Bind mount del código fuente (para desarrollo)
       - ./frontend/src:/app/src
-      # Persistencia de caché de build
-      - museo-frontend-cache-dev:/app/.angular
-      # Volumen anónimo para node_modules
+      # Volumen anónimo para node_modules y caché Angular (efímero, evita cache stale en Windows)
       - /app/node_modules
+      - /app/.angular
     networks:
       - museo-network-dev
     healthcheck:
@@ -73,6 +72,4 @@ volumes:
   museo-uploads-dev:
     driver: local
   museo-logs-backend-dev:
-    driver: local
-  museo-frontend-cache-dev:
     driver: local

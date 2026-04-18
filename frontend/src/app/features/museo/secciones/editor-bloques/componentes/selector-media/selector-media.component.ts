@@ -13,15 +13,18 @@ import {
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, finalize, takeUntil } from 'rxjs/operators';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
 import { SkeletonModule } from 'primeng/skeleton';
 import { TooltipModule } from 'primeng/tooltip';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 import { BibliotecaMediaServicio, ElementoMedia } from '@features/museo/servicios/biblioteca-media.servicio';
 import { SubidorMediosComponent } from '../subidor-medios/subidor-medios.component';
+import { environment } from '@env/environment';
 
 @Component({
   selector: 'spa-selector-media',
@@ -35,8 +38,10 @@ import { SubidorMediosComponent } from '../subidor-medios/subidor-medios.compone
     DropdownModule,
     SkeletonModule,
     TooltipModule,
+    ToastModule,
     SubidorMediosComponent
   ],
+  providers: [MessageService],
   templateUrl: './selector-media.component.html',
   styleUrl: './selector-media.component.css'
 })
@@ -52,8 +57,8 @@ export class SelectorMediaComponent implements OnChanges, OnDestroy {
   @Output() cerrado = new EventEmitter<void>();
 
   private readonly servicioMedia = inject(BibliotecaMediaServicio);
+  private readonly mensajes = inject(MessageService);
 
-  // destroy$ termina el componente; sesion$ termina cada apertura individualmente
   private readonly destroy$ = new Subject<void>();
   private sesion$ = new Subject<void>();
   private readonly busqueda$ = new Subject<string>();
@@ -95,7 +100,6 @@ export class SelectorMediaComponent implements OnChanges, OnDestroy {
   }
 
   private inicializar(): void {
-    // Termina suscripciones de la sesión anterior antes de crear nuevas
     this.sesion$.next();
     this.sesion$ = new Subject<void>();
 
@@ -140,14 +144,16 @@ export class SelectorMediaComponent implements OnChanges, OnDestroy {
 
     this.servicioMedia
       .listar({ tipo, busqueda, pagina: this.pagina(), limite: this.limite })
-      .pipe(takeUntil(this.sesion$))
+      .pipe(
+        takeUntil(this.sesion$),
+        finalize(() => this.cargando.set(false))
+      )
       .subscribe({
         next: (resultado) => {
-          this.items.set(resultado.items);
-          this.total.set(resultado.total);
-          this.cargando.set(false);
+          this.items.set(resultado?.items ?? []);
+          this.total.set(resultado?.total ?? 0);
         },
-        error: () => this.cargando.set(false)
+        error: (err) => console.error('[SelectorMedia] error:', err)
       });
   }
 
@@ -183,16 +189,35 @@ export class SelectorMediaComponent implements OnChanges, OnDestroy {
     this.cargarMedia();
   }
 
+  alErrorSubida(): void {
+    this.mensajes.add({
+      severity: 'error',
+      summary: 'Error al subir',
+      detail: 'No se pudo subir el archivo. Intenta nuevamente.',
+      life: 4000
+    });
+  }
+
   alSubirNuevo(elemento: ElementoMedia): void {
-    // Inserta el elemento recién subido al inicio sin recargar toda la página
-    this.items.update(lista => [elemento, ...lista]);
-    this.total.update(t => t + 1);
+    this.mensajes.add({
+      severity: 'success',
+      summary: 'Archivo subido',
+      detail: `"${elemento.nombre ?? elemento.titulo ?? 'Archivo'}" se subió correctamente.`,
+      life: 3500
+    });
+    this.pagina.set(1);
+    this.cargarMedia();
   }
 
   cerrar(): void {
     this.sesion$.next();
     this.visibleChange.emit(false);
     this.cerrado.emit();
+  }
+
+  urlCompleta(url: string): string {
+    if (!url) return '';
+    return url.startsWith('http') ? url : `${environment.apiUrl}${url}`;
   }
 
   iconoTipoMedia(tipo: string): string {
