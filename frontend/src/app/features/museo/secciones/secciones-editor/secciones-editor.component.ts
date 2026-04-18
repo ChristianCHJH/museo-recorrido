@@ -9,6 +9,7 @@ import {
   signal
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { environment } from '@env/environment';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -26,7 +27,6 @@ import {
 import { SeccionPreviewComponent } from '../seccion-preview/seccion-preview.component';
 // SeccionFormLiveComponent desconectado en Fase 3 — disponible para Fase 4 si se necesita
 // import { SeccionFormLiveComponent } from '../seccion-form-live/seccion-form-live.component';
-import { EditorBloquesComponent } from '../editor-bloques/editor-bloques.component';
 
 @Component({
   selector: 'spa-secciones-editor',
@@ -38,8 +38,7 @@ import { EditorBloquesComponent } from '../editor-bloques/editor-bloques.compone
     DialogModule,
     ToastModule,
     ConfirmDialogModule,
-    SeccionPreviewComponent,
-    EditorBloquesComponent
+    SeccionPreviewComponent
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './secciones-editor.component.html',
@@ -54,14 +53,11 @@ export class SeccionesEditorComponent implements OnInit {
   private readonly servicioMensajes = inject(MessageService);
   private readonly servicioConfirmacion = inject(ConfirmationService);
   private readonly fb = inject(FormBuilder);
+  private readonly router = inject(Router);
 
   readonly secciones = signal<SeccionRecorrido[]>([]);
   readonly cargando = signal(true);
   readonly error = signal<string | null>(null);
-
-  // Live editor
-  readonly modoLiveEditor = signal(false);
-  readonly seccionParaEditar = signal<SeccionRecorrido | null>(null);
 
   // Formulario de creación rápida
   readonly modoCrear = signal(false);
@@ -110,9 +106,7 @@ export class SeccionesEditorComponent implements OnInit {
     }).pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.creando.set(false)))
       .subscribe({
         next: (nueva) => {
-          this.modoCrear.set(false);
-          this.seccionParaEditar.set(nueva);
-          this.modoLiveEditor.set(true);
+          this.router.navigate(['/dashboard', 'exposiciones', this.exposicionId, 'secciones', nueva.id, 'editor']);
         },
         error: () => this.notificar('error', 'Error al crear', 'No se pudo crear la sección.')
       });
@@ -124,20 +118,7 @@ export class SeccionesEditorComponent implements OnInit {
   }
 
   abrirEditar(seccion: SeccionRecorrido): void {
-    this.seccionParaEditar.set(seccion);
-    this.modoLiveEditor.set(true);
-  }
-
-  alGuardarLive(): void {
-    this.modoLiveEditor.set(false);
-    this.seccionParaEditar.set(null);
-    this.cargar();
-    this.notificar('success', 'Seccion guardada', 'Los cambios fueron guardados correctamente.');
-  }
-
-  alCancelarLive(): void {
-    this.modoLiveEditor.set(false);
-    this.seccionParaEditar.set(null);
+    this.router.navigate(['/dashboard', 'exposiciones', this.exposicionId, 'secciones', seccion.id, 'editor']);
   }
 
   confirmarCambioEstado(seccion: SeccionRecorrido): void {

@@ -1,0 +1,23 @@
+<ng-container *ngIf="cargando()">
+  <div class="loading-state">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>Cargando sección...</p>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="!cargando() && seccion()">
+  <spa-editor-bloques
+    [seccion]="seccion()!"
+    [exposicionId]="exposicionId()"
+    (guardado)="alGuardar()"
+    (cancelado)="alCancelar()"
+  />
+</ng-container>
+
+<ng-container *ngIf="!cargando() && !seccion()">
+  <div class="error-state">
+    <i class="pi pi-exclamation-triangle"></i>
+    <p>No se pudo cargar la sección.</p>
+    <button type="button" class="primary-btn" (click)="alCancelar()">Volver</button>
+  </div>
+</ng-container>

@@ -1,13 +1,3 @@
-<!-- ── Editor de bloques (Fase 3) ────────────────────────── -->
-<ng-container *ngIf="modoLiveEditor() && seccionParaEditar()">
-  <spa-editor-bloques
-    [seccion]="seccionParaEditar()!"
-    [exposicionId]="exposicionId"
-    (guardado)="alGuardarLive()"
-    (cancelado)="alCancelarLive()"
-  />
-</ng-container>
-
 <!-- Formulario de creación rápida antes de abrir el editor de bloques -->
 <ng-container *ngIf="modoCrear()">
   <div class="crear-seccion-shell">
@@ -63,7 +53,7 @@
 </ng-container>
 
 <!-- ── Vista lista ──────────────────────────────────────── -->
-<ng-container *ngIf="!modoLiveEditor() && !modoCrear()">
+<ng-container *ngIf="!modoCrear()">
   <section class="sec-shell">
     <header class="sec-header">
       <div class="header-left">

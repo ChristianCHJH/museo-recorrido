@@ -15,6 +15,12 @@ export const rutas: Routes = [
       import('@features/panel/panel.component').then((m) => m.PanelComponent)
   },
   {
+    path: 'dashboard/exposiciones/:exposicionId/secciones/:seccionId/editor',
+    canActivate: [guardiaAutenticacion],
+    loadComponent: () =>
+      import('@features/museo/secciones/seccion-editor-page/seccion-editor-page.component').then((m) => m.SeccionEditorPageComponent)
+  },
+  {
     path: 'dashboard/:vista',
     canActivate: [guardiaAutenticacion],
     loadComponent: () =>
