@@ -12,7 +12,6 @@ import { REGISTRO_BLOQUES } from '../../registro/registro-bloques';
 })
 export class PreviewBloquesComponent {
   @Input() bloques: Bloque[] = [];
-  @Input() nombreSeccion?: string;
 
   componentePreviewDe(tipo: string): any {
     return REGISTRO_BLOQUES[tipo]?.componentePreview ?? null;
