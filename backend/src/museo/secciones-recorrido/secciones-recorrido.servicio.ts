@@ -3,7 +3,6 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { SeccionRecorridoEntidad } from './entidades/seccion-recorrido.entidad';
 import { ExposicionEntidad } from '../exposiciones/entidades/exposicion.entidad';
-import { ElementoMultimediaEntidad } from '../elementos-multimedia/entidades/elemento-multimedia.entidad';
 import { SeccionBloqueEntidad } from '../secciones-bloques/entidades/seccion-bloque.entidad';
 import {
   ActualizarSeccionRecorridoDto,
@@ -79,12 +78,6 @@ export class SeccionesRecorridoServicio {
       where: { id, estado: true, eliminado: false },
       include: [
         ExposicionEntidad,
-        {
-          model: ElementoMultimediaEntidad,
-          where: { estado: true, eliminado: false },
-          required: false,
-          order: [['orden', 'ASC']],
-        },
         {
           model: SeccionBloqueEntidad,
           as: 'bloques',

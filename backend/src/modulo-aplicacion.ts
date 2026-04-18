@@ -14,7 +14,6 @@ import { JwtGuardia } from './autenticacion/autenticacion/guardias/jwt.guardia';
 import { ConfiguracionMuseoModulo } from './museo/configuracion-museo/configuracion-museo.modulo';
 import { ExposicionesModulo } from './museo/exposiciones/exposiciones.modulo';
 import { SeccionesRecorridoModulo } from './museo/secciones-recorrido/secciones-recorrido.modulo';
-import { ElementosMultimediaModulo } from './museo/elementos-multimedia/elementos-multimedia.modulo';
 import { CodigosQrModulo } from './museo/codigos-qr/codigos-qr.modulo';
 import { SesionesVisitaModulo } from './museo/sesiones-visita/sesiones-visita.modulo';
 import { SeccionesBloquesModulo } from './museo/secciones-bloques/secciones-bloques.modulo';
@@ -44,7 +43,6 @@ import { SeccionesBloquesModulo } from './museo/secciones-bloques/secciones-bloq
     ConfiguracionMuseoModulo,
     ExposicionesModulo,
     SeccionesRecorridoModulo,
-    ElementosMultimediaModulo,
     CodigosQrModulo,
     SesionesVisitaModulo,
     SeccionesBloquesModulo,

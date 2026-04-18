@@ -5,8 +5,6 @@ import {
   Input,
   OnInit,
   Output,
-  ElementRef,
-  ViewChild,
   inject,
   signal
 } from '@angular/core';
@@ -25,10 +23,6 @@ import {
   SeccionRecorrido,
   SeccionesRecorridoServicio
 } from '@features/museo/servicios/secciones-recorrido.servicio';
-import {
-  ElementoMultimedia,
-  MultimediaServicio
-} from '@features/museo/servicios/multimedia.servicio';
 import { SeccionPreviewComponent } from '../seccion-preview/seccion-preview.component';
 // SeccionFormLiveComponent desconectado en Fase 3 — disponible para Fase 4 si se necesita
 // import { SeccionFormLiveComponent } from '../seccion-form-live/seccion-form-live.component';
@@ -55,11 +49,7 @@ export class SeccionesEditorComponent implements OnInit {
   @Input() exposicionId!: string;
   @Output() volver = new EventEmitter<void>();
 
-  @ViewChild('inputArchivo') inputArchivo!: ElementRef<HTMLInputElement>;
-  @ViewChild('inputAudio') inputAudio!: ElementRef<HTMLInputElement>;
-
   private readonly servicio = inject(SeccionesRecorridoServicio);
-  private readonly multimediaServicio = inject(MultimediaServicio);
   private readonly destruirRef = inject(DestroyRef);
   private readonly servicioMensajes = inject(MessageService);
   private readonly servicioConfirmacion = inject(ConfirmationService);
@@ -68,16 +58,6 @@ export class SeccionesEditorComponent implements OnInit {
   readonly secciones = signal<SeccionRecorrido[]>([]);
   readonly cargando = signal(true);
   readonly error = signal<string | null>(null);
-
-  readonly panelMultimediaVisible = signal(false);
-  readonly seccionMultimedia = signal<SeccionRecorrido | null>(null);
-  readonly multimedia = signal<ElementoMultimedia[]>([]);
-  readonly cargandoMultimedia = signal(false);
-  readonly videoUrlInput = signal('');
-  readonly videoTituloInput = signal('');
-  readonly mostrarFormVideo = signal(false);
-  readonly subiendoArchivo = signal(false);
-  readonly subiendoAudio = signal(false);
 
   // Live editor
   readonly modoLiveEditor = signal(false);
@@ -96,7 +76,7 @@ export class SeccionesEditorComponent implements OnInit {
   // Preview
   readonly previewVisible = signal(false);
   readonly seccionPreview = signal<SeccionRecorrido | null>(null);
-  readonly multimediaPreview = signal<ElementoMultimedia[]>([]);
+  readonly bloquesPreview = signal<any[]>([]);
   readonly cargandoPreview = signal(false);
 
   // Reordenar
@@ -195,7 +175,6 @@ export class SeccionesEditorComponent implements OnInit {
           .subscribe({
             next: () => {
               this.cargar();
-              if (this.seccionMultimedia()?.id === seccion.id) this.cerrarPanelMultimedia();
               this.notificar('success', 'Seccion eliminada', `"${seccion.nombre}" fue eliminada.`);
             },
             error: () => this.notificar('error', 'Error al eliminar', 'Intentalo nuevamente.')
@@ -243,13 +222,15 @@ export class SeccionesEditorComponent implements OnInit {
   // Preview
   abrirPreview(seccion: SeccionRecorrido): void {
     this.seccionPreview.set(seccion);
-    this.multimediaPreview.set([]);
+    this.bloquesPreview.set([]);
     this.previewVisible.set(true);
     this.cargandoPreview.set(true);
-    this.multimediaServicio.obtenerPorSeccion(seccion.id)
+    this.servicio.obtenerPorId(seccion.id)
       .pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.cargandoPreview.set(false)))
       .subscribe({
-        next: (lista) => this.multimediaPreview.set(lista),
+        next: (seccionConBloques) => {
+          this.bloquesPreview.set(seccionConBloques.bloques || []);
+        },
         error: () => {}
       });
   }
@@ -257,134 +238,9 @@ export class SeccionesEditorComponent implements OnInit {
   cerrarPreview(): void {
     this.previewVisible.set(false);
     this.seccionPreview.set(null);
-    this.multimediaPreview.set([]);
+    this.bloquesPreview.set([]);
   }
 
-  // Multimedia
-  abrirMultimedia(seccion: SeccionRecorrido): void {
-    this.seccionMultimedia.set(seccion);
-    this.panelMultimediaVisible.set(true);
-    this.cargarMultimedia(seccion.id);
-  }
-
-  cerrarPanelMultimedia(): void {
-    this.panelMultimediaVisible.set(false);
-    this.seccionMultimedia.set(null);
-    this.multimedia.set([]);
-    this.mostrarFormVideo.set(false);
-  }
-
-  seleccionarArchivo(): void {
-    this.inputArchivo.nativeElement.click();
-  }
-
-  seleccionarAudio(): void {
-    this.inputAudio.nativeElement.click();
-  }
-
-  alSeleccionarArchivo(evento: Event): void {
-    const input = evento.target as HTMLInputElement;
-    const archivo = input.files?.[0];
-    if (!archivo) return;
-    const seccion = this.seccionMultimedia();
-    if (!seccion) return;
-
-    this.subiendoArchivo.set(true);
-    this.multimediaServicio.subirImagen(seccion.id, archivo)
-      .pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.subiendoArchivo.set(false)))
-      .subscribe({
-        next: () => {
-          this.cargarMultimedia(seccion.id);
-          this.notificar('success', 'Imagen subida', 'La imagen fue agregada correctamente.');
-          input.value = '';
-        },
-        error: () => this.notificar('error', 'Error al subir imagen', 'Verifica el archivo e intentalo nuevamente.')
-      });
-  }
-
-  alSeleccionarAudio(evento: Event): void {
-    const input = evento.target as HTMLInputElement;
-    const archivo = input.files?.[0];
-    if (!archivo) return;
-    const seccion = this.seccionMultimedia();
-    if (!seccion) return;
-
-    this.subiendoAudio.set(true);
-    this.servicio.subirAudio(seccion.id, archivo)
-      .pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.subiendoAudio.set(false)))
-      .subscribe({
-        next: (sec) => {
-          const secciones = this.secciones().map(s => s.id === sec.id ? sec : s);
-          this.secciones.set(secciones);
-          this.seccionMultimedia.set(sec);
-          this.notificar('success', 'Audio subido', 'El audio fue asignado a la seccion.');
-          input.value = '';
-        },
-        error: () => this.notificar('error', 'Error al subir audio', 'Verifica el archivo e intentalo nuevamente.')
-      });
-  }
-
-  agregarVideo(): void {
-    const url = this.videoUrlInput().trim();
-    if (!url) return;
-    const seccion = this.seccionMultimedia();
-    if (!seccion) return;
-
-    this.multimediaServicio.agregarVideoExterno(seccion.id, url, this.videoTituloInput().trim() || undefined)
-      .pipe(takeUntilDestroyed(this.destruirRef))
-      .subscribe({
-        next: () => {
-          this.cargarMultimedia(seccion.id);
-          this.videoUrlInput.set('');
-          this.videoTituloInput.set('');
-          this.mostrarFormVideo.set(false);
-          this.notificar('success', 'Video agregado', 'El video fue agregado correctamente.');
-        },
-        error: () => this.notificar('error', 'Error al agregar video', 'Verifica la URL e intentalo nuevamente.')
-      });
-  }
-
-  toggleEstadoMultimedia(elemento: ElementoMultimedia): void {
-    this.multimediaServicio.cambiarEstado(elemento.id, !elemento.estado)
-      .pipe(takeUntilDestroyed(this.destruirRef))
-      .subscribe({
-        next: () => this.cargarMultimedia(this.seccionMultimedia()!.id),
-        error: () => this.notificar('error', 'Error al actualizar estado', '')
-      });
-  }
-
-  marcarPrincipal(elemento: ElementoMultimedia): void {
-    this.multimediaServicio.marcarPrincipal(elemento.id)
-      .pipe(takeUntilDestroyed(this.destruirRef))
-      .subscribe({
-        next: () => { this.cargarMultimedia(this.seccionMultimedia()!.id); this.notificar('success', 'Principal actualizado', ''); },
-        error: () => this.notificar('error', 'Error al marcar principal', '')
-      });
-  }
-
-  confirmarEliminarMultimedia(elemento: ElementoMultimedia): void {
-    this.servicioConfirmacion.confirm({
-      message: 'Deseas eliminar este elemento multimedia?',
-      header: 'Confirmar eliminacion',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Si, eliminar',
-      rejectLabel: 'Cancelar',
-      acceptButtonStyleClass: 'p-button-danger',
-      defaultFocus: 'reject',
-      accept: () => {
-        this.multimediaServicio.eliminar(elemento.id)
-          .pipe(takeUntilDestroyed(this.destruirRef))
-          .subscribe({
-            next: () => { this.cargarMultimedia(this.seccionMultimedia()!.id); this.notificar('success', 'Elemento eliminado', ''); },
-            error: () => this.notificar('error', 'Error al eliminar', '')
-          });
-      }
-    });
-  }
-
-  esVideo(elemento: ElementoMultimedia): boolean {
-    return elemento.tipo.startsWith('video');
-  }
 
   recargar(): void {
     this.cargar();
@@ -401,15 +257,6 @@ export class SeccionesEditorComponent implements OnInit {
       });
   }
 
-  private cargarMultimedia(seccionId: string): void {
-    this.cargandoMultimedia.set(true);
-    this.multimediaServicio.obtenerPorSeccion(seccionId)
-      .pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.cargandoMultimedia.set(false)))
-      .subscribe({
-        next: (lista) => this.multimedia.set(lista),
-        error: () => this.notificar('error', 'Error al cargar multimedia', '')
-      });
-  }
 
   private notificar(severidad: 'success' | 'info' | 'warn' | 'error', resumen: string, detalle: string): void {
     this.servicioMensajes.add({ severity: severidad, summary: resumen, detail: detalle, life: 3500 });

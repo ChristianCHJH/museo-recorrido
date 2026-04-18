@@ -74,7 +74,7 @@
         <div class="copy">
           <p class="eyebrow">Museo / Exposicion</p>
           <h1>Secciones del recorrido</h1>
-          <p class="subtitle">Administra las secciones y su contenido multimedia.</p>
+          <p class="subtitle">Administra las secciones y su contenido.</p>
         </div>
       </div>
       <div class="actions">
@@ -115,7 +115,7 @@
 
     <!-- Modo normal -->
     <ng-container *ngIf="!modoReordenar()">
-      <div class="sec-layout" [class.con-panel]="panelMultimediaVisible()">
+      <div class="sec-layout">
         <!-- Lista de secciones -->
         <div class="sec-lista">
           <ng-container *ngIf="!cargando(); else plantillaCargando">
@@ -133,9 +133,6 @@
                   <div class="sec-actions">
                     <button type="button" class="icon preview" pTooltip="Vista previa" tooltipPosition="top" (click)="abrirPreview(sec)">
                       <i class="pi pi-mobile"></i>
-                    </button>
-                    <button type="button" class="icon" pTooltip="Ver multimedia" tooltipPosition="top" (click)="abrirMultimedia(sec)">
-                      <i class="pi pi-images"></i>
                     </button>
                     <button type="button" class="icon" pTooltip="Editar" tooltipPosition="top" (click)="abrirEditar(sec)">
                       <i class="pi pi-pencil"></i>
@@ -160,82 +157,6 @@
           </ng-container>
         </div>
 
-        <!-- Panel Multimedia -->
-        <aside class="panel-multimedia" *ngIf="panelMultimediaVisible()">
-          <div class="panel-header">
-            <div>
-              <p class="panel-eyebrow">Multimedia</p>
-              <h2 class="panel-nombre">{{ seccionMultimedia()?.nombre }}</h2>
-            </div>
-            <button type="button" class="icon" (click)="cerrarPanelMultimedia()">
-              <i class="pi pi-times"></i>
-            </button>
-          </div>
-
-          <div class="panel-acciones">
-            <button type="button" class="primary-btn" (click)="seleccionarArchivo()" [disabled]="subiendoArchivo()">
-              <i class="pi" [class.pi-upload]="!subiendoArchivo()" [class.pi-spin]="subiendoArchivo()" [class.pi-spinner]="subiendoArchivo()"></i>
-              {{ subiendoArchivo() ? 'Subiendo...' : 'Subir imagen' }}
-            </button>
-            <button type="button" class="ghost-btn" (click)="mostrarFormVideo.set(!mostrarFormVideo())">
-              <i class="pi pi-video"></i>
-              Video externo
-            </button>
-            <input #inputArchivo type="file" accept="image/*" style="display:none" (change)="alSeleccionarArchivo($event)" />
-          </div>
-
-          <div class="video-form" *ngIf="mostrarFormVideo()">
-            <div class="field">
-              <label>URL del video (YouTube / Vimeo)</label>
-              <input type="url" class="input-text" placeholder="https://www.youtube.com/watch?v=..." [value]="videoUrlInput()" (input)="videoUrlInput.set($any($event.target).value)" />
-            </div>
-            <div class="field">
-              <label>Titulo (opcional)</label>
-              <input type="text" class="input-text" placeholder="Titulo del video" [value]="videoTituloInput()" (input)="videoTituloInput.set($any($event.target).value)" />
-            </div>
-            <div class="video-form-actions">
-              <button type="button" class="ghost-btn small" (click)="mostrarFormVideo.set(false)">Cancelar</button>
-              <button type="button" class="primary-btn small" (click)="agregarVideo()"><i class="pi pi-check"></i> Agregar</button>
-            </div>
-          </div>
-
-          <div class="multimedia-lista" *ngIf="!cargandoMultimedia(); else cargandoMedia">
-            <div class="multimedia-card" *ngFor="let elem of multimedia()">
-              <div class="media-preview">
-                <img *ngIf="elem.tipo === 'imagen' && elem.url" [src]="apiUrl + elem.url" [alt]="elem.titulo || 'Imagen'" />
-                <div class="media-video-thumb" *ngIf="esVideo(elem)">
-                  <i class="pi pi-play-circle"></i>
-                  <span>Video</span>
-                </div>
-              </div>
-              <div class="media-info">
-                <span class="media-titulo">{{ elem.titulo || 'Sin titulo' }}</span>
-                <span class="media-tipo">{{ elem.tipo }}</span>
-                <span class="badge-principal" *ngIf="elem.esPrincipal">Principal</span>
-              </div>
-              <div class="media-actions">
-                <button type="button" class="icon small" pTooltip="Marcar como principal" tooltipPosition="top" [disabled]="elem.esPrincipal" (click)="marcarPrincipal(elem)">
-                  <i class="pi" [class.pi-star-fill]="elem.esPrincipal" [class.pi-star]="!elem.esPrincipal"></i>
-                </button>
-                <button type="button" class="icon small" [pTooltip]="elem.estado ? 'Desactivar' : 'Activar'" tooltipPosition="top" (click)="toggleEstadoMultimedia(elem)">
-                  <i class="pi" [class.pi-eye]="elem.estado" [class.pi-eye-slash]="!elem.estado"></i>
-                </button>
-                <button type="button" class="icon small delete" pTooltip="Eliminar" tooltipPosition="top" (click)="confirmarEliminarMultimedia(elem)">
-                  <i class="pi pi-trash"></i>
-                </button>
-              </div>
-            </div>
-
-            <div class="state-card small" *ngIf="multimedia().length === 0">
-              <i class="pi pi-images"></i>
-              <p>Sin multimedia en esta seccion.</p>
-            </div>
-          </div>
-
-          <ng-template #cargandoMedia>
-            <div class="state-card small"><i class="pi pi-spin pi-spinner"></i><p>Cargando multimedia...</p></div>
-          </ng-template>
-        </aside>
       </div>
     </ng-container>
   </section>
@@ -281,7 +202,7 @@
           <spa-seccion-preview
             *ngIf="!cargandoPreview() && seccionPreview()"
             [seccion]="seccionPreview()!"
-            [multimedia]="multimediaPreview()"
+            [bloques]="bloquesPreview()"
           />
         </div>
       </div>
