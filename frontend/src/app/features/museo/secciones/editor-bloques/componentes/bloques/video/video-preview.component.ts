@@ -7,7 +7,16 @@ import { ConfigVideo } from '../../../modelos/bloque.modelo';
   selector: 'spa-video-preview',
   standalone: true,
   imports: [CommonModule],
-  templateUrl: './video-preview.component.html'
+  templateUrl: './video-preview.component.html',
+  styles: [`
+    .extra-bloque { display: flex; flex-direction: column; gap: 0.75rem; }
+    .seccion-subtitulo { font-family: var(--fuente-titulos, serif); color: var(--color-primario, #5d4037); font-size: 1rem; margin: 0; padding-bottom: 0.4rem; border-bottom: 2px solid var(--color-secundario, #c8a96e); }
+    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; }
+    .media-iframe, .media-video { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+    .media-caption { padding: 0.4rem 0; display: flex; flex-direction: column; gap: 0.2rem; }
+    .caption-desc { font-size: 0.75rem; color: var(--color-primario, #5d4037); opacity: 0.8; }
+    .bloque-placeholder { display: flex; align-items: center; gap: 0.5rem; padding: 1rem; color: var(--color-primario, #5d4037); opacity: 0.5; font-size: 0.85rem; margin: 0; }
+  `]
 })
 export class VideoPreviewComponent {
   @Input() config: ConfigVideo = { origen: 'youtube', url: '' };

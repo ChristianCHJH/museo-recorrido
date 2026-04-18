@@ -12,6 +12,11 @@ import { ConfigImagenDestacada } from '../../../modelos/bloque.modelo';
     .altura-sm { height: 150px; }
     .altura-md { height: 250px; }
     .altura-lg { height: 380px; }
+    .media-item { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(93,64,55,0.1); }
+    .media-caption { padding: 0.6rem 0.85rem; display: flex; flex-direction: column; gap: 0.2rem; }
+    .caption-titulo { font-weight: 600; font-size: 0.82rem; color: var(--color-texto-oscuro, #2c1a0e); }
+    .caption-desc { font-size: 0.75rem; color: var(--color-primario, #5d4037); opacity: 0.8; }
+    .bloque-placeholder { display: flex; align-items: center; gap: 0.5rem; padding: 1rem; color: var(--color-primario, #5d4037); opacity: 0.5; font-size: 0.85rem; margin: 0; }
   `]
 })
 export class ImagenDestacadaPreviewComponent {

@@ -7,7 +7,8 @@ import { REGISTRO_BLOQUES } from '../../registro/registro-bloques';
   selector: 'spa-preview-bloques',
   standalone: true,
   imports: [CommonModule, NgComponentOutlet],
-  templateUrl: './preview-bloques.component.html'
+  templateUrl: './preview-bloques.component.html',
+  styleUrl: './preview-bloques.component.css'
 })
 export class PreviewBloquesComponent {
   @Input() bloques: Bloque[] = [];
