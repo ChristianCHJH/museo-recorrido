@@ -1,115 +1,227 @@
 <form [formGroup]="formulario" class="flex flex-col gap-4">
 
-  <div class="flex flex-col gap-1">
-    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
-      Título de la galería <span class="text-xs font-normal opacity-60">(opcional)</span>
-    </label>
-    <textarea
-      pInputTextarea
-      [autoResize]="true"
-      rows="1"
-      formControlName="tituloEs"
-      placeholder="Ej: Galería de imágenes"
-      class="w-full resize-none"
-      style="max-height:80px;overflow-y:auto"></textarea>
+  <!-- Header de galería -->
+  <div class="galeria-controls">
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+        Título de la galería <span class="text-xs font-normal opacity-60">(opcional)</span>
+      </label>
+      <textarea
+        pInputTextarea
+        [autoResize]="true"
+        rows="1"
+        formControlName="tituloEs"
+        placeholder="Ej: Galería de imágenes"
+        class="w-full resize-none"
+        style="max-height:80px;overflow-y:auto"></textarea>
+    </div>
+
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+        Disposición
+      </label>
+      <p-dropdown
+        formControlName="disposicion"
+        [options]="opcionesDisposicion"
+        optionLabel="label"
+        optionValue="value"
+        styleClass="w-full" />
+    </div>
   </div>
 
-  <div class="flex flex-col gap-1">
-    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
-      Disposición
-    </label>
-    <p-dropdown
-      formControlName="disposicion"
-      [options]="opcionesDisposicion"
-      optionLabel="label"
-      optionValue="value"
-      styleClass="w-full" />
-  </div>
-
-  <div class="flex flex-col gap-3">
+  <!-- Grid compacto de imágenes -->
+  <div class="galeria-grid-editor">
     <div
       *ngFor="let item of imagenesArray.controls; let i = index"
       [formGroup]="$any(item)"
-      class="flex flex-col gap-2 p-3 rounded-lg border"
-      style="border-color: rgba(93,64,55,0.15); background: var(--surface-section, #faf8f0)">
+      class="galeria-item-editor">
 
-      <div class="flex items-center justify-between">
-        <span class="text-xs font-bold uppercase tracking-wide opacity-60" style="color: var(--color-primario)">
-          Imagen {{ i + 1 }}
-        </span>
+      <!-- Número identificador -->
+      <div class="item-numero">#{{ i + 1 }}</div>
+
+      <!-- Imagen y selector -->
+      <div class="item-imagen-container">
+        @if (item.get('url')?.value; as url) {
+          <img [src]="urlCompleta(url)" alt="Imagen" class="item-imagen">
+        } @else {
+          <div class="item-sin-imagen">
+            <i class="pi pi-image"></i>
+          </div>
+        }
         <p-button
-          icon="pi pi-trash"
-          severity="danger"
+          icon="pi pi-folder-open"
+          severity="info"
           [text]="true"
           [rounded]="true"
           size="small"
-          (onClick)="eliminarImagen(i)" />
-      </div>
-
-      <div class="flex flex-col gap-1">
-        @if (item.get('url')?.value; as url) {
-          <img [src]="urlCompleta(url)" alt="Miniatura" style="max-height:120px; width:auto; border-radius:4px; object-fit:contain;">
-        }
-        <p-button
-          label="Imagen"
-          icon="pi pi-folder-open"
-          severity="info"
-          [outlined]="true"
-          size="small"
-          styleClass="w-full"
+          class="item-selector-btn"
           (onClick)="abrirSelectorPara(i)" />
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
-          Título <span class="text-xs font-normal opacity-60">(opcional)</span>
-        </label>
+      <!-- Inputs de texto -->
+      <div class="item-textos">
         <textarea
           pInputTextarea
           [autoResize]="true"
           rows="1"
           formControlName="tituloEs"
-          placeholder="Título de la imagen"
-          class="w-full resize-none"
-          style="max-height:80px;overflow-y:auto"></textarea>
-      </div>
+          placeholder="Título"
+          class="w-full resize-none item-input"
+          style="max-height:60px;overflow-y:auto;font-size:0.8rem;"></textarea>
 
-      <div class="flex flex-col gap-1">
-        <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
-          Caption <span class="text-xs font-normal opacity-60">(opcional)</span>
-        </label>
         <textarea
           pInputTextarea
           [autoResize]="true"
           rows="1"
           formControlName="captionEs"
-          placeholder="Descripción breve"
-          class="w-full resize-none"
-          style="max-height:80px;overflow-y:auto"></textarea>
+          placeholder="Descripción"
+          class="w-full resize-none item-input"
+          style="max-height:80px;overflow-y:auto;font-size:0.7rem;"></textarea>
       </div>
 
+      <!-- Botón eliminar -->
+      <p-button
+        icon="pi pi-trash"
+        severity="danger"
+        [text]="true"
+        [rounded]="true"
+        size="small"
+        class="item-delete-btn"
+        (onClick)="eliminarImagen(i)" />
+
+    </div>
+
+    <!-- Botón agregar imagen -->
+    <div class="galeria-item-add">
+      <p-button
+        icon="pi pi-plus"
+        severity="secondary"
+        [outlined]="true"
+        styleClass="w-full"
+        (onClick)="agregarImagen()" />
     </div>
   </div>
 
-  <!-- Botones de agregar -->
-  <div class="flex gap-2">
-    <p-button
-      label="Agregar imagen"
-      icon="pi pi-plus"
-      severity="secondary"
-      [outlined]="true"
-      styleClass="flex-1"
-      (onClick)="agregarImagen()" />
-    <p-button
-      label="Desde biblioteca"
-      icon="pi pi-folder-open"
-      severity="info"
-      [outlined]="true"
-      styleClass="flex-1"
-      (onClick)="selectorVisible.set(true)" />
-  </div>
+  <!-- Botón agregar desde biblioteca -->
+  <p-button
+    label="Agregar desde biblioteca"
+    icon="pi pi-folder-open"
+    severity="info"
+    [outlined]="true"
+    styleClass="w-full"
+    (onClick)="selectorVisible.set(true)" />
 
 </form>
+
+<style>
+  .galeria-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(93, 64, 55, 0.15);
+  }
+
+  .galeria-grid-editor {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    padding: 1rem 0;
+  }
+
+  .galeria-item-editor {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.8rem;
+    border: 1px solid rgba(93, 64, 55, 0.15);
+    border-radius: 8px;
+    background: var(--surface-section, #faf8f0);
+    transition: all 0.2s ease;
+  }
+
+  .galeria-item-editor:hover {
+    box-shadow: 0 2px 8px rgba(93, 64, 55, 0.12);
+    border-color: rgba(93, 64, 55, 0.25);
+  }
+
+  .item-numero {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    background: rgba(93, 64, 55, 0.9);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 600;
+    padding: 0.25rem 0.4rem;
+    border-radius: 3px;
+  }
+
+  .item-imagen-container {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    overflow: hidden;
+    background: white;
+    border: 1px solid rgba(93, 64, 55, 0.1);
+  }
+
+  .item-imagen {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .item-sin-imagen {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(93, 64, 55, 0.05);
+    color: rgba(93, 64, 55, 0.3);
+    font-size: 2rem;
+  }
+
+  .item-selector-btn {
+    position: absolute;
+    bottom: 0.4rem;
+    right: 0.4rem;
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .item-textos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .item-input {
+    padding: 0.4rem !important;
+    border: 1px solid rgba(93, 64, 55, 0.1) !important;
+    border-radius: 4px !important;
+  }
+
+  .item-delete-btn {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+  }
+
+  .galeria-item-add {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    border: 2px dashed rgba(93, 64, 55, 0.2);
+    border-radius: 8px;
+    background: rgba(93, 64, 55, 0.02);
+    min-height: 150px;
+  }
+</style>
 
 <spa-selector-media
   [visible]="selectorVisible()"
