@@ -30,6 +30,7 @@
         [exposicionId]="exposicionSeleccionada()?.id ?? ''"
         (volver)="alVolverExposiciones()"
       ></spa-secciones-editor>
+      <spa-seccion-editor-page *ngSwitchCase="'editor-seccion'"></spa-seccion-editor-page>
       <spa-qr-lista *ngSwitchCase="'qr'"></spa-qr-lista>
       <spa-visitas-panel *ngSwitchCase="'visitas'"></spa-visitas-panel>
       <spa-configuracion-museo *ngSwitchCase="'configuracion'"></spa-configuracion-museo>
