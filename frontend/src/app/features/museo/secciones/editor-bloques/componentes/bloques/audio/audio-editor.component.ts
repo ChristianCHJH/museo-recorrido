@@ -14,6 +14,7 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ButtonModule } from 'primeng/button';
 import { ConfigAudio } from '../../../modelos/bloque.modelo';
@@ -27,6 +28,7 @@ import { ElementoMedia } from '@features/museo/servicios/biblioteca-media.servic
     CommonModule,
     ReactiveFormsModule,
     InputTextModule,
+    InputTextareaModule,
     InputNumberModule,
     ButtonModule,
     SelectorMediaComponent

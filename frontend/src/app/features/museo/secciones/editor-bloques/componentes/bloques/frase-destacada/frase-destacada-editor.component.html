@@ -16,12 +16,14 @@
     <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
       Autor <span class="text-xs font-normal opacity-60">(opcional)</span>
     </label>
-    <input
-      pInputText
-      type="text"
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      rows="1"
       formControlName="autorEs"
       placeholder="Nombre del autor o fuente..."
-      class="w-full" />
+      class="w-full resize-none"
+      style="max-height:80px;overflow-y:auto"></textarea>
   </div>
 
 </form>

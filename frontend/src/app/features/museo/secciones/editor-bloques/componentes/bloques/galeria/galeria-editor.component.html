@@ -4,12 +4,14 @@
     <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
       Título de la galería <span class="text-xs font-normal opacity-60">(opcional)</span>
     </label>
-    <input
-      pInputText
-      type="text"
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      rows="1"
       formControlName="tituloEs"
       placeholder="Ej: Galería de imágenes"
-      class="w-full" />
+      class="w-full resize-none"
+      style="max-height:80px;overflow-y:auto"></textarea>
   </div>
 
   <div class="flex flex-col gap-1">
@@ -48,36 +50,42 @@
         <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
           URL imagen <span class="text-red-500">*</span>
         </label>
-        <input
-          pInputText
-          type="text"
+        <textarea
+          pInputTextarea
+          [autoResize]="true"
+          rows="1"
           formControlName="url"
           placeholder="https://... o /uploads/..."
-          class="w-full" />
+          class="w-full resize-none"
+          style="max-height:80px;overflow-y:auto"></textarea>
       </div>
 
       <div class="flex flex-col gap-1">
         <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
           Título <span class="text-xs font-normal opacity-60">(opcional)</span>
         </label>
-        <input
-          pInputText
-          type="text"
+        <textarea
+          pInputTextarea
+          [autoResize]="true"
+          rows="1"
           formControlName="tituloEs"
           placeholder="Título de la imagen"
-          class="w-full" />
+          class="w-full resize-none"
+          style="max-height:80px;overflow-y:auto"></textarea>
       </div>
 
       <div class="flex flex-col gap-1">
         <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
           Caption <span class="text-xs font-normal opacity-60">(opcional)</span>
         </label>
-        <input
-          pInputText
-          type="text"
+        <textarea
+          pInputTextarea
+          [autoResize]="true"
+          rows="1"
           formControlName="captionEs"
           placeholder="Descripción breve"
-          class="w-full" />
+          class="w-full resize-none"
+          style="max-height:80px;overflow-y:auto"></textarea>
       </div>
 
     </div>

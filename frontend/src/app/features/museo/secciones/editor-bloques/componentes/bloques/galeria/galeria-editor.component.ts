@@ -14,6 +14,7 @@ import { FormBuilder, FormArray, FormGroup, ReactiveFormsModule } from '@angular
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DestroyRef } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 import { DropdownModule } from 'primeng/dropdown';
 import { ButtonModule } from 'primeng/button';
 import { ConfigGaleria, ConfigGaleriaItem } from '../../../modelos/bloque.modelo';
@@ -27,6 +28,7 @@ import { ElementoMedia } from '@features/museo/servicios/biblioteca-media.servic
     CommonModule,
     ReactiveFormsModule,
     InputTextModule,
+    InputTextareaModule,
     DropdownModule,
     ButtonModule,
     SelectorMediaComponent

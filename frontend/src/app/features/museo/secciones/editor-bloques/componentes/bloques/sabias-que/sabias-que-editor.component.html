@@ -16,12 +16,14 @@
     <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
       Etiqueta <span class="text-xs font-normal opacity-60">(opcional)</span>
     </label>
-    <input
-      pInputText
-      type="text"
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      rows="1"
       formControlName="etiquetaEs"
       placeholder="¿Sabías qué...?"
-      class="w-full" />
+      class="w-full resize-none"
+      style="max-height:80px;overflow-y:auto"></textarea>
     <small class="text-xs opacity-60">Si no se completa, se mostrará "¿Sabías qué...?" por defecto.</small>
   </div>
 

@@ -4,12 +4,14 @@
     <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
       Título de la sección <span class="text-xs font-normal opacity-60">(opcional)</span>
     </label>
-    <input
-      pInputText
-      type="text"
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      rows="1"
       formControlName="tituloEs"
       placeholder="Ej: Personajes relacionados"
-      class="w-full" />
+      class="w-full resize-none"
+      style="max-height:80px;overflow-y:auto"></textarea>
   </div>
 
   <div class="flex flex-col gap-3">
@@ -36,24 +38,28 @@
         <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
           Nombre <span class="text-red-500">*</span>
         </label>
-        <input
-          pInputText
-          type="text"
+        <textarea
+          pInputTextarea
+          [autoResize]="true"
+          rows="1"
           formControlName="nombre"
           placeholder="Nombre del personaje"
-          class="w-full" />
+          class="w-full resize-none"
+          style="max-height:80px;overflow-y:auto"></textarea>
       </div>
 
       <div class="flex flex-col gap-1">
         <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
           Rol <span class="text-xs font-normal opacity-60">(opcional)</span>
         </label>
-        <input
-          pInputText
-          type="text"
+        <textarea
+          pInputTextarea
+          [autoResize]="true"
+          rows="1"
           formControlName="rolEs"
           placeholder="Ej: Emperador, Sacerdote..."
-          class="w-full" />
+          class="w-full resize-none"
+          style="max-height:80px;overflow-y:auto"></textarea>
       </div>
 
       <div class="flex flex-col gap-1">
@@ -72,12 +78,14 @@
         <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
           URL imagen <span class="text-xs font-normal opacity-60">(opcional)</span>
         </label>
-        <input
-          pInputText
-          type="text"
+        <textarea
+          pInputTextarea
+          [autoResize]="true"
+          rows="1"
           formControlName="imagenUrl"
           placeholder="https://... o /uploads/..."
-          class="w-full" />
+          class="w-full resize-none"
+          style="max-height:80px;overflow-y:auto"></textarea>
       </div>
 
     </div>
