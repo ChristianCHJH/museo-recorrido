@@ -47,17 +47,17 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label class="text-xs font-semibold" style="color: var(--color-texto-oscuro)">
-          URL imagen <span class="text-red-500">*</span>
-        </label>
-        <textarea
-          pInputTextarea
-          [autoResize]="true"
-          rows="1"
-          formControlName="url"
-          placeholder="https://... o /uploads/..."
-          class="w-full resize-none"
-          style="max-height:80px;overflow-y:auto"></textarea>
+        @if (item.get('url')?.value) {
+          <img [src]="item.get('url')?.value" alt="Miniatura" style="max-height:120px; width:auto; border-radius:4px; object-fit:contain;">
+        }
+        <p-button
+          label="Imagen"
+          icon="pi pi-folder-open"
+          severity="info"
+          [outlined]="true"
+          size="small"
+          styleClass="w-full"
+          (onClick)="abrirSelectorPara(i)" />
       </div>
 
       <div class="flex flex-col gap-1">

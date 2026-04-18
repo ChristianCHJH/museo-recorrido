@@ -43,6 +43,7 @@ export class GaleriaEditorComponent implements OnInit, OnChanges {
   private readonly destroyRef = inject(DestroyRef);
 
   readonly selectorVisible = signal(false);
+  private readonly currentImageIndex = signal<number | null>(null);
 
   readonly opcionesDisposicion = [
     { label: 'Cuadrícula', value: 'grid' },
@@ -105,13 +106,39 @@ export class GaleriaEditorComponent implements OnInit, OnChanges {
     this.imagenesArray.push(this.crearFilaImagen());
   }
 
+  abrirSelectorPara(index: number): void {
+    this.currentImageIndex.set(index);
+    this.selectorVisible.set(true);
+  }
+
   alSeleccionarDesdeLibreria(elementos: ElementoMedia[]): void {
-    elementos.forEach(el => {
-      this.imagenesArray.push(this.crearFilaImagen({
-        url: el.url,
-        elementoMultimediaId: el.id
-      }));
-    });
+    const index = this.currentImageIndex();
+    if (index !== null) {
+      // Reemplazar imagen existente
+      elementos.forEach((el, i) => {
+        const targetIndex = index + i;
+        if (targetIndex < this.imagenesArray.length) {
+          this.imagenesArray.at(targetIndex)?.patchValue({
+            url: el.url,
+            elementoMultimediaId: el.id
+          }, { emitEvent: false });
+        } else {
+          this.imagenesArray.push(this.crearFilaImagen({
+            url: el.url,
+            elementoMultimediaId: el.id
+          }), { emitEvent: false });
+        }
+      });
+      this.currentImageIndex.set(null);
+    } else {
+      // Agregar nuevas imágenes
+      elementos.forEach(el => {
+        this.imagenesArray.push(this.crearFilaImagen({
+          url: el.url,
+          elementoMultimediaId: el.id
+        }));
+      });
+    }
   }
 
   eliminarImagen(index: number): void {
