@@ -23,7 +23,6 @@ export class SeccionesBloquesServicio {
   }
 
   async guardarLote(seccionId: string, dto: GuardarBloquesDto): Promise<SeccionBloqueEntidad[]> {
-    // Validar tipo y config de cada bloque antes de iniciar transacción
     for (const bloque of dto.bloques) {
       validarConfigBloque(bloque.tipo, bloque.config);
     }
@@ -33,7 +32,6 @@ export class SeccionesBloquesServicio {
       .map((b) => b.id as string);
 
     await this.sequelize.transaction(async (t) => {
-      // Soft-delete los bloques que ya no aparecen en el array
       await this.modelo.update(
         { eliminado: true, actualizadoEn: new Date() },
         {
@@ -48,8 +46,7 @@ export class SeccionesBloquesServicio {
 
       for (const bloqueDto of dto.bloques) {
         if (bloqueDto.id) {
-          // Actualizar bloque existente
-          await this.modelo.update(
+          const [filasActualizadas] = await this.modelo.update(
             {
               tipo: bloqueDto.tipo,
               orden: bloqueDto.orden,
@@ -59,8 +56,21 @@ export class SeccionesBloquesServicio {
             },
             { where: { id: bloqueDto.id, seccionId }, transaction: t },
           );
+
+          if (filasActualizadas === 0) {
+            await this.modelo.create(
+              {
+                id: bloqueDto.id,
+                seccionId,
+                tipo: bloqueDto.tipo,
+                orden: bloqueDto.orden,
+                config: bloqueDto.config,
+                estado: bloqueDto.estado ?? true,
+              } as any,
+              { transaction: t },
+            );
+          }
         } else {
-          // Crear nuevo bloque
           await this.modelo.create(
             {
               seccionId,

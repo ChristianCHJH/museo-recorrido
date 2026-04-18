@@ -19,7 +19,14 @@ export class BloquesServicio {
   }
 
   guardarLote(seccionId: string, bloques: Bloque[]): Observable<Bloque[]> {
-    return this.http.put<RespuestaApi<Bloque[]>>(`api/museo/secciones/${seccionId}/bloques`, { bloques }).pipe(map(r => r.datos));
+    const bloquesParaEnviar = bloques.map(b => ({
+      id: b.id,
+      tipo: b.tipo,
+      orden: b.orden,
+      config: b.config,
+      estado: b.estado
+    }));
+    return this.http.put<RespuestaApi<Bloque[]>>(`api/museo/secciones/${seccionId}/bloques`, { bloques: bloquesParaEnviar }).pipe(map(r => r.datos));
   }
 
   crear(seccionId: string, bloque: Bloque): Observable<Bloque> {
