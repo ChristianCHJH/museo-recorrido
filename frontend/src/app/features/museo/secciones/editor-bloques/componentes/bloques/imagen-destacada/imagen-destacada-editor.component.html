@@ -1,0 +1,66 @@
+<form [formGroup]="formulario" class="flex flex-col gap-4">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Imagen <span class="text-red-500">*</span>
+    </label>
+    @if (formulario.get('url')?.value; as url) {
+      <img [src]="urlCompleta(url)" alt="Miniatura" style="max-height:200px; width:auto; border-radius:4px; object-fit:contain;">
+    }
+    <p-button
+      label="Seleccionar de biblioteca"
+      icon="pi pi-folder-open"
+      severity="info"
+      [outlined]="true"
+      styleClass="w-full"
+      (onClick)="selectorVisible.set(true)" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Título <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      rows="1"
+      formControlName="tituloEs"
+      placeholder="Título de la imagen"
+      class="w-full resize-none"
+      style="max-height:80px;overflow-y:auto"></textarea>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Caption <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      rows="1"
+      formControlName="captionEs"
+      placeholder="Descripción breve de la imagen"
+      class="w-full resize-none"
+      style="max-height:80px;overflow-y:auto"></textarea>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Altura
+    </label>
+    <p-dropdown
+      formControlName="altura"
+      [options]="opcionesAltura"
+      optionLabel="label"
+      optionValue="value"
+      styleClass="w-full" />
+  </div>
+
+</form>
+
+<spa-selector-media
+  [visible]="selectorVisible()"
+  (visibleChange)="selectorVisible.set($event)"
+  tipoFiltrado="imagen"
+  modo="uno"
+  (seleccionado)="alSeleccionarDesdeLibreria($event)" />

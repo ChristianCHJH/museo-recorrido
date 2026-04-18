@@ -12,8 +12,7 @@ import { RegistroAccesoQrEntidad } from './entidades/registro-acceso-qr.entidad'
 import { CodigoQrEntidad } from '../codigos-qr/entidades/codigo-qr.entidad';
 import { CodigosQrServicio } from '../codigos-qr/codigos-qr.servicio';
 import { SeccionRecorridoEntidad } from '../secciones-recorrido/entidades/seccion-recorrido.entidad';
-
-const DURACION_SESION_MINUTOS_DEFAULT = 120;
+import { ConfiguracionMuseoServicio } from '../configuracion-museo/configuracion-museo.servicio';
 
 @Injectable()
 export class SesionesVisitaServicio {
@@ -23,6 +22,7 @@ export class SesionesVisitaServicio {
     @InjectModel(RegistroAccesoQrEntidad)
     private readonly modeloRegistro: typeof RegistroAccesoQrEntidad,
     private readonly codigosQrServicio: CodigosQrServicio,
+    private readonly configuracionServicio: ConfiguracionMuseoServicio,
   ) {}
 
   async iniciarSesion(
@@ -38,7 +38,7 @@ export class SesionesVisitaServicio {
 
     if (!qr.activo) {
       await this.registrarAcceso(qr.id, null, ipOrigen, userAgent, 'qr_inactivo');
-      throw new BadRequestException('Este código QR no está activo');
+      throw new BadRequestException('Este código QR está desactivado');
     }
 
     if (!qr.seccionId) {
@@ -51,8 +51,9 @@ export class SesionesVisitaServicio {
       throw new BadRequestException('La sección asociada no está disponible');
     }
 
+    const configuracion = await this.configuracionServicio.obtener();
+    const duracion = configuracion.duracionSesionVisitaMinutos;
     const token = uuidv4();
-    const duracion = DURACION_SESION_MINUTOS_DEFAULT;
     const ahora = new Date();
     const fechaExpiracion = new Date(ahora.getTime() + duracion * 60 * 1000);
 

@@ -18,6 +18,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import {
   CodigoQr,
   CrearQrDto,
+  SeccionDisponible,
   CodigosQrServicio
 } from '@features/museo/servicios/codigos-qr.servicio';
 
@@ -51,6 +52,8 @@ export class QrListaComponent implements OnInit {
   readonly qrSeleccionado = signal<CodigoQr | null>(null);
   readonly guardando = signal(false);
   readonly errorFormulario = signal<string | null>(null);
+  readonly seccionesDisponibles = signal<SeccionDisponible[]>([]);
+  readonly cargandoSecciones = signal(false);
 
   readonly formulario = this.fb.nonNullable.group({
     nombreDescriptivo: ['', [Validators.required, Validators.minLength(2)]],
@@ -69,6 +72,7 @@ export class QrListaComponent implements OnInit {
     this.errorFormulario.set(null);
     this.formulario.reset({ nombreDescriptivo: '', seccionId: '' });
     this.formularioVisible.set(true);
+    this.cargarSeccionesDisponibles();
   }
 
   abrirEditar(qr: CodigoQr): void {
@@ -80,11 +84,16 @@ export class QrListaComponent implements OnInit {
       seccionId: qr.seccionId ?? ''
     });
     this.formularioVisible.set(true);
+    this.cargarSeccionesDisponibles(qr.id);
   }
 
   cerrarFormulario(): void {
     if (this.guardando()) return;
     this.formularioVisible.set(false);
+  }
+
+  desvincularSeccion(): void {
+    this.formulario.patchValue({ seccionId: '' });
   }
 
   guardar(): void {
@@ -95,7 +104,7 @@ export class QrListaComponent implements OnInit {
     const valores = this.formulario.getRawValue();
     const dto: CrearQrDto = {
       nombreDescriptivo: valores.nombreDescriptivo.trim(),
-      seccionId: valores.seccionId?.trim() || undefined
+      seccionId: valores.seccionId?.trim() || null
     };
 
     this.guardando.set(true);
@@ -174,8 +183,46 @@ export class QrListaComponent implements OnInit {
     });
   }
 
-  descargarUrl(qr: CodigoQr): string {
-    return this.servicio.descargarUrl(qr.id);
+  descargar(qr: CodigoQr): void {
+    this.servicio
+      .descargarQr(qr.id)
+      .pipe(takeUntilDestroyed(this.destruirRef))
+      .subscribe({
+        next: (blob) => {
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = `${qr.nombreDescriptivo}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        },
+        error: () => this.notificar('error', 'Error al descargar', 'No se pudo descargar el QR.')
+      });
+  }
+
+  regenerarQr(qr: CodigoQr): void {
+    this.servicioConfirmacion.confirm({
+      message: `Deseas regenerar el codigo QR de "${qr.nombreDescriptivo}"? Se generara un nuevo codigo y la imagen anterior dejara de funcionar.`,
+      header: 'Regenerar codigo QR',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Si, regenerar',
+      rejectLabel: 'Cancelar',
+      defaultFocus: 'reject',
+      accept: () => {
+        this.servicio
+          .regenerar(qr.id)
+          .pipe(takeUntilDestroyed(this.destruirRef))
+          .subscribe({
+            next: () => {
+              this.cargar();
+              this.notificar('success', 'QR regenerado', `Se genero un nuevo codigo para "${qr.nombreDescriptivo}".`);
+            },
+            error: () => this.notificar('error', 'Error al regenerar', 'No se pudo regenerar el QR. Intentalo nuevamente.')
+          });
+      }
+    });
   }
 
   imagenQrUrl(qr: CodigoQr): string | null {
@@ -203,6 +250,23 @@ export class QrListaComponent implements OnInit {
       .subscribe({
         next: (lista) => this.codigos.set(lista),
         error: () => this.error.set('No se pudieron cargar los codigos QR. Intentalo nuevamente.')
+      });
+  }
+
+  private cargarSeccionesDisponibles(excluirQrId?: string): void {
+    this.cargandoSecciones.set(true);
+    this.servicio
+      .obtenerSeccionesDisponibles(excluirQrId)
+      .pipe(takeUntilDestroyed(this.destruirRef))
+      .subscribe({
+        next: (secciones) => {
+          this.seccionesDisponibles.set(secciones);
+          this.cargandoSecciones.set(false);
+        },
+        error: () => {
+          this.seccionesDisponibles.set([]);
+          this.cargandoSecciones.set(false);
+        }
       });
   }
 

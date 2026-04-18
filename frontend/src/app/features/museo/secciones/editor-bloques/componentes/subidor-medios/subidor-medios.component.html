@@ -1,0 +1,89 @@
+<p-dialog
+  [visible]="visible"
+  (visibleChange)="visible = $event"
+  header="Subir archivo"
+  [modal]="true"
+  [closable]="true"
+  [draggable]="false"
+  (onHide)="cerrar()"
+  styleClass="w-full max-w-md">
+
+  <div class="flex flex-col gap-4 py-2">
+
+    <!-- Zona de selección de archivo -->
+    <div class="flex flex-col gap-2">
+      <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+        Archivo <span class="text-red-500">*</span>
+      </label>
+      <label
+        class="flex flex-col items-center justify-center gap-2 p-6 border-2 border-dashed rounded-lg cursor-pointer transition-colors"
+        [class.border-amber-400]="!archivoSeleccionado()"
+        [class.border-green-500]="!!archivoSeleccionado()"
+        style="background: var(--surface-section)">
+        <i
+          class="pi text-2xl"
+          [class.pi-upload]="!archivoSeleccionado()"
+          [class.pi-check-circle]="!!archivoSeleccionado()"
+          [class.text-gray-400]="!archivoSeleccionado()"
+          [class.text-green-600]="!!archivoSeleccionado()"></i>
+        <span class="text-sm text-center" style="color: var(--color-texto-oscuro)">
+          @if (archivoSeleccionado()) {
+            <strong>{{ nombreArchivo }}</strong>
+          } @else {
+            Haz clic para seleccionar un archivo
+          }
+        </span>
+        <input
+          type="file"
+          class="hidden"
+          accept="image/*,audio/*,video/*"
+          (change)="alSeleccionarArchivo($event)" />
+      </label>
+    </div>
+
+    <!-- Nombre opcional -->
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">
+        Nombre <span class="text-xs font-normal opacity-60">(opcional)</span>
+      </label>
+      <input
+        pInputText
+        type="text"
+        [formControl]="formulario.controls.nombre"
+        placeholder="Nombre descriptivo"
+        class="w-full" />
+    </div>
+
+    <!-- Descripción opcional -->
+    <div class="flex flex-col gap-1">
+      <label class="text-sm font-medium text-gray-700">
+        Descripción <span class="text-xs font-normal opacity-60">(opcional)</span>
+      </label>
+      <input
+        pInputText
+        type="text"
+        [formControl]="formulario.controls.descripcion"
+        placeholder="Descripción breve"
+        class="w-full" />
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-2">
+      <p-button
+        label="Cancelar"
+        icon="pi pi-times"
+        severity="secondary"
+        (onClick)="cerrar()" />
+      <p-button
+        label="Subir"
+        icon="pi pi-upload"
+        severity="success"
+        [loading]="subiendo()"
+        [disabled]="!archivoSeleccionado() || subiendo()"
+        (onClick)="subir()" />
+    </div>
+  </ng-template>
+
+</p-dialog>

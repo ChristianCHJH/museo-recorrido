@@ -3,6 +3,7 @@ import {
   Column,
   DataType,
   ForeignKey,
+  Index,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -12,14 +13,21 @@ import {
   InferCreationAttributes,
 } from 'sequelize';
 import { SeccionRecorridoEntidad } from '../../secciones-recorrido/entidades/seccion-recorrido.entidad';
+import { TipoBloque } from '../dto/tipos-bloque';
 
 @Table({
-  tableName: 'elementos_multimedia',
+  tableName: 'seccion_bloques',
   timestamps: false,
+  indexes: [
+    {
+      fields: ['seccion_id', 'orden'],
+      name: 'idx_seccion_bloques_seccion_orden',
+    },
+  ],
 })
-export class ElementoMultimediaEntidad extends Model<
-  InferAttributes<ElementoMultimediaEntidad>,
-  InferCreationAttributes<ElementoMultimediaEntidad>
+export class SeccionBloqueEntidad extends Model<
+  InferAttributes<SeccionBloqueEntidad>,
+  InferCreationAttributes<SeccionBloqueEntidad>
 > {
   @Column({
     type: DataType.UUID,
@@ -32,32 +40,17 @@ export class ElementoMultimediaEntidad extends Model<
   @Column({ field: 'seccion_id', type: DataType.UUID, allowNull: false })
   declare seccionId: string;
 
-  @BelongsTo(() => SeccionRecorridoEntidad)
+  @BelongsTo(() => SeccionRecorridoEntidad, { as: 'seccion', foreignKey: 'seccionId' })
   seccion: SeccionRecorridoEntidad;
 
-  @Column({ type: DataType.STRING(20), allowNull: false })
-  declare tipo: string;
-
-  @Column({ type: DataType.STRING(500), allowNull: false })
-  declare url: string;
-
-  @Column({ field: 'url_miniatura', type: DataType.STRING(500), allowNull: true })
-  declare urlMiniatura: CreationOptional<string | null>;
-
-  @Column({ type: DataType.STRING(200), allowNull: true })
-  declare titulo: CreationOptional<string | null>;
-
-  @Column({ type: DataType.STRING(500), allowNull: true })
-  declare descripcion: CreationOptional<string | null>;
-
-  @Column({ field: 'es_principal', type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  declare esPrincipal: CreationOptional<boolean>;
+  @Column({ type: DataType.STRING(40), allowNull: false })
+  declare tipo: TipoBloque;
 
   @Column({ type: DataType.INTEGER, allowNull: false, defaultValue: 0 })
   declare orden: CreationOptional<number>;
 
-  @Column({ field: 'peso_bytes', type: DataType.BIGINT, allowNull: true })
-  declare pesoBytes: CreationOptional<bigint | null>;
+  @Column({ type: DataType.JSONB, allowNull: false, defaultValue: {} })
+  declare config: CreationOptional<Record<string, any>>;
 
   @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: true })
   declare estado: CreationOptional<boolean>;

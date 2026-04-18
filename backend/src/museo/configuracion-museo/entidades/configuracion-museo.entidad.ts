@@ -95,7 +95,7 @@ export class ConfiguracionMuseoEntidad extends Model<
     field: 'duracion_sesion_visita_minutos',
     type: DataType.INTEGER,
     allowNull: false,
-    defaultValue: 120,
+    defaultValue: 15,
   })
   declare duracionSesionVisitaMinutos: CreationOptional<number>;
 

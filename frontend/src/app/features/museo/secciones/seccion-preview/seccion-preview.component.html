@@ -11,17 +11,6 @@
 
   <div class="visita-contenido">
 
-    <!-- Audio narrado -->
-    <div class="audio-block" *ngIf="seccion.audioUrl">
-      <div class="audio-label">
-        <i class="pi pi-volume-up"></i>
-        <span>Audio narrado</span>
-      </div>
-      <audio controls style="width:100%">
-        <source [src]="apiUrl + seccion.audioUrl" />
-      </audio>
-    </div>
-
     <!-- Periodo historico -->
     <div class="periodo-tag" *ngIf="seccion.periodoHistorico">
       <i class="pi pi-clock"></i>
@@ -31,89 +20,18 @@
     <!-- Descripcion breve -->
     <p class="descripcion" *ngIf="seccion.descripcionBreve">{{ seccion.descripcionBreve }}</p>
 
-    <!-- Frase destacada -->
-    <blockquote class="frase-destacada" *ngIf="seccion.fraseDestacada">
-      <i class="pi pi-quote-left"></i>
-      <p>{{ seccion.fraseDestacada }}</p>
-    </blockquote>
-
-    <!-- Contenido historico -->
-    <div class="contenido-historico" *ngIf="seccion.contenidoHistorico">
-      <h2 class="seccion-subtitulo">Contenido historico</h2>
-      <p>{{ seccion.contenidoHistorico }}</p>
-    </div>
-
-    <!-- Galeria multimedia -->
-    <div class="galeria" *ngIf="elementosActivos().length > 0">
-      <h2 class="seccion-subtitulo">Galeria</h2>
-      <div class="galeria-lista">
-        <div
-          class="media-item"
-          *ngFor="let elem of elementosActivos()"
-          [class.media-item-principal]="elem.esPrincipal"
-        >
-          <!-- Imagen local -->
-          <ng-container *ngIf="esImagenLocal(elem)">
-            <img
-              [src]="imagenUrl(elem)"
-              [alt]="elem.titulo || seccion.nombre"
-              class="media-imagen"
-              loading="lazy"
-            />
-          </ng-container>
-
-          <!-- Video externo (YouTube / Vimeo) -->
-          <ng-container *ngIf="esVideoExterno(elem)">
-            <div class="video-wrapper">
-              <iframe
-                [src]="embedUrl(elem)"
-                [title]="elem.titulo || 'Video'"
-                frameborder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowfullscreen
-                class="media-iframe"
-              ></iframe>
-            </div>
-          </ng-container>
-
-          <!-- Video local -->
-          <ng-container *ngIf="esVideoLocal(elem)">
-            <div class="video-wrapper">
-              <video
-                [src]="imagenUrl(elem)"
-                controls
-                class="media-video"
-                [title]="elem.titulo || 'Video'"
-              ></video>
-            </div>
-          </ng-container>
-
-          <div class="media-caption" *ngIf="elem.titulo">
-            <span class="caption-titulo">{{ elem.titulo }}</span>
-            <span class="caption-desc" *ngIf="elem.descripcion">{{ elem.descripcion }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Personajes relacionados -->
-    <div class="extra-bloque" *ngIf="seccion.personajesRelacionados">
-      <h2 class="seccion-subtitulo">Personajes relacionados</h2>
-      <p>{{ seccion.personajesRelacionados }}</p>
-    </div>
-
-    <!-- Datos curiosos -->
-    <div class="curiosos-bloque" *ngIf="seccion.datosCuriosos">
-      <div class="curiosos-header">
-        <i class="pi pi-lightbulb"></i>
-        <span>Sabias que...?</span>
-      </div>
-      <p>{{ seccion.datosCuriosos }}</p>
+    <!-- Bloques -->
+    <div class="bloques-contenedor" *ngIf="bloques.length > 0">
+      <spa-renderer-bloque
+        *ngFor="let bloque of bloques"
+        [bloque]="bloque"
+        [modoEdicion]="false"
+      />
     </div>
 
     <!-- Sin contenido -->
     <div class="sin-contenido"
-      *ngIf="!seccion.descripcionBreve && !seccion.contenidoHistorico && elementosActivos().length === 0">
+      *ngIf="!seccion.descripcionBreve && bloques.length === 0">
       <i class="pi pi-image"></i>
       <p>Esta seccion aun no tiene contenido cargado.</p>
     </div>

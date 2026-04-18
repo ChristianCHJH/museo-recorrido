@@ -33,7 +33,8 @@ export class ConfiguracionMuseoComponent implements OnInit {
     nombre: ['', [Validators.required, Validators.minLength(2)]],
     descripcion: [''],
     colorPrimario: ['#5D4037'],
-    colorSecundario: ['#C5B358']
+    colorSecundario: ['#C5B358'],
+    duracionSesionVisitaMinutos: [15, [Validators.required, Validators.min(1), Validators.max(480)]]
   });
 
   ngOnInit(): void {
@@ -53,7 +54,8 @@ export class ConfiguracionMuseoComponent implements OnInit {
         nombre: valores.nombre.trim(),
         descripcion: valores.descripcion?.trim() || undefined,
         colorPrimario: valores.colorPrimario || undefined,
-        colorSecundario: valores.colorSecundario || undefined
+        colorSecundario: valores.colorSecundario || undefined,
+        duracionSesionVisitaMinutos: valores.duracionSesionVisitaMinutos
       })
       .pipe(takeUntilDestroyed(this.destruirRef), finalize(() => this.guardando.set(false)))
       .subscribe({
@@ -87,7 +89,8 @@ export class ConfiguracionMuseoComponent implements OnInit {
       nombre: config.nombre ?? '',
       descripcion: config.descripcion ?? '',
       colorPrimario: config.colorPrimario ?? '#5D4037',
-      colorSecundario: config.colorSecundario ?? '#C5B358'
+      colorSecundario: config.colorSecundario ?? '#C5B358',
+      duracionSesionVisitaMinutos: config.duracionSesionVisitaMinutos ?? 15
     });
   }
 

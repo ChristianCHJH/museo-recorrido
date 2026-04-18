@@ -38,28 +38,28 @@ export class SesionesVisitaServicio {
 
   iniciarSesion(codigoQr: string): Observable<IniciarSesionRespuesta> {
     return this.http.post<IniciarSesionRespuesta>(
-      `api/museo/visitas/iniciar/${codigoQr}`,
+      `api/museo/visita/iniciar/${codigoQr}`,
       {}
     );
   }
 
   verificarToken(token: string): Observable<SesionVisita> {
     return this.httpClient.get<SesionVisita>(
-      `${this.baseUrl}/museo/visitas/verificar`,
+      `${this.baseUrl}/museo/visita/verificar`,
       { headers: { 'X-Visita-Token': token } }
     );
   }
 
   obtenerSesionesActivas(): Observable<SesionVisita[]> {
-    return this.http.get<SesionVisita[]>('api/museo/visitas/sesiones');
+    return this.http.get<SesionVisita[]>('api/museo/visita/sesiones');
   }
 
   revocarSesion(id: string): Observable<void> {
-    return this.http.patch<void>(`api/museo/visitas/sesiones/${id}/revocar`, {});
+    return this.http.patch<void>(`api/museo/visita/sesiones/${id}/revocar`, {});
   }
 
   obtenerLogs(): Observable<RegistroAcceso[]> {
-    return this.http.get<RegistroAcceso[]>('api/museo/visitas/logs');
+    return this.http.get<RegistroAcceso[]>('api/museo/visita/logs');
   }
 
   guardarToken(token: string): void {

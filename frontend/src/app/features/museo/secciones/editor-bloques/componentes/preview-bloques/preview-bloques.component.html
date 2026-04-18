@@ -1,0 +1,14 @@
+<!-- Contenido dinámico por bloques -->
+<ng-container *ngIf="bloquesOrdenados.length === 0">
+  <div class="sin-contenido">
+    <i class="pi pi-image"></i>
+    <p>Esta seccion aun no tiene bloques.</p>
+  </div>
+</ng-container>
+
+<ng-container *ngFor="let bloque of bloquesOrdenados">
+  <ng-container *ngIf="esTipoRegistrado(bloque.tipo)">
+    <ng-container
+      *ngComponentOutlet="componentePreviewDe(bloque.tipo); inputs: inputsDe(bloque)" />
+  </ng-container>
+</ng-container>

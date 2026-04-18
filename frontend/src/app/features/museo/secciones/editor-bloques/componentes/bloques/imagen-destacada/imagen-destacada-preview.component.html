@@ -1,0 +1,20 @@
+<ng-container *ngIf="tieneUrl; else sinImagen">
+  <div class="media-item">
+    <img
+      [src]="urlCompleta(config.url)"
+      [alt]="config.titulo?.es || 'Imagen'"
+      class="imagen-destacada"
+      [ngClass]="alturaClase"
+      loading="lazy" />
+    <div class="media-caption" *ngIf="tieneCaption">
+      <span class="caption-titulo" *ngIf="config.titulo?.es">{{ config.titulo!.es }}</span>
+      <span class="caption-desc" *ngIf="config.caption?.es">{{ config.caption!.es }}</span>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #sinImagen>
+  <p class="bloque-placeholder">
+    <i class="pi pi-image"></i> Sin imagen
+  </p>
+</ng-template>

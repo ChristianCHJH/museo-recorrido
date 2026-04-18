@@ -3,7 +3,8 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { SeccionRecorridoEntidad } from './entidades/seccion-recorrido.entidad';
 import { ExposicionEntidad } from '../exposiciones/entidades/exposicion.entidad';
-import { ElementoMultimediaEntidad } from '../elementos-multimedia/entidades/elemento-multimedia.entidad';
+import { SeccionBloqueEntidad } from '../secciones-bloques/entidades/seccion-bloque.entidad';
+import { CodigoQrEntidad } from '../codigos-qr/entidades/codigo-qr.entidad';
 import {
   ActualizarSeccionRecorridoDto,
   CambiarEstadoSeccionDto,
@@ -30,6 +31,7 @@ export class SeccionesRecorridoServicio {
   async obtenerPorExposicion(exposicionId: string): Promise<SeccionRecorridoEntidad[]> {
     return this.modelo.findAll({
       where: { exposicionId, eliminado: false },
+      include: [{ model: CodigoQrEntidad, required: false }],
       order: [['orden', 'ASC']],
     });
   }
@@ -37,7 +39,16 @@ export class SeccionesRecorridoServicio {
   async obtenerPorId(id: string): Promise<SeccionRecorridoEntidad> {
     const seccion = await this.modelo.findOne({
       where: { id, eliminado: false },
-      include: [ExposicionEntidad],
+      include: [
+        ExposicionEntidad,
+        {
+          model: SeccionBloqueEntidad,
+          as: 'bloques',
+          where: { eliminado: false },
+          required: false,
+          order: [['orden', 'ASC']],
+        },
+      ],
     });
     if (!seccion) {
       throw new NotFoundException(`Sección con id ${id} no encontrada`);
@@ -69,7 +80,13 @@ export class SeccionesRecorridoServicio {
       where: { id, estado: true, eliminado: false },
       include: [
         ExposicionEntidad,
-        { model: ElementoMultimediaEntidad, where: { estado: true, eliminado: false }, required: false, order: [['orden', 'ASC']] },
+        {
+          model: SeccionBloqueEntidad,
+          as: 'bloques',
+          where: { eliminado: false, estado: true },
+          required: false,
+          order: [['orden', 'ASC']],
+        },
       ],
     });
     if (!seccion) throw new NotFoundException(`Sección con id ${id} no encontrada o no está publicada`);

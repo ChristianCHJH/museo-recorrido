@@ -1,0 +1,41 @@
+<form [formGroup]="formulario" class="flex flex-col gap-4">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Titulo <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      rows="1"
+      formControlName="tituloEs"
+      placeholder="Titulo de la seccion de texto..."
+      class="w-full resize-none"
+      style="max-height:80px;overflow-y:auto"></textarea>
+  </div>
+
+  <div class="flex flex-col gap-1" *ngIf="formulario.get('tituloEs')?.value">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Nivel de titulo
+    </label>
+    <p-dropdown
+      formControlName="nivelTitulo"
+      [options]="opcionesNivel"
+      optionLabel="label"
+      optionValue="value"
+      styleClass="w-full" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Contenido <span class="text-red-500">*</span>
+    </label>
+    <textarea
+      pInputTextarea
+      formControlName="contenidoEs"
+      rows="5"
+      placeholder="Escribe el contenido del parrafo..."
+      class="w-full resize-y"></textarea>
+  </div>
+
+</form>

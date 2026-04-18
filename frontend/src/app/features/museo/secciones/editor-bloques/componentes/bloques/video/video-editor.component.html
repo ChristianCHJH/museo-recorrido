@@ -1,0 +1,79 @@
+<form [formGroup]="formulario" class="flex flex-col gap-4">
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Origen
+    </label>
+    <p-dropdown
+      formControlName="origen"
+      [options]="opcionesOrigen"
+      optionLabel="label"
+      optionValue="value"
+      styleClass="w-full"
+      (onChange)="alCambiarOrigen($event.value)" />
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Video <span class="text-red-500">*</span>
+    </label>
+    @if (formulario.get('url')?.value; as url) {
+      <div style="padding: 8px 12px; background: #f5f5f5; border-radius: 4px; font-size: 13px; color: #555;">
+        <span class="pi pi-video" style="margin-right: 8px;"></span>{{ url.split('/').pop() }}
+      </div>
+    }
+    @if (esLocal()) {
+      <p-button
+        label="Seleccionar de biblioteca"
+        icon="pi pi-folder-open"
+        severity="info"
+        [outlined]="true"
+        styleClass="w-full"
+        (onClick)="selectorVisible.set(true)" />
+    } @else {
+      <p-button
+        label="Ingresa URL de YouTube o Vimeo"
+        icon="pi pi-info-circle"
+        severity="secondary"
+        [outlined]="true"
+        [disabled]="true"
+        styleClass="w-full" />
+    }
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Título <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      rows="1"
+      formControlName="tituloEs"
+      placeholder="Título del video"
+      class="w-full resize-none"
+      style="max-height:80px;overflow-y:auto"></textarea>
+  </div>
+
+  <div class="flex flex-col gap-1">
+    <label class="text-sm font-semibold" style="color: var(--color-texto-oscuro)">
+      Caption <span class="text-xs font-normal opacity-60">(opcional)</span>
+    </label>
+    <textarea
+      pInputTextarea
+      [autoResize]="true"
+      rows="1"
+      formControlName="captionEs"
+      placeholder="Descripción breve del video"
+      class="w-full resize-none"
+      style="max-height:80px;overflow-y:auto"></textarea>
+  </div>
+
+</form>
+
+<spa-selector-media
+  [visible]="selectorVisible()"
+  (visibleChange)="selectorVisible.set($event)"
+  tipoFiltrado="video"
+  modo="uno"
+  (seleccionado)="alSeleccionarDesdeLibreria($event)" />

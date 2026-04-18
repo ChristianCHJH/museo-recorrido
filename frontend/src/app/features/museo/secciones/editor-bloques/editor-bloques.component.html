@@ -1,0 +1,95 @@
+<section class="editor-shell">
+
+  <!-- Header -->
+  <header class="editor-header">
+    <div class="editor-header-left">
+      <button type="button" class="back-btn" (click)="cancelar()">
+        <i class="pi pi-arrow-left"></i>
+        Volver a secciones
+      </button>
+      <div class="editor-copy">
+        <p class="eyebrow">Museo / Exposicion / Secciones</p>
+        <h1>Editor de contenido — {{ seccion.nombre }}</h1>
+      </div>
+    </div>
+    <div class="editor-header-actions">
+      <span *ngIf="hayChangesSinGuardar()" class="cambios-badge">
+        <i class="pi pi-circle-fill"></i>
+        Cambios sin guardar
+      </span>
+      <button
+        type="button"
+        class="ghost-btn"
+        (click)="cancelar()"
+        [disabled]="guardando()">
+        Cancelar
+      </button>
+      <button
+        type="button"
+        class="primary-btn"
+        (click)="guardar()"
+        [disabled]="!hayChangesSinGuardar() || guardando()">
+        <i class="pi"
+          [class.pi-save]="!guardando()"
+          [class.pi-spin]="guardando()"
+          [class.pi-spinner]="guardando()"></i>
+        {{ guardando() ? 'Guardando...' : 'Guardar bloques' }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Estado de carga -->
+  <div *ngIf="cargando()" class="estado-cargando">
+    <i class="pi pi-spin pi-spinner"></i>
+    <p>Cargando bloques...</p>
+  </div>
+
+  <!-- Body: 3 columnas -->
+  <div *ngIf="!cargando()" class="editor-body">
+
+    <!-- Columna 1: Paleta -->
+    <aside class="paleta-col">
+      <spa-paleta-bloques
+        (agregarBloque)="alAgregarBloque($event)" />
+    </aside>
+
+    <!-- Columna 2: Lista de bloques -->
+    <main class="lista-col">
+      <div class="lista-header">
+        <span class="lista-titulo">
+          <i class="pi pi-list"></i>
+          Bloques
+          <span class="lista-count">{{ contadorBloques() }}</span>
+        </span>
+      </div>
+
+      <spa-lista-bloques
+        [bloques]="bloques()"
+        (bloquesChange)="alReordenar($event)"
+        (eliminarBloque)="alEliminar($event)"
+        (duplicarBloque)="alDuplicar($event)"
+        (agregarEnPosicion)="alAgregarEnPosicion($event)" />
+    </main>
+
+    <!-- Columna 3: Preview móvil -->
+    <aside class="preview-col">
+      <div class="preview-label">
+        <i class="pi pi-mobile"></i>
+        <span>Vista previa</span>
+        <span class="preview-badge">Live</span>
+      </div>
+
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <spa-preview-bloques [bloques]="bloques()" />
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+</section>
+
+<p-toast position="bottom-right"></p-toast>
+<p-confirmDialog></p-confirmDialog>

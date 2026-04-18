@@ -11,6 +11,7 @@ import { RolAccesoComponent } from '@features/roles/rol-acceso/rol-acceso.compon
 import { UsuarioAccesoComponent } from '@features/usuarios/usuario-acceso/usuario-acceso.component';
 import { ExposicionesListaComponent } from '@features/museo/exposiciones/exposiciones-lista/exposiciones-lista.component';
 import { SeccionesEditorComponent } from '@features/museo/secciones/secciones-editor/secciones-editor.component';
+import { SeccionEditorPageComponent } from '@features/museo/secciones/seccion-editor-page/seccion-editor-page.component';
 import { QrListaComponent } from '@features/museo/qr/qr-lista/qr-lista.component';
 import { VisitasPanelComponent } from '@features/museo/visitas/visitas-panel/visitas-panel.component';
 import { ConfiguracionMuseoComponent } from '@features/museo/configuracion/configuracion-museo/configuracion-museo.component';
@@ -32,6 +33,7 @@ import { Exposicion } from '@features/museo/servicios/exposiciones.servicio';
     UsuarioAccesoComponent,
     ExposicionesListaComponent,
     SeccionesEditorComponent,
+    SeccionEditorPageComponent,
     QrListaComponent,
     VisitasPanelComponent,
     ConfiguracionMuseoComponent
@@ -57,6 +59,15 @@ export class PanelComponent implements OnInit {
     this.ruta.paramMap
       .pipe(takeUntilDestroyed(this.destruirRef))
       .subscribe((params) => {
+        const exposicionId = params.get('exposicionId');
+        const seccionId = params.get('seccionId');
+
+        // Si está en la ruta del editor de sección
+        if (exposicionId && seccionId) {
+          this.vistaActiva = 'editor-seccion';
+          return;
+        }
+
         const vista = params.get('vista');
         if (!vista) {
           this.router.navigate(['/dashboard', 'users'], { replaceUrl: true });

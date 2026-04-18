@@ -1,15 +1,59 @@
-<!-- ── Live editor ──────────────────────────────────────── -->
-<ng-container *ngIf="modoLiveEditor()">
-  <spa-seccion-form-live
-    [exposicionId]="exposicionId"
-    [seccion]="seccionParaEditar()"
-    (guardado)="alGuardarLive()"
-    (cancelado)="alCancelarLive()"
-  />
+<!-- Formulario de creación rápida antes de abrir el editor de bloques -->
+<ng-container *ngIf="modoCrear()">
+  <div class="crear-seccion-shell">
+    <header class="sec-header" style="margin-bottom:1.5rem">
+      <button type="button" class="back-btn" (click)="cancelarCrear()">
+        <i class="pi pi-arrow-left"></i> Volver
+      </button>
+      <div>
+        <p class="sec-breadcrumb">MUSEO / EXPOSICION / SECCIONES</p>
+        <h2 class="sec-title">Nueva sección</h2>
+      </div>
+    </header>
+
+    <form [formGroup]="formularioCrear" (ngSubmit)="confirmarCrear()" class="crear-seccion-form">
+      <p class="crear-seccion-hint">
+        <i class="pi pi-info-circle"></i>
+        Ingresa los datos básicos. Luego podrás agregar bloques de contenido.
+      </p>
+
+      <div class="campo-grupo">
+        <label class="campo-label">Nombre <span class="requerido">*</span></label>
+        <input pInputText formControlName="nombre" placeholder="Ej: Sala de Cerámicas" class="w-full" />
+        <small class="campo-error" *ngIf="formularioCrear.controls.nombre.invalid && formularioCrear.controls.nombre.touched">
+          El nombre es requerido (mínimo 2 caracteres).
+        </small>
+      </div>
+
+      <div class="campo-grupo">
+        <label class="campo-label">Subtítulo</label>
+        <input pInputText formControlName="subtitulo" placeholder="Ej: Colección siglo XVIII" class="w-full" />
+      </div>
+
+      <div class="campo-grupo">
+        <label class="campo-label">Descripción breve</label>
+        <input pInputText formControlName="descripcionBreve" placeholder="Resumen visible al inicio" class="w-full" />
+      </div>
+
+      <div class="campo-grupo">
+        <label class="campo-label">Período histórico</label>
+        <input pInputText formControlName="periodoHistorico" placeholder="Ej: Siglo XVIII" class="w-full" />
+      </div>
+
+      <div class="crear-seccion-acciones">
+        <button type="button" class="secondary-btn" (click)="cancelarCrear()">Cancelar</button>
+        <button type="submit" class="primary-btn" [disabled]="creando()">
+          <i class="pi pi-spin pi-spinner" *ngIf="creando()"></i>
+          <i class="pi pi-arrow-right" *ngIf="!creando()"></i>
+          {{ creando() ? 'Creando...' : 'Crear y agregar contenido' }}
+        </button>
+      </div>
+    </form>
+  </div>
 </ng-container>
 
 <!-- ── Vista lista ──────────────────────────────────────── -->
-<ng-container *ngIf="!modoLiveEditor()">
+<ng-container *ngIf="!modoCrear()">
   <section class="sec-shell">
     <header class="sec-header">
       <div class="header-left">
@@ -20,7 +64,7 @@
         <div class="copy">
           <p class="eyebrow">Museo / Exposicion</p>
           <h1>Secciones del recorrido</h1>
-          <p class="subtitle">Administra las secciones y su contenido multimedia.</p>
+          <p class="subtitle">Administra las secciones y su contenido.</p>
         </div>
       </div>
       <div class="actions">
@@ -61,7 +105,7 @@
 
     <!-- Modo normal -->
     <ng-container *ngIf="!modoReordenar()">
-      <div class="sec-layout" [class.con-panel]="panelMultimediaVisible()">
+      <div class="sec-layout">
         <!-- Lista de secciones -->
         <div class="sec-lista">
           <ng-container *ngIf="!cargando(); else plantillaCargando">
@@ -75,14 +119,10 @@
                     <span class="badge" [class.badge-activo]="sec.estado" [class.badge-inactivo]="!sec.estado">
                       {{ sec.estado ? 'Activo' : 'Inactivo' }}
                     </span>
-                    <span class="badge-audio" *ngIf="sec.audioUrl"><i class="pi pi-volume-up"></i> Audio</span>
                   </div>
                   <div class="sec-actions">
                     <button type="button" class="icon preview" pTooltip="Vista previa" tooltipPosition="top" (click)="abrirPreview(sec)">
                       <i class="pi pi-mobile"></i>
-                    </button>
-                    <button type="button" class="icon" pTooltip="Ver multimedia" tooltipPosition="top" (click)="abrirMultimedia(sec)">
-                      <i class="pi pi-images"></i>
                     </button>
                     <button type="button" class="icon" pTooltip="Editar" tooltipPosition="top" (click)="abrirEditar(sec)">
                       <i class="pi pi-pencil"></i>
@@ -96,6 +136,13 @@
                   </div>
                 </div>
                 <p class="sec-descripcion" *ngIf="sec.descripcionBreve">{{ sec.descripcionBreve }}</p>
+                <div class="sec-qr-info" *ngIf="sec.codigoQr || !sec.codigoQr">
+                  <div *ngIf="sec.codigoQr" class="sec-qr-badge" (click)="abrirVistaQr(sec.codigoQr)" role="button" tabindex="0">
+                    <i class="pi pi-qrcode"></i>
+                    <span>{{ sec.codigoQr.nombreDescriptivo }}</span>
+                  </div>
+                  <span *ngIf="!sec.codigoQr" class="sec-qr-ninguno">Sin QR</span>
+                </div>
               </div>
 
               <div class="state-card" *ngIf="secciones().length === 0">
@@ -107,99 +154,6 @@
           </ng-container>
         </div>
 
-        <!-- Panel Multimedia -->
-        <aside class="panel-multimedia" *ngIf="panelMultimediaVisible()">
-          <div class="panel-header">
-            <div>
-              <p class="panel-eyebrow">Multimedia</p>
-              <h2 class="panel-nombre">{{ seccionMultimedia()?.nombre }}</h2>
-            </div>
-            <button type="button" class="icon" (click)="cerrarPanelMultimedia()">
-              <i class="pi pi-times"></i>
-            </button>
-          </div>
-
-          <div class="audio-section">
-            <p class="audio-label"><i class="pi pi-volume-up"></i> Audio narrado</p>
-            <div class="audio-player" *ngIf="seccionMultimedia()?.audioUrl">
-              <audio controls style="width:100%">
-                <source [src]="apiUrl + seccionMultimedia()!.audioUrl" />
-              </audio>
-            </div>
-            <p class="audio-vacio" *ngIf="!seccionMultimedia()?.audioUrl">Sin audio asignado</p>
-            <button type="button" class="ghost-btn small" (click)="seleccionarAudio()" [disabled]="subiendoAudio()">
-              <i class="pi" [class.pi-upload]="!subiendoAudio()" [class.pi-spin]="subiendoAudio()" [class.pi-spinner]="subiendoAudio()"></i>
-              {{ subiendoAudio() ? 'Subiendo...' : (seccionMultimedia()?.audioUrl ? 'Reemplazar audio' : 'Subir audio') }}
-            </button>
-            <input #inputAudio type="file" accept="audio/*" style="display:none" (change)="alSeleccionarAudio($event)" />
-          </div>
-
-          <div class="panel-divider"></div>
-
-          <div class="panel-acciones">
-            <button type="button" class="primary-btn" (click)="seleccionarArchivo()" [disabled]="subiendoArchivo()">
-              <i class="pi" [class.pi-upload]="!subiendoArchivo()" [class.pi-spin]="subiendoArchivo()" [class.pi-spinner]="subiendoArchivo()"></i>
-              {{ subiendoArchivo() ? 'Subiendo...' : 'Subir imagen' }}
-            </button>
-            <button type="button" class="ghost-btn" (click)="mostrarFormVideo.set(!mostrarFormVideo())">
-              <i class="pi pi-video"></i>
-              Video externo
-            </button>
-            <input #inputArchivo type="file" accept="image/*" style="display:none" (change)="alSeleccionarArchivo($event)" />
-          </div>
-
-          <div class="video-form" *ngIf="mostrarFormVideo()">
-            <div class="field">
-              <label>URL del video (YouTube / Vimeo)</label>
-              <input type="url" class="input-text" placeholder="https://www.youtube.com/watch?v=..." [value]="videoUrlInput()" (input)="videoUrlInput.set($any($event.target).value)" />
-            </div>
-            <div class="field">
-              <label>Titulo (opcional)</label>
-              <input type="text" class="input-text" placeholder="Titulo del video" [value]="videoTituloInput()" (input)="videoTituloInput.set($any($event.target).value)" />
-            </div>
-            <div class="video-form-actions">
-              <button type="button" class="ghost-btn small" (click)="mostrarFormVideo.set(false)">Cancelar</button>
-              <button type="button" class="primary-btn small" (click)="agregarVideo()"><i class="pi pi-check"></i> Agregar</button>
-            </div>
-          </div>
-
-          <div class="multimedia-lista" *ngIf="!cargandoMultimedia(); else cargandoMedia">
-            <div class="multimedia-card" *ngFor="let elem of multimedia()">
-              <div class="media-preview">
-                <img *ngIf="elem.tipo === 'imagen' && elem.url" [src]="apiUrl + elem.url" [alt]="elem.titulo || 'Imagen'" />
-                <div class="media-video-thumb" *ngIf="esVideo(elem)">
-                  <i class="pi pi-play-circle"></i>
-                  <span>Video</span>
-                </div>
-              </div>
-              <div class="media-info">
-                <span class="media-titulo">{{ elem.titulo || 'Sin titulo' }}</span>
-                <span class="media-tipo">{{ elem.tipo }}</span>
-                <span class="badge-principal" *ngIf="elem.esPrincipal">Principal</span>
-              </div>
-              <div class="media-actions">
-                <button type="button" class="icon small" pTooltip="Marcar como principal" tooltipPosition="top" [disabled]="elem.esPrincipal" (click)="marcarPrincipal(elem)">
-                  <i class="pi" [class.pi-star-fill]="elem.esPrincipal" [class.pi-star]="!elem.esPrincipal"></i>
-                </button>
-                <button type="button" class="icon small" [pTooltip]="elem.estado ? 'Desactivar' : 'Activar'" tooltipPosition="top" (click)="toggleEstadoMultimedia(elem)">
-                  <i class="pi" [class.pi-eye]="elem.estado" [class.pi-eye-slash]="!elem.estado"></i>
-                </button>
-                <button type="button" class="icon small delete" pTooltip="Eliminar" tooltipPosition="top" (click)="confirmarEliminarMultimedia(elem)">
-                  <i class="pi pi-trash"></i>
-                </button>
-              </div>
-            </div>
-
-            <div class="state-card small" *ngIf="multimedia().length === 0">
-              <i class="pi pi-images"></i>
-              <p>Sin multimedia en esta seccion.</p>
-            </div>
-          </div>
-
-          <ng-template #cargandoMedia>
-            <div class="state-card small"><i class="pi pi-spin pi-spinner"></i><p>Cargando multimedia...</p></div>
-          </ng-template>
-        </aside>
       </div>
     </ng-container>
   </section>
@@ -245,9 +199,52 @@
           <spa-seccion-preview
             *ngIf="!cargandoPreview() && seccionPreview()"
             [seccion]="seccionPreview()!"
-            [multimedia]="multimediaPreview()"
+            [bloques]="bloquesPreview()"
           />
         </div>
+      </div>
+    </div>
+  </p-dialog>
+
+  <!-- Dialog Vista QR -->
+  <p-dialog
+    [visible]="qrVistaVisible()"
+    (visibleChange)="qrVistaVisible.set($event)"
+    [modal]="true"
+    [draggable]="false"
+    [resizable]="false"
+    [style]="{ width: '400px', maxWidth: '95vw' }"
+    [dismissableMask]="true"
+    (onHide)="cerrarVistaQr()"
+  >
+    <ng-template pTemplate="header">
+      <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <i class="pi pi-qrcode"></i>
+        <span>{{ qrVista()?.nombreDescriptivo }}</span>
+      </div>
+    </ng-template>
+
+    <div class="qr-vista-content" *ngIf="qrVista()">
+      <div class="qr-imagen" *ngIf="imagenQrUrl(qrVista())">
+        <img [src]="imagenQrUrl(qrVista())" [alt]="'QR ' + qrVista().nombreDescriptivo" />
+      </div>
+      <div class="qr-detalles">
+        <div class="qr-campo">
+          <label>Código</label>
+          <code>{{ qrVista().codigo }}</code>
+        </div>
+        <div class="qr-campo">
+          <label>Estado</label>
+          <span class="badge" [class.badge-activo]="qrVista().activo" [class.badge-inactivo]="!qrVista().activo">
+            {{ qrVista().activo ? 'Activo' : 'Inactivo' }}
+          </span>
+        </div>
+      </div>
+      <div class="qr-acciones">
+        <button type="button" (click)="descargarQr(qrVista().id)" class="primary-btn">
+          <i class="pi pi-download"></i>
+          Descargar QR
+        </button>
       </div>
     </div>
   </p-dialog>
