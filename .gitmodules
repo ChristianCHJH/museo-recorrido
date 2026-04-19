@@ -3,4 +3,4 @@
 	url = https://github.com/ADIFNEX-CONSULTORA-TI/museo-recorrido-bk.git
 [submodule "frontend"]
 	path = frontend
-	url = https://github.com/ADIFNEX-CONSULTORA-TI/museo-recorrido-fe.git
+	url = https://github.com/ChristianCHJH/museo-recorrido-fe.git
