@@ -21,6 +21,10 @@ services:
       REFRESH_TOKEN_EXPIRATION: 7d
       APP_URL: http://localhost:4200
       NODE_ENV: production
+      STORAGE: local
+      CLOUDINARY_CLOUD_NAME: dovxgcpc5
+      CLOUDINARY_API_KEY: 828716991748763
+      CLOUDINARY_API_SECRET: eNN5r1FRga2OpE8fdrXuPyG0gq8
     volumes:
       # Persistencia de archivos subidos
       - museo-uploads:/app/uploads
@@ -40,12 +44,12 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      args:
+        NG_APP_API_URL: http://localhost:3000
     container_name: museo-frontend
     restart: unless-stopped
     ports:
       - "4200:4200"
-    environment:
-      API_URL: http://localhost:3000
     volumes:
       # Persistencia de caché de build
       - museo-frontend-cache:/app/.angular

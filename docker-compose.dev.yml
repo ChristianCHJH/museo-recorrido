@@ -21,6 +21,10 @@ services:
       REFRESH_TOKEN_EXPIRATION: 7d
       APP_URL: http://localhost:4200
       NODE_ENV: development
+      STORAGE: local
+      CLOUDINARY_CLOUD_NAME: dovxgcpc5
+      CLOUDINARY_API_KEY: 828716991748763
+      CLOUDINARY_API_SECRET: eNN5r1FRga2OpE8fdrXuPyG0gq8
     volumes:
       # Bind mount del código fuente (para desarrollo)
       - ./backend/src:/app/src
@@ -30,8 +34,6 @@ services:
       - museo-logs-backend-dev:/app/logs
       # Volumen anónimo para node_modules
       - /app/node_modules
-    depends_on:
-      - frontend
     networks:
       - museo-network-dev
     healthcheck:
